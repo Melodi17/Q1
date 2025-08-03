@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "dotnet",
+            "name": "Dotnet configuration",
+            "projectPath": "$PROJECT_DIR$",
+            "solutionPath": "$PROJECT_DIR$",
+            "args": []
+        }
+    ]
+}
