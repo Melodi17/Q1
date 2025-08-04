@@ -10,6 +10,7 @@ namespace Q1Emu;
 public class DisplayEngine : Game
 {
     private readonly Action<Texture2D>     _onScreenTextureLoaded;
+    private readonly Action                _requestUpdate;
     private          GraphicsDeviceManager _graphics;
     private          SpriteBatch           _spriteBatch;
 
@@ -18,12 +19,13 @@ public class DisplayEngine : Game
     public int Width { get; }
     public int Height { get; }
 
-    public DisplayEngine(int width, int height, int scaling, Action<Texture2D> onScreenTextureLoaded)
+    public DisplayEngine(int width, int height, int scaling, Action<Texture2D> onScreenTextureLoaded, Action requestUpdate)
     {
         this.Width                  = width;
         this.Height                 = height;
         this.Scaling                = scaling;
         this._onScreenTextureLoaded = onScreenTextureLoaded;
+        this._requestUpdate         = requestUpdate;
 
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
@@ -60,6 +62,8 @@ public class DisplayEngine : Game
     protected override void Draw(GameTime gameTime)
     {
         GraphicsDevice.Clear(Color.CornflowerBlue);
+
+        this._requestUpdate();
 
         _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
         // Draw the texture to the screen

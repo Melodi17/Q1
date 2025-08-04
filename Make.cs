@@ -1,6 +1,7 @@
 namespace Q1Emu;
 
 using System;
+using System.Buffers.Binary;
 
 public static class Make
 {
@@ -44,5 +45,9 @@ public static class Make
         u8 b3 = (u8) (value >> 8);
         u8 b4 = (u8) (value & 0xFF);
         return new ref8([b1, b2, b3, b4], 0, 4);
+    }
+    public static i16 i16(ref8 value)
+    {
+        return BinaryPrimitives.ReadInt16BigEndian(value);
     }
 }

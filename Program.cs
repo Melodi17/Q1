@@ -5,6 +5,7 @@ using System.Threading;
 using Microsoft.Xna.Framework;
 using Q1Emu.Chip;
 using Q1Emu;
+using Q1Emu.Assembler;
 
 internal class Program
 {
@@ -31,7 +32,14 @@ internal class Program
     }
     private static void AssembleAndRun(string filePath)
     {
+        StringReader reader = new(File.ReadAllText(filePath));
+        BinaryWriter writer = new(File.Create(Path.ChangeExtension(filePath, ".q1")));
         
+        Assembler assembler = new(reader, writer);
+        assembler.Assemble();
+        writer.Close();
+        Console.WriteLine($"Assembled {filePath} to {Path.ChangeExtension(filePath, ".q1")}");
+        Run(Path.ChangeExtension(filePath, ".q1"));
     }
     private static void Run(string filePath)
     {
@@ -51,6 +59,7 @@ internal class Program
         
         cpu.Bus = bus;
         ram.AttachToBus(bus);
+        display.AttachToBus(bus);
 
         int frameRate = 600;
         Thread t = new(() =>
@@ -58,7 +67,6 @@ internal class Program
             while (true)
             {
                 cpu.Clock();
-                display.Clock();
                 Thread.Sleep(1000 / frameRate);
             }
         });
@@ -70,7 +78,7 @@ internal class Program
             {
                 display.OutputTexture = tex;
                 Console.WriteLine("Display texture initialized.");
-            });
+            }, () => display.Clock());
         game.Run();
     }
 }

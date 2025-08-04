@@ -3,6 +3,7 @@
 namespace Q1Emu.Chip;
 
 using System.Collections.Generic;
+using Assembler;
 
 public partial class Q1Cpu
 {
@@ -42,7 +43,9 @@ public partial class Q1Cpu
 
     public void Clock()
     {
+        var pc = this.PC;
         u16 instruction = this.FetchInstruction(out u8 op, out u8 m1, out u8 m2, out _);
+        Console.WriteLine($"{pc:X4}: {Disassembler.ParseInstruction(instruction)}");
 
         bool ex = m2 > 0;
         switch (m1, ex)

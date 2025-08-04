@@ -39,7 +39,7 @@ public class Bus : BusDevice
     {
         BusDevice? device = this.GetDevice(address);
         if (device == null)
-            return [];
+            return new u8[length];
 
         return device.ReadSeq(address, length);
     }
