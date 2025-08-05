@@ -7,7 +7,7 @@ using Assembler;
 
 public partial class Q1Cpu
 {
-    public const u16 StackStart  = 0x30;
+    public const u16 StackStart  = 0x2FFF;
     public const u16 StackLength = 16 * 2; // 16 16-bit values
 
     public Random Random;
@@ -45,7 +45,8 @@ public partial class Q1Cpu
     {
         var pc = this.PC;
         u16 instruction = this.FetchInstruction(out u8 op, out u8 m1, out u8 m2, out _);
-        Console.WriteLine($"{pc:X4}: {Disassembler.ParseInstruction(instruction)}");
+        Console.WriteLine($"CPU.Clock: {pc:X4} |  {Disassembler.ParseInstruction(instruction)}");
+        // Console.WriteLine($"{V[0]:X4} {V[1]:X4} {V[2]:X4} {V[3]:X4} {V[4]:X4} {V[5]:X4} {V[6]:X4} {V[7]:X4}");
 
         bool ex = m2 > 0;
         switch (m1, ex)
@@ -84,7 +85,7 @@ public partial class Q1Cpu
         if (this.SP + 2 >= StackStart + StackLength)
             throw new InvalidOperationException("Stack overflow");
 
-        this.Bus.WriteSeq(this.SP, 2, Make.ref8(value));
+        this.Bus.WriteWord(this.SP, value);
         this.SP += 2;
     }
 
@@ -94,7 +95,7 @@ public partial class Q1Cpu
             throw new InvalidOperationException("Stack underflow");
 
         this.SP -= 2;
-        return Make.u16(this.Bus.ReadSeq(this.SP, 2));
+        return this.Bus.ReadWord(this.SP);
     }
 
     private u16 FetchRegister(u8 regIndex)

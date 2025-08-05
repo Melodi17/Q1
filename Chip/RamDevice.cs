@@ -33,17 +33,4 @@ public class RamDevice : BusDevice
         u16 relativeAddress = this.GetRelativeAddress(address);
         this.Memory[relativeAddress] = value;
     }
-
-    public override ref8 ReadSeq(u16 address, u16 length)
-    {
-        u16 relativeAddress = this.GetRelativeAddress(address);
-        // Console.WriteLine($"{address:X4} {relativeAddress:X4} {length:X4}");
-        return new ref8(this.Memory, relativeAddress, length);
-    }
-    
-    public override void WriteSeq(u16 address, u16 length, ref8 value)
-    {
-        ref8 destination = this.ReadSeq(address, length);
-        value.CopyTo(destination);
-    }
 }

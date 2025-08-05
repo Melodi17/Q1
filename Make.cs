@@ -50,4 +50,9 @@ public static class Make
     {
         return BinaryPrimitives.ReadInt16BigEndian(value);
     }
+    
+    public static i16 i16(u8 high, u8 low)
+    {
+        return BinaryPrimitives.ReadInt16BigEndian(new ReadOnlySpan<u8>([high, low]));
+    }
 }

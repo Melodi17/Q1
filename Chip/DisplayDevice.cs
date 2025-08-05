@@ -31,12 +31,12 @@ public class DisplayDevice : RamDevice
     public override void Clock()
     {
         Color[] palette = this.ReadPalette();
-        ref8 pixelData = this.ReadSeq((u16) (this.AddressableStart + this._paletteSize * 3), (u16) (this._displayWidth * this._displayHeight));
-
+        ref8 pixelData = this.Memory.AsSpan((u16) (this._paletteSize * 3), (u16) (this._displayWidth * this._displayHeight));
+        // Console.WriteLine($"DisplayDevice.Clock: @{(this.AddressableStart + this._paletteSize * 3):X4} palette size={this._paletteSize} display size={this._displayWidth}x{this._displayHeight}");
         for (u16 i = 0; i < textureData.Length; i++)
         {
             u8 pixelValue = pixelData[i];
-            textureData[i] = palette[pixelValue];
+            textureData[i] = palette[pixelValue % this._paletteSize];
         }
 
         if (this.OutputTexture != null)
@@ -45,7 +45,7 @@ public class DisplayDevice : RamDevice
 
     private Color[] ReadPalette()
     {
-        ref8 paletteData = this.ReadSeq(this.AddressableStart, (u16) (this._paletteSize * 3));
+        ref8 paletteData = this.Memory.AsSpan(0, (u16) (this._paletteSize * 3));
         Color[] colors = new Color[this._paletteSize + 1];
         colors[0] = Color.Transparent;
 
@@ -66,7 +66,7 @@ public class DisplayDevice : RamDevice
         if (palette.Length != this._paletteSize)
             throw new ArgumentException($"Palette must have {this._paletteSize} colors.");
 
-        ref8 paletteData = this.ReadSeq(this.AddressableStart, (u16) (this._paletteSize * 3));
+        ref8 paletteData = this.Memory.AsSpan(0, (u16) (this._paletteSize * 3));
         for (u16 i = 0; i < this._paletteSize; i++)
         {
             u16 offset = (u16) (i * 3);
@@ -74,16 +74,5 @@ public class DisplayDevice : RamDevice
             paletteData[offset + 1] = palette[i].G;
             paletteData[offset + 2] = palette[i].B;
         }
-    }
-
-    public override void Write(u16 address, u8 value)
-    {
-        Console.WriteLine($"DisplayDevice.Write: {address:X4} = {value:X2}");
-        base.Write(address, value);
-    }
-    public override void WriteSeq(u16 address, u16 length, ref8 value)
-    {
-        Console.WriteLine($"DisplayDevice.WriteSeq: {address:X4} length={length} value={Make.u16(value)}");
-        base.WriteSeq(address, length, value);
     }
 }

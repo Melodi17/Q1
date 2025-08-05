@@ -14,6 +14,10 @@ internal class Program
         if (args.Length > 0)
         {
             string filePath = args[0];
+
+            Environment.CurrentDirectory = Path.GetDirectoryName(filePath) ?? Environment.CurrentDirectory;
+            filePath                     = Path.GetFileName(filePath);
+
             if (filePath.EndsWith(".q1"))
             {
                 Run(filePath);
@@ -34,7 +38,7 @@ internal class Program
     {
         StringReader reader = new(File.ReadAllText(filePath));
         BinaryWriter writer = new(File.Create(Path.ChangeExtension(filePath, ".q1")));
-        
+
         Assembler assembler = new(reader, writer);
         assembler.Assemble();
         writer.Close();
@@ -49,31 +53,49 @@ internal class Program
         File.ReadAllBytes(filePath).CopyTo(ram.Memory, 0);
 
         cpu.PC = ram.AddressableStart;
-        
+
         DisplayDevice display = new(16, 64, 32, 0x3FFF);
         display.SetPalette([
-            Color.Red, Color.Green, Color.Blue, Color.Yellow, 
-            Color.Cyan, Color.Magenta, Color.White, Color.Black, 
-            Color.Gray, Color.Orange, Color.Purple, Color.Brown, 
-            Color.LightGray, Color.DarkGray, Color.LightBlue, Color.LightGreen]);
-        
+            Color.Red,
+            Color.Green,
+            Color.Blue,
+            Color.Yellow,
+            Color.Cyan,
+            Color.Magenta,
+            Color.White,
+            Color.Black,
+            Color.Gray,
+            Color.Orange,
+            Color.Purple,
+            Color.Brown,
+            Color.LightGray,
+            Color.DarkGray,
+            Color.LightBlue,
+            Color.LightGreen
+        ]);
+
         cpu.Bus = bus;
         ram.AttachToBus(bus);
         display.AttachToBus(bus);
 
-        int frameRate = 600;
         Thread t = new(() =>
         {
             while (true)
             {
-                cpu.Clock();
-                Thread.Sleep(1000 / frameRate);
+                for (int i = 0; i < 64; i++)
+                {
+                    cpu.Clock();
+                }
+                Thread.Sleep(1);
+                //
+                // cpu.Clock();
+                // Thread.Sleep(1000);
             }
         });
         t.IsBackground = true;
         t.Start();
 
-        using DisplayEngine game = new(64, 32, 10, 
+        using DisplayEngine game = new(64, 32, 10,
             tex =>
             {
                 display.OutputTexture = tex;

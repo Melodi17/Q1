@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public partial class Q1Cpu
 {
-    public u16 FetchData(u8 mode)
+    public (Func<u16> read, Action<u16> write, Action<u8> writeByte) Address(u8 mode)
     {
         return mode switch
         {
@@ -20,61 +20,8 @@ public partial class Q1Cpu
             _   => throw new InvalidOperationException($"Unknown addressing mode: {mode:X2}"),
         };
     }
-    
-    public void StoreData(u8 mode, u16 value)
-    {
-        switch (mode)
-        {
-            case 0x0:
-                throw new InvalidOperationException("Cannot store data in implicit mode.");
-            case 0x1:
-                throw new InvalidOperationException("Cannot store data in immediate mode.");
-            case 0x2:
-                this.AddressingMode_Direct_Store(value);
-                break;
-            case 0x3:
-                this.AddressingMode_Indirect_Store(value);
-                break;
-            case 0x4:
-                this.AddressingMode_Relative_Store(value);
-                break;
-            case 0x5:
-                this.AddressingMode_Register_Store(value);
-                break;
-            case 0x6:
-                this.AddressingMode_RegisterIndirect_Store(value);
-                break;
-            case 0x7:
-                this.AddressingMode_RegisterIndirectOffset_Store(value);
-                break;
-            default:
-                throw new InvalidOperationException($"Unknown addressing mode: {mode:X2}");
-        }
-    }
-    
-    public void TransformData(u8 mode, Func<u16, u16> transform)
-    {
-        // if (mode != 0x05)
-        // {
-        //     u16 address = this.FetchData(mode);
-        //     u16 value = this.Bus.ReadWord(address);
-        //     u16 transformedValue = transform(value);
-        //     this.Bus.WriteWord(address, transformedValue);
-        // }
-        // else
-        // {
-        //     u8 regIndex = this.Bus.Read(this.PC);
-        //     this.PC += 1;
-        //
-        //     u16 value = this.FetchRegister(regIndex);
-        //     u16 transformedValue = transform(value);
-        //     this.StoreRegister(regIndex, transformedValue);
-        // }
-        
-        throw new NotImplementedException("TransformData is not implemented yet.");
-    }
 
-    public u8 AddressingModeLength(u8 mode)
+    private u8 AddressingModeLength(u8 mode)
     {
         return mode switch
         {
@@ -90,133 +37,152 @@ public partial class Q1Cpu
         };
     }
     
-    public u16 AddressingMode_Implicit()
+    public (Func<u16> read, Action<u16> write, Action<u8> writeByte) AddressingMode_Implicit()
     {
-        return 0;
+        u16 Read() => throw new InvalidOperationException("Cannot read from implicit mode.");
+        void Write(u16 value) => throw new InvalidOperationException("Cannot write to implicit mode.");
+        void WriteByte(u8 value) => throw new InvalidOperationException("Cannot write byte to implicit mode.");
+        
+        return (Read, Write, WriteByte);
     }
 
 
-    public u16 AddressingMode_Immediate()
+    public (Func<u16> read, Action<u16> write, Action<u8> writeByte) AddressingMode_Immediate()
     {
         u16 value = this.Bus.ReadWord(this.PC);
         this.PC += 2;
 
-        return value;
+        u16 Read() => value;
+        void Write(u16 v) => throw new InvalidOperationException("Cannot write to immediate mode.");
+        void WriteByte(u8 v) => throw new InvalidOperationException("Cannot write byte to immediate mode.");
+        
+        return (Read, Write, WriteByte);
     }
 
-    public u16 AddressingMode_Direct()
+    public (Func<u16> read, Action<u16> write, Action<u8> writeByte) AddressingMode_Direct()
     {
         u16 address = this.Bus.ReadWord(this.PC);
         this.PC += 2;
-
-        u16 value = this.Bus.ReadWord(address);
-        return value;
+        
+        u16 Read() => this.Bus.ReadWord(address);
+        void Write(u16 value) => this.Bus.WriteWord(address, value);
+        void WriteByte(u8 value) => this.Bus.Write(address, value);
+        
+        return (Read, Write, WriteByte);
     }
 
-    public u16 AddressingMode_Indirect()
+    public (Func<u16> read, Action<u16> write, Action<u8> writeByte) AddressingMode_Indirect()
     {
         u16 address = this.Bus.ReadWord(this.PC);
         this.PC += 2;
+        
+        u16 Read()
+        {
+            u16 indirectAddress = this.Bus.ReadWord(address);
+            u16 value = this.Bus.ReadWord(indirectAddress);
+            return value;
+        }
 
-        u16 indirectAddress = this.Bus.ReadWord(address);
-        u16 value = this.Bus.ReadWord(indirectAddress);
-        return value;
+        void Write(u16 value)
+        {
+            u16 indirectAddress = this.Bus.ReadWord(address);
+            this.Bus.WriteWord(indirectAddress, value);
+        }
+        
+        void WriteByte(u8 value)
+        {
+            u16 indirectAddress = this.Bus.ReadWord(address);
+            this.Bus.Write(indirectAddress, value);
+        }
+        
+        return (Read, Write, WriteByte);
     }
 
-    public u16 AddressingMode_Relative()
+    public (Func<u16> read, Action<u16> write, Action<u8> writeByte) AddressingMode_Relative()
     {
         u16 offset = this.Bus.ReadWord(this.PC);
         this.PC += 2;
 
         u16 address = (u16) (this.PC + offset);
-        return address;
+
+        u16 Read() => address;
+        void Write(u16 value) => throw new InvalidOperationException("Cannot write to relative mode.");
+        void WriteByte(u8 value) => throw new InvalidOperationException("Cannot write byte to relative mode.");
+        
+        return (Read, Write, WriteByte);
     }
 
-    public u16 AddressingMode_Register()
-    {
-        u8 regIndex = this.Bus.Read(this.PC);
-        this.PC += 1;
-
-        return this.FetchRegister(regIndex);
-    }
-
-    public u16 AddressingMode_RegisterIndirect()
-    {
-        u8 regIndex = this.Bus.Read(this.PC);
-        this.PC += 1;
-
-        u16 address = this.FetchRegister(regIndex);
-        u16 value = this.Bus.ReadWord(address);
-        Console.WriteLine($"Value at {address:X4}: {value:X4}");
-        return value;
-    }
-
-    public u16 AddressingMode_RegisterIndirectOffset()
-    {
-        u8 regIndex = this.Bus.Read(this.PC);
-        this.PC += 1;
-
-        i16 offset = Make.i16(this.Bus.ReadSeq(this.PC, 2));
-        Console.WriteLine("Offset: " + offset);
-        this.PC += 2;
-
-        u16 address = (u16) (this.FetchRegister(regIndex) + offset);
-        u16 value = this.Bus.ReadWord(address);
-        return value;
-    }
-
-    public void AddressingMode_Direct_Store(u16 data)
-    {
-        u16 address = this.Bus.ReadWord(this.PC);
-        this.PC += 2;
-
-        this.Bus.WriteWord(address, data);
-    }
-
-    public void AddressingMode_Indirect_Store(u16 data)
-    {
-        u16 address = this.Bus.ReadWord(this.PC);
-        this.PC += 2;
-
-        u16 indirectAddress = this.Bus.ReadWord(address);
-        this.Bus.WriteWord(indirectAddress, data);
-    }
-
-    public void AddressingMode_Relative_Store(u16 data)
-    {
-        u16 offset = this.Bus.ReadWord(this.PC);
-        this.PC += 2;
-
-        u16 address = (u16) (this.PC + offset);
-        this.Bus.WriteWord(address, data);
-    }
-
-    public void AddressingMode_Register_Store(u16 data)
+    public (Func<u16> read, Action<u16> write, Action<u8> writeByte) AddressingMode_Register()
     {
         u8 regIndex = this.Bus.Read(this.PC);
         this.PC += 1;
         
-        this.StoreRegister(regIndex, data);
+        u16 Read() => this.FetchRegister(regIndex);
+        void Write(u16 value) => this.StoreRegister(regIndex, value);
+        void WriteByte(u8 value)
+        {
+            u16 currentValue = this.FetchRegister(regIndex);
+            u16 newValue = (u16) ((currentValue & 0xFF00) | (value & 0x00FF)); // Update low byte
+            this.StoreRegister(regIndex, newValue);
+        }
+        
+        return (Read, Write, WriteByte);
     }
 
-    public void AddressingMode_RegisterIndirect_Store(u16 data)
+    public (Func<u16> read, Action<u16> write, Action<u8> writeByte) AddressingMode_RegisterIndirect()
     {
         u8 regIndex = this.Bus.Read(this.PC);
         this.PC += 1;
 
-        u16 address = this.FetchRegister(regIndex);
-        this.Bus.WriteWord(address, data);
+        u16 Read()
+        {
+            u16 address = this.FetchRegister(regIndex);
+            u16 value = this.Bus.ReadWord(address);
+            return value;
+        }
+        
+        void Write(u16 value)
+        {
+            u16 address = this.FetchRegister(regIndex);
+            this.Bus.WriteWord(address, value);
+        }
+        
+        void WriteByte(u8 value)
+        {
+            u16 address = this.FetchRegister(regIndex);
+            this.Bus.Write(address, value);
+        }
+        
+        return (Read, Write, WriteByte);
     }
 
-    public void AddressingMode_RegisterIndirectOffset_Store(u16 data)
+    public (Func<u16> read, Action<u16> write, Action<u8> writeByte) AddressingMode_RegisterIndirectOffset()
     {
         u8 regIndex = this.Bus.Read(this.PC);
         this.PC += 1;
 
-        i16 offset = Make.i16(this.Bus.ReadSeq(this.PC, 2));
+        i16 offset = this.Bus.ReadSignedWord(this.PC);
         this.PC += 2;
 
-        u16 address = (u16) (this.FetchRegister(regIndex) + offset);
-        this.Bus.WriteWord(address, data);
+        u16 Read()
+        {
+            u16 address = (u16) (this.FetchRegister(regIndex) + offset);
+            u16 value = this.Bus.ReadWord(address);
+            return value;
+        }
+        
+        void Write(u16 value)
+        {
+            u16 address = (u16) (this.FetchRegister(regIndex) + offset);
+            this.Bus.WriteWord(address, value);
+        }
+        
+        void WriteByte(u8 value)
+        {
+            u16 address = (u16) (this.FetchRegister(regIndex) + offset);
+            this.Bus.Write(address, value);
+        }
+        
+        return (Read, Write, WriteByte);
     }
 }

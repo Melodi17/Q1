@@ -34,22 +34,4 @@ public class Bus : BusDevice
 
         device.Write(address, value);
     }
-
-    public override ref8 ReadSeq(u16 address, u16 length)
-    {
-        BusDevice? device = this.GetDevice(address);
-        if (device == null)
-            return new u8[length];
-
-        return device.ReadSeq(address, length);
-    }
-
-    public override void WriteSeq(u16 address, u16 length, ref8 value)
-    {
-        BusDevice? device = this.GetDevice(address);
-        if (device == null)
-            return;
-
-        device.WriteSeq(address, length, value);
-    }
 }

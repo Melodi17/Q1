@@ -2,29 +2,21 @@ namespace Q1Emu.Assembler;
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using Chip;
 
 public class Disassembler
 {
-    public static Dictionary<u8, string[]> InstructionLookup = new()
-    {
-        { 0x00, ["NOP", "JMP", "HALT", "MOV"] },
-        { 0x01, ["RET", "CALL", "SUS", "CMP"] },
-        { 0x02, ["BR", "BZ", "BZ_LX", "LT"] },
-        { 0x03, ["NOP", "NOP", "NOP", "GT"] },
-
-        { 0x04, ["NOT_LX", "NOT", "NOP", "AND"] },
-        { 0x05, ["INV_DX", "INV", "NOP", "OR"] },
-        { 0x06, ["SHL_DX", "SHL", "NOP", "XOR"] },
-        { 0x07, ["SHR_DX", "SHR", "NOP", "NOP"] },
-
-        { 0x08, ["INC_AX", "INC", "NOP", "ADD"] },
-        { 0x09, ["DEC_AX", "DEC", "NOP", "SUB"] },
-        { 0x0A, ["NOP", "NOP", "NOP", "DIV"] },
-        { 0x0B, ["NOP", "NOP", "NOP", "MUL"] },
-        { 0x0C, ["NOP", "NOP", "NOP", "MOD"] },
-    };
+    public readonly StringWriter Writer;
+    public readonly BinaryReader Reader;
     
-    public static Dictionary<u8, string> ModeLookup = new()
+    public Disassembler(StringWriter writer, BinaryReader reader)
+    {
+        this.Writer = writer;
+        this.Reader = reader;
+    }
+    
+    private static Dictionary<u8, string> ModeLookup = new()
     {
         { 0x00, "" },
         { 0x01, "c" },
@@ -35,7 +27,7 @@ public class Disassembler
         { 0x06, "[r]" },
         { 0x07, "[r + c]" },
     };
-    
+
     public static string ParseInstruction(u16 instruction)
     {
         u8 op = (u8) ((instruction >> 8) & 0xFF); // 256 opcodes
@@ -45,43 +37,38 @@ public class Disassembler
         u8 i = (m1, m2) switch
         {
             (0x00, 0x00) => 0, // Implicit
-            (0x00, _)    => 2, // Extended implicit
+            (0x00, 0x01)    => 2, // Extended implicit
             (_, 0x00)    => 1, // Simple addressing mode
             _            => 3  // Extended addressing mode
         };
-        
-        string opcodeName = GetOpcodeName(op, i);
-        string mode1 = GetModeName(m1);
-        string mode2 = GetModeName(m2);
 
-        if (i == 0)
+        string opcodeName = GetOpcodeName(op, i);
+
+        if (i == 0 || i == 2)
             return opcodeName;
-        
-        if (i == 2)
-            return $"{opcodeName}";
-        
+
         if (i == 1)
-            return $"{opcodeName} {mode1}";
-        
+            return $"{opcodeName} {GetModeName(m1)}";
+
         if (i == 3)
-            return $"{opcodeName} {mode1}, {mode2}";
-        
+            return $"{opcodeName} {GetModeName(m1)}, {GetModeName(m2)}";
+
         throw new InvalidOperationException($"Unknown instruction format for opcode {op:X2} with modes {m1:X2}, {m2:X2}");
     }
-    
+
     private static string GetOpcodeName(u8 opcode, u8 i)
     {
-        if (!InstructionLookup.ContainsKey(opcode) || i >= InstructionLookup[opcode].Length)
-            return $"{opcode:X2}";
-        
-        return InstructionLookup[opcode][i];
+        if (!Q1Cpu.InstructionLookupStrings.TryGetValue(opcode, out string[]? opNames))
+            return $"[{opcode:X2}]"; // Fallback for unknown opcodes
+
+        return opNames[i];
     }
-    
+
     private static string GetModeName(u8 mode)
     {
-        if (ModeLookup.TryGetValue(mode, out string modeName))
+        if (ModeLookup.TryGetValue(mode, out string? modeName))
             return modeName;
-        
+
         return $"[{mode:X2}]"; // Fallback for unknown modes
     }
 }
