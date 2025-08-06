@@ -20,9 +20,7 @@ internal class Program
         Bus bus = new(u16.MinValue, u16.MaxValue);
         RamDevice ram = new(0x1FFF, 1024 * 8);
         File.ReadAllBytes(options.InputFile).CopyTo(ram.Memory, 0);
-
-        cpu.PC = ram.AddressableStart;
-
+        
         DisplayDevice display = new(16, 64, 32, 0x3FFF);
         display.SetPalette([
             Color.Red,
@@ -55,13 +53,13 @@ internal class Program
             cpu.Reset();
             while (!cpu.AbortRequested)
             {
-                for (int i = 0; i < 64; i++)
-                    cpu.Clock();
-                
-                Thread.Sleep(1);
+                // for (int i = 0; i < 64; i++)
+                //     cpu.Clock();
                 //
-                // cpu.Clock();
-                // Thread.Sleep(1000);
+                // Thread.Sleep(1);
+                //
+                cpu.Clock();
+                Thread.Sleep(1000);
             }
             Console.WriteLine($"Exit code: 0x{cpu.V[0]:X4}");
         });

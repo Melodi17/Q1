@@ -1,4 +1,4 @@
 int main() 
 {
-    return (1 + 2) * (4 - 1);
+    return 0 | 1;
 }

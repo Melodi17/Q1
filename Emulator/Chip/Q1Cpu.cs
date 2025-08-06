@@ -5,8 +5,9 @@ using Assembler;
 
 public partial class Q1Cpu
 {
-    public const u16 StackStart  = 0x2FFF;
-    public const u16 StackLength = 16 * 2; // 16 16-bit values
+    public const u16 StackStart   = 0x2FFF;
+    public const u16 StackLength  = 16 * 2; // 16 16-bit values
+    public const u16 ProgramStart = 0x1FFF;
 
     public Random Random;
 
@@ -18,7 +19,6 @@ public partial class Q1Cpu
     public u16 PC { get; set; } // Program counter
 
     public u16[] V      { get; set; } // Variable registers (64 total)
-    public u16   I      { get; set; } // Index register
     public u16   Cycles { get; set; } // Number of cycles
 
     public Bus  Bus { get; set; }
@@ -38,7 +38,7 @@ public partial class Q1Cpu
         this.SP = Q1Cpu.StackStart;
         this.PushStack(0xFFFF);
 
-        this.I = 0;
+        this.PC = Q1Cpu.ProgramStart;
     }
 
     public void Clock()

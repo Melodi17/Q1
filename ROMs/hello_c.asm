@@ -1,7 +1,8 @@
 _main:
-ADD 1, 2
-SUB 4, 1
-MUL AX, AX
-MOV AX, V0
-RET
+    push 0
+    mov 1, V1
+    pop V0
+    or V0, V1
+    mov DX, V0
+    ret
 
