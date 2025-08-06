@@ -1,0 +1,7 @@
+_main:
+ADD 1, 2
+SUB 4, 1
+MUL AX, AX
+MOV AX, V0
+RET
+

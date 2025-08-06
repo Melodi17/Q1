@@ -1,21 +1,11 @@
-namespace Q1Emu.Assembler;
+namespace Q1.Assembler;
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using Chip;
+using Emulator;
+using Emulator.Chip;
 
 public class Assembler
 {
-    public readonly BinaryWriter Writer;
-    public readonly StringReader Reader;
-
-    private Dictionary<string, u16> _labels         = new();
-    private Dictionary<u16, string> _unloadedLabels = new();
-    private u16                     _addressOffset  = 0;
-
     public static Dictionary<u16, string> RegisterLookup = new()
     {
         { 0x40, "AX" },
@@ -26,30 +16,31 @@ public class Assembler
         { 0x45, "DL" },
         { 0x46, "LX" },
         { 0x50, "PC" },
-        { 0x51, "SP" },
+        { 0x51, "SP" }
     };
+    private readonly string[] InputLines;
 
-    public Assembler(StringReader reader, BinaryWriter writer)
+    private readonly Dictionary<string, u16> _labels = new();
+
+    public Assembler(string[] inputLines)
     {
-        this.Reader = reader;
-        this.Writer = writer;
+        this.InputLines = inputLines;
     }
 
-    public void Assemble()
+    private void ResolveLabels()
     {
-        int lineNumber = 0;
-        while (this.Reader.ReadLine() is { } line)
+        int offset = 0;
+        int pos = 0;
+        foreach (string line in this.InputLines)
         {
-            lineNumber++;
-            string trimmedLine = line.Split(";")[0].Trim(); // Remove comments
+            string trimmedLine = line.Split(";")[0].Trim();
             if (string.IsNullOrEmpty(trimmedLine) || trimmedLine.StartsWith(';'))
                 continue;
 
             if (trimmedLine.StartsWith(".org"))
             {
-                // Handle .org directive
                 string orgValue = trimmedLine[5..].Trim();
-                this._addressOffset = this.GetConstant(orgValue);
+                offset = this.GetConstant(orgValue);
             }
 
             else if (trimmedLine.StartsWith(".ascii"))
@@ -61,6 +52,7 @@ public class Assembler
                 {
                     char c = asciiValue[i];
                     if (c == '\\')
+                    {
                         c = asciiValue[++i] switch
                         {
                             'n'  => '\n',
@@ -68,10 +60,79 @@ public class Assembler
                             '\\' => '\\',
                             '\'' => '\'',
                             '"'  => '"',
-                            _    => throw new AssemblerException($"Unknown escape sequence: \\{asciiValue[i]}"),
+                            _    => throw new AssemblerException($"Unknown escape sequence: \\{asciiValue[i]}")
                         };
+                    }
 
-                    this.Write((u8) c);
+                    pos++;
+                }
+            }
+
+            else if (trimmedLine.StartsWith(".raw"))
+            {
+                string[] values = trimmedLine[5..].Split(',');
+                pos += values.Length * 2; // Each value is 2 bytes
+            }
+
+            else if (trimmedLine.StartsWith(".include"))
+            {
+                string includeFile = trimmedLine[9..].Trim()[1..^1];
+                if (!File.Exists(includeFile))
+                    throw new AssemblerException($"Include file '{includeFile}' not found");
+
+                pos += File.ReadAllBytes(includeFile).Length;
+            }
+
+            else if (trimmedLine.EndsWith(":"))
+            {
+                string label = trimmedLine[..^1].Trim();
+                if (this._labels.ContainsKey(label))
+                    throw new AssemblerException($"Label '{label}' already defined");
+                this._labels[label] = (u16) (pos + offset);
+            }
+
+            else
+                pos += this.GetInstructionLength(trimmedLine);
+        }
+    }
+
+    public IEnumerable<byte> Assemble()
+    {
+        this.ResolveLabels();
+
+        foreach (string line in this.InputLines)
+        {
+            string trimmedLine = line.Split(";")[0].Trim(); // Remove comments
+            if (string.IsNullOrEmpty(trimmedLine) || trimmedLine.StartsWith(';'))
+                continue;
+
+            if (trimmedLine.StartsWith(".org"))
+            {
+                // Already handled in ResolveLabels
+            }
+
+            else if (trimmedLine.StartsWith(".ascii"))
+            {
+                string asciiValue = trimmedLine[7..].Trim()
+                    [1..^1]; // Remove quotes
+
+                for (int i = 0; i < asciiValue.Length; i++)
+                {
+                    char c = asciiValue[i];
+                    if (c == '\\')
+                    {
+                        c = asciiValue[++i] switch
+                        {
+                            'n'  => '\n',
+                            't'  => '\t',
+                            '\\' => '\\',
+                            '\'' => '\'',
+                            '"'  => '"',
+                            _    => throw new AssemblerException($"Unknown escape sequence: \\{asciiValue[i]}")
+                        };
+                    }
+
+                    yield return (byte) c;
                 }
             }
 
@@ -79,79 +140,93 @@ public class Assembler
             {
                 string[] values = trimmedLine[5..].Split(',');
                 foreach (string value in values)
-                    this.Write(GetConstant(value.Trim()));
+                {
+                    u16 c = this.GetConstant(value.Trim());
+                    
+                    yield return c.High();
+                    yield return c.Low();
+                }
             }
-            
+
             else if (trimmedLine.StartsWith(".include"))
             {
                 string includeFile = trimmedLine[9..].Trim()[1..^1];
                 if (!File.Exists(includeFile))
-                {
-                    WriteError(line, lineNumber, $"Include file '{includeFile}' not found");
-                    return;
-                }
+                    throw new AssemblerException($"Include file '{includeFile}' not found");
 
                 foreach (byte b in File.ReadAllBytes(includeFile))
-                    this.Writer.Write(b);
+                    yield return b;
             }
 
             else if (trimmedLine.EndsWith(":"))
-                this._labels[trimmedLine[..^1]] = (u16) (this.Writer.BaseStream.Position + this._addressOffset);
+            {
+                // Handled in ResolveLabels
+            }
 
             else
-            {
-                try
-                {
-                    this.ParseInstruction(trimmedLine);
-                }
-                catch (AssemblerException ex)
-                {
-                    WriteError(line, lineNumber, ex.Message);
-                    return;
-                }
-            }
-        }
-
-        foreach ((u16 key, string value) in this._unloadedLabels)
-        {
-            if (this._labels.TryGetValue(value, out u16 address))
-            {
-                Console.WriteLine($"Resolving label '{value}' at address {address:X4} for key {key:X4}");
-                this.Writer.BaseStream.Seek(key, SeekOrigin.Begin);
-                this.Write(address);
-            }
-            else
-            {
-                WriteError($"", 0, "Label not defined");
-            }
+                foreach (byte b in this.GetInstructionBytes(trimmedLine))
+                    yield return b;
         }
     }
 
-    private void WriteError(string line, int lineNumber, string message)
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine($"Error on line {lineNumber}: {message}");
-        Console.WriteLine($" --> {line}");
-        Console.ResetColor();
-    }
-
-    private void ParseInstruction(string instruction)
+    private int GetInstructionLength(string instruction)
     {
         string[] parts = instruction.Split(' ', 2);
         string opcode = parts[0].ToUpperInvariant();
 
         parts = parts.Length > 1 ? parts[1].Split(',') : [];
         if (parts.Length > 2)
-            throw new AssemblerException($"Invalid instruction format");
+            throw new AssemblerException("Invalid instruction format");
 
-        u8 opcodeValue = this.ParseOpcode(opcode, parts.Length, out u8 addressingIndex);
+        u8 opcodeValue = this.ResolveOpcode(opcode, parts.Length, out u8 addressingIndex);
+        (u8 m1, u8 m2) = this.ResolveAddressingModes(addressingIndex, parts);
 
+        int length = 2; // Opcode + mode byte
+
+        if (parts.Length > 0)
+            length += this.GetModeLength(m1);
+
+        if (parts.Length > 1)
+            length += this.GetModeLength(m2);
+
+        return length;
+    }
+
+    private IEnumerable<byte> GetInstructionBytes(string instruction)
+    {
+        string[] parts = instruction.Split(' ', 2);
+        string opcode = parts[0].ToUpperInvariant();
+
+        parts = parts.Length > 1 ? parts[1].Split(',') : [];
+        if (parts.Length > 2)
+            throw new AssemblerException("Invalid instruction format");
+
+        u8 opcodeValue = this.ResolveOpcode(opcode, parts.Length, out u8 addressingIndex);
+        (u8 m1, u8 m2) = this.ResolveAddressingModes(addressingIndex, parts);
+
+        yield return opcodeValue;
+        yield return (u8) ((m1 << 4) | m2); // Combine m1 and m2 into a single byte
+
+        if (parts.Length > 0)
+        {
+            foreach (byte b in this.GetModeBytes(m1, parts[0]))
+                yield return b;
+        }
+
+        if (parts.Length > 1)
+        {
+            foreach (byte b in this.GetModeBytes(m2, parts[1]))
+                yield return b;
+        }
+    }
+    private (u8 m1, u8 m2) ResolveAddressingModes(u8 addressingIndex, string[] parts)
+    {
         u8 m1, m2;
         switch (addressingIndex)
         {
             case 0: // Implicit
                 if (parts.Length > 0)
-                    throw new AssemblerException($"Implicit instruction should not have operands");
+                    throw new AssemblerException("Implicit instruction should not have operands");
 
                 m1 = 0x00;
                 m2 = 0x00;
@@ -159,17 +234,17 @@ public class Assembler
 
             case 1: // Simple addressing mode
                 if (parts.Length > 2)
-                    throw new AssemblerException($"Simple addressing mode should have at most one operand");
+                    throw new AssemblerException("Simple addressing mode should have at most one operand");
                 if (parts.Length == 0)
-                    throw new AssemblerException($"Simple addressing mode requires an operand");
+                    throw new AssemblerException("Simple addressing mode requires an operand");
 
-                m1 = this.ParseMode(parts[0]);
+                m1 = this.ResolveMode(parts[0]);
                 m2 = 0x00;
                 break;
 
             case 2: // Extended implicit
                 if (parts.Length > 0)
-                    throw new AssemblerException($"Extended implicit instruction should not have operands");
+                    throw new AssemblerException("Extended implicit instruction should not have operands");
 
                 m1 = 0x00;
                 m2 = 0x01;
@@ -177,25 +252,19 @@ public class Assembler
 
             case 3: // Dual addressing mode
                 if (parts.Length != 2)
-                    throw new AssemblerException($"Dual addressing mode requires exactly two operands");
+                    throw new AssemblerException("Dual addressing mode requires exactly two operands");
 
-                m1 = this.ParseMode(parts[0]);
-                m2 = this.ParseMode(parts[1]);
+                m1 = this.ResolveMode(parts[0]);
+                m2 = this.ResolveMode(parts[1]);
                 break;
 
             default:
                 throw new UnreachableException("Invalid addressing index: " + addressingIndex);
         }
-
-        this.WriteInstruction(opcodeValue, m1, m2);
-
-        if (parts.Length > 0)
-            this.WriteMode(m1, parts[0]);
-        if (parts.Length > 1)
-            this.WriteMode(m2, parts[1]);
+        return (m1, m2);
     }
 
-    private u8 ParseOpcode(string opcode, int parts, out u8 addressingIndex)
+    private u8 ResolveOpcode(string opcode, int parts, out u8 addressingIndex)
     {
         List<int> addressingIndices = new();
         u8? opCode = null;
@@ -231,7 +300,7 @@ public class Assembler
         return opCode.Value;
     }
 
-    private u8 ParseMode(string mode)
+    private u8 ResolveMode(string mode)
     {
         mode = mode.Trim();
 
@@ -244,14 +313,10 @@ public class Assembler
         }
 
         if (this._labels.ContainsKey(mode))
-        {
             return 0x01; // Immediate
-        }
 
         if (mode.StartsWith("@"))
-        {
             return 0x03; // Indirect
-        }
 
         if (mode.StartsWith("[") && mode.EndsWith("]"))
         {
@@ -271,13 +336,7 @@ public class Assembler
         return 0x01; // Immediate
     }
 
-    private void WriteInstruction(u8 opcode, u8 m1, u8 m2)
-    {
-        Write(opcode);
-        Write((u8) (m1 << 4 | m2)); // Combine m1 and m2 into a single byte
-    }
-
-    private void WriteMode(u8 mode, string operand)
+    private byte[] GetModeBytes(u8 mode, string operand)
     {
         operand = operand.Trim();
 
@@ -285,53 +344,66 @@ public class Assembler
         {
             case 0x00: // Implicit
                 // No additional data needed
-                break;
+                return [];
 
             case 0x01: // Immediate
                 u16 immediateValue = this.GetConstant(operand);
-                this.Write(immediateValue);
-                break;
+                return [immediateValue.High(), immediateValue.Low()];
 
             case 0x02:                                         // Direct
                 u16 directAddress = this.GetConstant(operand); // Remove brackets
-                this.Write(directAddress);
-                break;
+                return [directAddress.High(), directAddress.Low()];
 
             case 0x03:                                           // Indirect
                 u16 indirectAddress = this.GetConstant(operand); // Remove brackets and @
-                this.Write(indirectAddress);
-                break;
+                return [indirectAddress.High(), indirectAddress.Low()];
 
             case 0x04: // Relative
-                i16 relativeOffset = this.GetSignedConstant(operand);
-                Write(relativeOffset);
-                break;
+                u16 relativeOffset = this.GetConstant(operand);
+                return [relativeOffset.High(), relativeOffset.Low()];
 
             case 0x05: // Register
                 u8 regIndex = this.GetRegisterIndex(operand);
-                Write(regIndex);
-                break;
+                return [regIndex];
 
             case 0x06:                                                // Register Indirect
                 u8 indirectRegIndex = this.GetRegisterIndex(operand); // Remove brackets
-                Write(indirectRegIndex);
-                break;
+                return [indirectRegIndex];
 
             case 0x07: // Register Indirect with Offset
                 u8 offsetRegIndex = this.GetRegisterIndex(operand[1..^1].Split('+')[0].Trim());
-                i16 offsetValue = this.GetSignedConstant(operand[1..^1].Split('+')[1].Trim());
-                Write(offsetRegIndex);
-                Write(offsetValue);
-                break;
+                u16 offsetValue = this.GetConstant(operand[1..^1].Split('+')[1].Trim());
+                return [offsetRegIndex, offsetValue.High(), offsetValue.Low()];
+
+            default:
+                throw new AssemblerException($"Unknown addressing mode: {mode:X2}");
         }
+    }
+
+    private int GetModeLength(u8 mode)
+    {
+        return mode switch
+        {
+            0x00 => 0, // Implicit
+            0x01 => 2, // Immediate
+            0x02 => 2, // Direct
+            0x03 => 2, // Indirect
+            0x04 => 2, // Relative
+            0x05 => 1, // Register
+            0x06 => 1, // Register indirect
+            0x07 => 3, // Register indirect with offset
+            _    => throw new AssemblerException($"Unknown addressing mode: {mode:X2}")
+        };
     }
     private u8 GetRegisterIndex(string reg)
     {
         reg = this.Clean(reg);
 
         if (reg.StartsWith("V"))
+        {
             if (u8.TryParse(reg[1..], out u8 index) && index < 0x3F)
                 return index;
+        }
 
         if (Assembler.RegisterLookup.ContainsValue(reg))
         {
@@ -351,32 +423,15 @@ public class Assembler
             u16 x = Convert.ToUInt16(value[1..], 16);
             return x;
         }
-        else if (u16.TryParse(value, out u16 result))
+        if (u16.TryParse(value, out u16 result))
             // Decimal constant
             return result;
-        else
-        {
-            this._unloadedLabels[(u16) this.Writer.BaseStream.Position] = value;
-            return 0;
-        }
-    }
-    private i16 GetSignedConstant(string value)
-    {
-        value = this.Clean(value);
-
-        if (value.StartsWith("$"))
-        {
-            // Hexadecimal offset
-            return Convert.ToInt16(value[1..], 16);
-        }
-        else if (i16.TryParse(value, out i16 result))
-            // Decimal offset
-            return result;
-        else
-        {
-            this._unloadedLabels[(u16) this.Writer.BaseStream.Position] = value;
-            return 0;
-        }
+        
+        if (this._labels.TryGetValue(value, out u16 labelAddress))
+            // Label reference
+            return labelAddress;
+        
+        return 0;
     }
 
     private string Clean(string value)
@@ -388,23 +443,6 @@ public class Assembler
             value = value[1..^1].Trim(); // Remove brackets for direct addressing
 
         return value.Trim();
-    }
-
-    private void Write(u16 value)
-    {
-        u16 swappedValue = (u16) ((value >> 8) | (value << 8));
-        this.Writer.Write(swappedValue);
-    }
-
-    private void Write(u8 value)
-    {
-        this.Writer.Write(value);
-    }
-
-    private void Write(i16 value)
-    {
-        u16 swappedValue = (u16) ((value >> 8) | (value << 8));
-        this.Writer.Write(swappedValue);
     }
 }
 
