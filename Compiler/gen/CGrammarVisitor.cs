@@ -44,12 +44,6 @@ public interface ICGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitFunction([NotNull] CGrammarParser.FunctionContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="CGrammarParser.body"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitBody([NotNull] CGrammarParser.BodyContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="CGrammarParser.block"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -82,6 +76,13 @@ public interface ICGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitExpressionStatement([NotNull] CGrammarParser.ExpressionStatementContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>blockStatement</c>
+	/// labeled alternative in <see cref="CGrammarParser.statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitBlockStatement([NotNull] CGrammarParser.BlockStatementContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>variableDeclaration</c>
 	/// labeled alternative in <see cref="CGrammarParser.declaration"/>.

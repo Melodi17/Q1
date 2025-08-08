@@ -546,23 +546,33 @@ public class CCompilerVisitor : CGrammarBaseVisitor<string?>
     {
         string cond = this.Visit(context.expression())
                       ?? throw new CompilerException("If condition was not an expression");
-        
-        // Else branch is first since it saves us from having to perform a NOT operation.
-        // If cond, jump to then, else fall through to else, then jump to end
-
-        string thenBranch = this.GenerateBranchLabel("then");
         string endBranch = this.GenerateBranchLabel("end");
         
         this.Instruction($"bz {cond}", "check if condition");
-        this.Instruction($"jmp {thenBranch}");
-
-        this.GeneratedComment("if failed");
-        if (context.@else != null)
-            this.Visit(context.@else);
-        this.Instruction($"jmp {endBranch}");
         
-        this.Label(thenBranch, "if succeeded");
-        this.Visit(context.then);
+        if (context.@else != null)
+        {
+            // Else branch is first since it saves us from having to perform a NOT operation.
+            // If cond, jump to then, else fall through to else, then jump to end
+
+            string thenBranch = this.GenerateBranchLabel("then");
+            
+            this.Instruction($"jmp {thenBranch}");
+
+            this.GeneratedComment("if failed");
+            if (context.@else != null)
+                this.Visit(context.@else);
+            this.Instruction($"jmp {endBranch}");
+        
+            this.Label(thenBranch, "if succeeded");
+            this.Visit(context.then);
+        }
+        else
+        {
+            this.Instruction($"not");
+            this.Instruction($"jmp {endBranch}", "if succeeds, continue, else jump to end");
+            this.Visit(context.then);
+        }
         
         this.Label(endBranch);
         

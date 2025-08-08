@@ -14,11 +14,6 @@ function
     : 'int' name=ID '(' ')' block
     ;
    
-body
-    : statement
-    | block
-    ;
-   
 block
     : '{' block_item* '}'
     ;
@@ -30,8 +25,9 @@ block_item
     
 statement
     : 'return' expression ';' #returnStatement
-    | 'if' '(' expression ')' then=body ('else' else=body) #ifStatement
+    | 'if' '(' expression ')' then=statement ('else' else=statement)? #ifStatement
     | expression #expressionStatement
+    | block #blockStatement
     ;
     
     
