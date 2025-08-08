@@ -1,8 +1,10 @@
 _main:
-    push 0
-    mov 1, V1
-    pop V0
-    or V0, V1
-    mov DX, V0
+    ; comment
+    mov 5, [$51FF]            ; int a = 5
+    add [$51FF], 5            ; compute addition
+    mov AX, [$51FF]           ; store back into left param
+    mov [$51FF], V0           ; return value
+    ret
+    mov 0, V0                 ; fallback return 0
     ret
 

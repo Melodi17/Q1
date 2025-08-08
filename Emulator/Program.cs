@@ -18,10 +18,10 @@ internal class Program
     {
         Q1Cpu cpu = new();
         Bus bus = new(u16.MinValue, u16.MaxValue);
-        RamDevice ram = new(0x1FFF, 1024 * 8);
-        File.ReadAllBytes(options.InputFile).CopyTo(ram.Memory, 0);
+        RamDevice rom = new(Q1Layout.Rom.start, Q1Layout.Rom.size);
+        File.ReadAllBytes(options.InputFile).CopyTo(rom.Memory, 0);
         
-        DisplayDevice display = new(16, 64, 32, 0x3FFF);
+        DisplayDevice display = new(16, 64, 32, Q1Layout.Display);
         display.SetPalette([
             Color.Red,
             Color.Green,
@@ -41,12 +41,12 @@ internal class Program
             Color.LightGreen
         ]);
         
-        DebugDevice debug = new(0xEFFF);
-
+        RamDevice memory = new(Q1Layout.Memory.start, Q1Layout.Memory.size);
+        
         cpu.Bus = bus;
-        ram.AttachToBus(bus);
+        rom.AttachToBus(bus);
         display.AttachToBus(bus);
-        debug.AttachToBus(bus);
+        memory.AttachToBus(bus);
 
         Thread t = new(() =>
         {

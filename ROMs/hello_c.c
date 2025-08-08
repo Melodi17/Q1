@@ -1,4 +1,6 @@
 int main() 
 {
-    return 0 | 1;
+    //comment
+    int a = 5;
+    return a += 5;
 }

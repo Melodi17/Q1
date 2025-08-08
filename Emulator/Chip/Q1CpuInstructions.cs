@@ -14,8 +14,10 @@ public partial class Q1Cpu
         { 0x04, ["NOP", "POP", "NOP", "NOP"] },
 
         { 0x10, ["INV", "INV", "NOP", "AND"] },
-        { 0x11, ["SHL", "SHL", "NOP", "OR"] },
-        { 0x12, ["SHR", "SHR", "NOP", "XOR"] },
+        { 0x11, ["NOP", "NOP", "NOP", "OR"] },
+        { 0x12, ["NOP", "NOP", "NOP", "XOR"] },
+        { 0x13, ["NOP", "NOP", "NOP", "SHL"] },
+        { 0x14, ["NOP", "NOP", "NOP", "SHR"] },
 
         { 0x20, ["NOT", "NOT", "NOP", "CMP"] },
         { 0x21, ["NOP", "NOP", "NOP", "LT"] },
@@ -40,8 +42,10 @@ public partial class Q1Cpu
             { 0x04, (this.Instruction_NOP, this.Instruction_POP, this.Instruction_NOP, this.Instruction_NOP) },
 
             { 0x10, (this.Instruction_INV_DX, this.Instruction_INV, this.Instruction_NOP, this.Instruction_AND) },
-            { 0x11, (this.Instruction_SHL_DX, this.Instruction_SHL, this.Instruction_NOP, this.Instruction_OR) },
-            { 0x12, (this.Instruction_SHR_DX, this.Instruction_SHR, this.Instruction_NOP, this.Instruction_XOR) },
+            { 0x11, (this.Instruction_NOP, this.Instruction_NOP, this.Instruction_NOP, this.Instruction_OR) },
+            { 0x12, (this.Instruction_NOP, this.Instruction_NOP, this.Instruction_NOP, this.Instruction_XOR) },
+            { 0x13, (this.Instruction_NOP, this.Instruction_NOP, this.Instruction_NOP, this.Instruction_SHL) },
+            { 0x14, (this.Instruction_NOP, this.Instruction_NOP, this.Instruction_NOP, this.Instruction_SHR) },
 
             { 0x20, (this.Instruction_NOT_LX, this.Instruction_NOT, this.Instruction_NOP, this.Instruction_CMP) },
             { 0x21, (this.Instruction_NOP, this.Instruction_NOP, this.Instruction_NOP, this.Instruction_LT) },
@@ -118,27 +122,19 @@ public partial class Q1Cpu
     {
         this.AX = (u16) (this.AX - 1);
     }
-    private void Instruction_SHL(u8 obj)
+    private void Instruction_SHL(u8 m1, u8 m2)
     {
-        var address = this.Address(obj);
-        u16 value = address.read();
-        u16 result = (u16) (value << 1);
-        address.write(result);
+        u16 v1 = this.Address(m1).read();
+        u16 v2 = this.Address(m1).read();
+        u16 shifted = (u16) (v1 << v2);
+        this.DX = shifted;
     }
-    private void Instruction_SHR(u8 obj)
+    private void Instruction_SHR(u8 m1, u8 m2)
     {
-        var address = this.Address(obj);
-        u16 value = address.read();
-        u16 result = (u16) (value >> 1);
-        address.write(result);
-    }
-    private void Instruction_SHL_DX()
-    {
-        this.DX = (u16) (this.DX << 1);
-    }
-    private void Instruction_SHR_DX()
-    {
-        this.DX = (u16) (this.DX >> 1);
+        u16 v1 = this.Address(m1).read();
+        u16 v2 = this.Address(m1).read();
+        u16 shifted = (u16) (v1 >> v2);
+        this.DX = shifted;
     }
     private void Instruction_XOR(u8 m1, u8 m2)
     {

@@ -55,6 +55,36 @@ public partial class CGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Resu
 	/// <return>The visitor result.</return>
 	public virtual Result VisitFunction([NotNull] CGrammarParser.FunctionContext context) { return VisitChildren(context); }
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="CGrammarParser.body"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitBody([NotNull] CGrammarParser.BodyContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="CGrammarParser.block"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitBlock([NotNull] CGrammarParser.BlockContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="CGrammarParser.block_item"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitBlock_item([NotNull] CGrammarParser.Block_itemContext context) { return VisitChildren(context); }
+	/// <summary>
 	/// Visit a parse tree produced by the <c>returnStatement</c>
 	/// labeled alternative in <see cref="CGrammarParser.statement"/>.
 	/// <para>
@@ -66,8 +96,8 @@ public partial class CGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Resu
 	/// <return>The visitor result.</return>
 	public virtual Result VisitReturnStatement([NotNull] CGrammarParser.ReturnStatementContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by the <c>bitwiseXorExpression</c>
-	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// Visit a parse tree produced by the <c>ifStatement</c>
+	/// labeled alternative in <see cref="CGrammarParser.statement"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -75,10 +105,10 @@ public partial class CGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Resu
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitBitwiseXorExpression([NotNull] CGrammarParser.BitwiseXorExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitIfStatement([NotNull] CGrammarParser.IfStatementContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by the <c>constantExpression</c>
-	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// Visit a parse tree produced by the <c>expressionStatement</c>
+	/// labeled alternative in <see cref="CGrammarParser.statement"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -86,9 +116,20 @@ public partial class CGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Resu
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitConstantExpression([NotNull] CGrammarParser.ConstantExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitExpressionStatement([NotNull] CGrammarParser.ExpressionStatementContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by the <c>lessThanOrEqualExpression</c>
+	/// Visit a parse tree produced by the <c>variableDeclaration</c>
+	/// labeled alternative in <see cref="CGrammarParser.declaration"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitVariableDeclaration([NotNull] CGrammarParser.VariableDeclarationContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>compoundSubtractExpression</c>
 	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
@@ -97,7 +138,7 @@ public partial class CGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Resu
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitLessThanOrEqualExpression([NotNull] CGrammarParser.LessThanOrEqualExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitCompoundSubtractExpression([NotNull] CGrammarParser.CompoundSubtractExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>modulusExpression</c>
 	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
@@ -121,7 +162,7 @@ public partial class CGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Resu
 	/// <return>The visitor result.</return>
 	public virtual Result VisitNotExpression([NotNull] CGrammarParser.NotExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by the <c>notEqualExpression</c>
+	/// Visit a parse tree produced by the <c>decrementPrefixExpression</c>
 	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
@@ -130,7 +171,7 @@ public partial class CGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Resu
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitNotEqualExpression([NotNull] CGrammarParser.NotEqualExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitDecrementPrefixExpression([NotNull] CGrammarParser.DecrementPrefixExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>multiplyExpression</c>
 	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
@@ -154,7 +195,7 @@ public partial class CGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Resu
 	/// <return>The visitor result.</return>
 	public virtual Result VisitGreaterThanExpression([NotNull] CGrammarParser.GreaterThanExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by the <c>logicalOrExpression</c>
+	/// Visit a parse tree produced by the <c>bitwiseLeftShiftExpression</c>
 	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
@@ -163,9 +204,9 @@ public partial class CGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Resu
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitLogicalOrExpression([NotNull] CGrammarParser.LogicalOrExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitBitwiseLeftShiftExpression([NotNull] CGrammarParser.BitwiseLeftShiftExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by the <c>greaterThanOrEqualExpression</c>
+	/// Visit a parse tree produced by the <c>bitwiseRightShiftExpression</c>
 	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
@@ -174,9 +215,9 @@ public partial class CGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Resu
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitGreaterThanOrEqualExpression([NotNull] CGrammarParser.GreaterThanOrEqualExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitBitwiseRightShiftExpression([NotNull] CGrammarParser.BitwiseRightShiftExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by the <c>divideExpression</c>
+	/// Visit a parse tree produced by the <c>variableExpression</c>
 	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
@@ -185,9 +226,9 @@ public partial class CGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Resu
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitDivideExpression([NotNull] CGrammarParser.DivideExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitVariableExpression([NotNull] CGrammarParser.VariableExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by the <c>bitwiseOrExpression</c>
+	/// Visit a parse tree produced by the <c>compoundDivideExpression</c>
 	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
@@ -196,7 +237,7 @@ public partial class CGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Resu
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitBitwiseOrExpression([NotNull] CGrammarParser.BitwiseOrExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitCompoundDivideExpression([NotNull] CGrammarParser.CompoundDivideExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>parenthesizedExpression</c>
 	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
@@ -209,7 +250,7 @@ public partial class CGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Resu
 	/// <return>The visitor result.</return>
 	public virtual Result VisitParenthesizedExpression([NotNull] CGrammarParser.ParenthesizedExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by the <c>addExpression</c>
+	/// Visit a parse tree produced by the <c>compoundAddExpression</c>
 	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
@@ -218,9 +259,9 @@ public partial class CGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Resu
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitAddExpression([NotNull] CGrammarParser.AddExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitCompoundAddExpression([NotNull] CGrammarParser.CompoundAddExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by the <c>subtractExpression</c>
+	/// Visit a parse tree produced by the <c>compoundMultiplyExpression</c>
 	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
@@ -229,7 +270,18 @@ public partial class CGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Resu
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitSubtractExpression([NotNull] CGrammarParser.SubtractExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitCompoundMultiplyExpression([NotNull] CGrammarParser.CompoundMultiplyExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>compoundBitwiseXorExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitCompoundBitwiseXorExpression([NotNull] CGrammarParser.CompoundBitwiseXorExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>bitwiseAndExpression</c>
 	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
@@ -286,6 +338,237 @@ public partial class CGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Resu
 	/// <return>The visitor result.</return>
 	public virtual Result VisitEqualExpression([NotNull] CGrammarParser.EqualExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
+	/// Visit a parse tree produced by the <c>bitwiseXorExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitBitwiseXorExpression([NotNull] CGrammarParser.BitwiseXorExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>constantExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitConstantExpression([NotNull] CGrammarParser.ConstantExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>compoundModulusExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitCompoundModulusExpression([NotNull] CGrammarParser.CompoundModulusExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>lessThanOrEqualExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitLessThanOrEqualExpression([NotNull] CGrammarParser.LessThanOrEqualExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>incrementPostfixExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitIncrementPostfixExpression([NotNull] CGrammarParser.IncrementPostfixExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>compoundBitwiseRightShiftExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitCompoundBitwiseRightShiftExpression([NotNull] CGrammarParser.CompoundBitwiseRightShiftExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>assignmentExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitAssignmentExpression([NotNull] CGrammarParser.AssignmentExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>notEqualExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitNotEqualExpression([NotNull] CGrammarParser.NotEqualExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>compoundBitwiseAndExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitCompoundBitwiseAndExpression([NotNull] CGrammarParser.CompoundBitwiseAndExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>logicalOrExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitLogicalOrExpression([NotNull] CGrammarParser.LogicalOrExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>commaExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitCommaExpression([NotNull] CGrammarParser.CommaExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>incrementPrefixExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitIncrementPrefixExpression([NotNull] CGrammarParser.IncrementPrefixExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>greaterThanOrEqualExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitGreaterThanOrEqualExpression([NotNull] CGrammarParser.GreaterThanOrEqualExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>divideExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitDivideExpression([NotNull] CGrammarParser.DivideExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>bitwiseOrExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitBitwiseOrExpression([NotNull] CGrammarParser.BitwiseOrExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>addExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitAddExpression([NotNull] CGrammarParser.AddExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>subtractExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitSubtractExpression([NotNull] CGrammarParser.SubtractExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>compoundBitwiseOrExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitCompoundBitwiseOrExpression([NotNull] CGrammarParser.CompoundBitwiseOrExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>decrementPostfixExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitDecrementPostfixExpression([NotNull] CGrammarParser.DecrementPostfixExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>ternaryExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitTernaryExpression([NotNull] CGrammarParser.TernaryExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>compoundBitwiseLeftShiftExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitCompoundBitwiseLeftShiftExpression([NotNull] CGrammarParser.CompoundBitwiseLeftShiftExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
 	/// Visit a parse tree produced by the <c>intConstant</c>
 	/// labeled alternative in <see cref="CGrammarParser.constant"/>.
 	/// <para>
@@ -296,4 +579,15 @@ public partial class CGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<Resu
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	public virtual Result VisitIntConstant([NotNull] CGrammarParser.IntConstantContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>variableTarget</c>
+	/// labeled alternative in <see cref="CGrammarParser.target"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitVariableTarget([NotNull] CGrammarParser.VariableTargetContext context) { return VisitChildren(context); }
 }

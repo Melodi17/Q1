@@ -5,10 +5,6 @@ using Assembler;
 
 public partial class Q1Cpu
 {
-    public const u16 StackStart   = 0x2FFF;
-    public const u16 StackLength  = 16 * 2; // 16 16-bit values
-    public const u16 ProgramStart = 0x1FFF;
-
     public Random Random;
 
     public u16 AX = 0; // Accumulator register
@@ -35,10 +31,10 @@ public partial class Q1Cpu
 
         this.V = new u16[16];
 
-        this.SP = Q1Cpu.StackStart;
+        this.SP = Q1Layout.StackStart;
         this.PushStack(0xFFFF);
 
-        this.PC = Q1Cpu.ProgramStart;
+        this.PC = Q1Layout.ProgramStart;
     }
 
     public void Clock()
@@ -88,7 +84,7 @@ public partial class Q1Cpu
 
     private void PushStack(u16 value)
     {
-        if (this.SP + 2 >= Q1Cpu.StackStart + Q1Cpu.StackLength)
+        if (this.SP + 2 >= Q1Layout.StackStart + Q1Layout.StackLength)
             throw new InvalidOperationException("Stack overflow");
 
         this.Bus.WriteWord(this.SP, value);
@@ -97,7 +93,7 @@ public partial class Q1Cpu
 
     private u16 PopStack()
     {
-        if (this.SP - 2 < Q1Cpu.StackStart)
+        if (this.SP - 2 < Q1Layout.StackStart)
             throw new InvalidOperationException("Stack underflow");
 
         this.SP -= 2;

@@ -8,10 +8,16 @@ class Program
 {
     static void Main(string[] args)
     {
-        Parser.Default.ParseArguments<Options>(args).WithParsed(Program.Main);
+        Parser commandLineParser = new(with =>
+        {
+            with.CaseInsensitiveEnumValues = true;
+        });
+        
+        commandLineParser.ParseArguments<CompilerOptions>(args)
+            .WithParsed(Program.Main);
     }
 
-    static void Main(Options options)
+    static void Main(CompilerOptions options)
     {
         Environment.CurrentDirectory = Path.GetDirectoryName(options.InputFile) ?? Environment.CurrentDirectory;
         options.InputFile            = Path.GetFileName(options.InputFile);
@@ -20,12 +26,13 @@ class Program
         CGrammarLexer lexer = new(inputStream);
         lexer.RemoveErrorListeners();
         
-        CommonTokenStream tokenStream = new(lexer);
+        ITokenStream tokenStream = new BufferedTokenStream(lexer);
         CGrammarParser parser = new(tokenStream);
         parser.RemoveErrorListeners();
         
-        CCompilerVisitor compiler = new();
-        var result = compiler.Compile(parser.program());
+        CCompilerVisitor compiler = new(options.CommentCompilationMode);
+        IEnumerable<string> result = compiler.Compile(parser.program());
+        
         File.WriteAllLines(options.OutputFile, result);
     }
 }

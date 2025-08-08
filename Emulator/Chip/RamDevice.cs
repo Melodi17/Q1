@@ -6,14 +6,14 @@ public class RamDevice : BusDevice
 
     public RamDevice(u16 start, u16 size) : base(start, (u16) (start + size))
     {
-        this.Memory           = new u8[size];
+        this.Memory = new u8[size];
     }
-    
+
     public override void Reset()
     {
         this.Memory = new u8[this.AddressableEnd - this.AddressableStart];
     }
-    
+
     public override void Clock()
     {
         // No clocking needed for RAM

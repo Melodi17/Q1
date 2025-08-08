@@ -39,23 +39,32 @@ public partial class CGrammarParser : Parser {
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
 		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, T__15=16, T__16=17, 
 		T__17=18, T__18=19, T__19=20, T__20=21, T__21=22, T__22=23, T__23=24, 
-		T__24=25, ID=26, INT=27;
+		T__24=25, T__25=26, T__26=27, T__27=28, T__28=29, T__29=30, T__30=31, 
+		T__31=32, T__32=33, T__33=34, T__34=35, T__35=36, T__36=37, T__37=38, 
+		T__38=39, T__39=40, T__40=41, T__41=42, T__42=43, T__43=44, T__44=45, 
+		ID=46, INT=47, WS=48, COMMENT=49;
 	public const int
-		RULE_program = 0, RULE_function = 1, RULE_statement = 2, RULE_expression = 3, 
-		RULE_constant = 4;
+		RULE_program = 0, RULE_function = 1, RULE_body = 2, RULE_block = 3, RULE_block_item = 4, 
+		RULE_statement = 5, RULE_declaration = 6, RULE_expression = 7, RULE_constant = 8, 
+		RULE_target = 9;
 	public static readonly string[] ruleNames = {
-		"program", "function", "statement", "expression", "constant"
+		"program", "function", "body", "block", "block_item", "statement", "declaration", 
+		"expression", "constant", "target"
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, "'int'", "'('", "')'", "'{'", "'}'", "'return'", "';'", "'!'", "'~'", 
-		"'*'", "'/'", "'%'", "'+'", "'-'", "'<'", "'>'", "'<='", "'>='", "'=='", 
-		"'!='", "'&'", "'|'", "'^'", "'&&'", "'||'"
+		null, "'int'", "'('", "')'", "'{'", "'}'", "'return'", "';'", "'if'", 
+		"'else'", "'='", "'!'", "'~'", "'++'", "'--'", "'*'", "'/'", "'%'", "'+'", 
+		"'-'", "'<'", "'>'", "'<='", "'>='", "'=='", "'!='", "'&'", "'|'", "'^'", 
+		"'<<'", "'>>'", "'&&'", "'||'", "'*='", "'/='", "'%='", "'+='", "'-='", 
+		"'&='", "'|='", "'^='", "'<<='", "'>>='", "','", "'?'", "':'"
 	};
 	private static readonly string[] _SymbolicNames = {
 		null, null, null, null, null, null, null, null, null, null, null, null, 
 		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, "ID", "INT"
+		null, null, null, null, null, null, null, null, null, null, null, null, 
+		null, null, null, null, null, null, null, null, null, null, "ID", "INT", 
+		"WS", "COMMENT"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -114,9 +123,9 @@ public partial class CGrammarParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 10;
+			State = 20;
 			function();
-			State = 11;
+			State = 21;
 			Match(Eof);
 			}
 		}
@@ -132,13 +141,11 @@ public partial class CGrammarParser : Parser {
 	}
 
 	public partial class FunctionContext : ParserRuleContext {
+		public IToken name;
+		[System.Diagnostics.DebuggerNonUserCode] public BlockContext block() {
+			return GetRuleContext<BlockContext>(0);
+		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID() { return GetToken(CGrammarParser.ID, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public StatementContext[] statement() {
-			return GetRuleContexts<StatementContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public StatementContext statement(int i) {
-			return GetRuleContext<StatementContext>(i);
-		}
 		public FunctionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -156,36 +163,208 @@ public partial class CGrammarParser : Parser {
 	public FunctionContext function() {
 		FunctionContext _localctx = new FunctionContext(Context, State);
 		EnterRule(_localctx, 2, RULE_function);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 23;
+			Match(T__0);
+			State = 24;
+			_localctx.name = Match(ID);
+			State = 25;
+			Match(T__1);
+			State = 26;
+			Match(T__2);
+			State = 27;
+			block();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class BodyContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public StatementContext statement() {
+			return GetRuleContext<StatementContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public BlockContext block() {
+			return GetRuleContext<BlockContext>(0);
+		}
+		public BodyContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_body; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitBody(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public BodyContext body() {
+		BodyContext _localctx = new BodyContext(Context, State);
+		EnterRule(_localctx, 4, RULE_body);
+		try {
+			State = 31;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case T__1:
+			case T__5:
+			case T__7:
+			case T__10:
+			case T__11:
+			case T__12:
+			case T__13:
+			case ID:
+			case INT:
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 29;
+				statement();
+				}
+				break;
+			case T__3:
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 30;
+				block();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class BlockContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public Block_itemContext[] block_item() {
+			return GetRuleContexts<Block_itemContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Block_itemContext block_item(int i) {
+			return GetRuleContext<Block_itemContext>(i);
+		}
+		public BlockContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_block; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitBlock(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public BlockContext block() {
+		BlockContext _localctx = new BlockContext(Context, State);
+		EnterRule(_localctx, 6, RULE_block);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 13;
-			Match(T__0);
-			State = 14;
-			Match(ID);
-			State = 15;
-			Match(T__1);
-			State = 16;
-			Match(T__2);
-			State = 17;
+			State = 33;
 			Match(T__3);
-			State = 21;
+			State = 37;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while (_la==T__5) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 211106232564038L) != 0)) {
 				{
 				{
-				State = 18;
-				statement();
+				State = 34;
+				block_item();
 				}
 				}
-				State = 23;
+				State = 39;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 24;
+			State = 40;
 			Match(T__4);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Block_itemContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public StatementContext statement() {
+			return GetRuleContext<StatementContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public DeclarationContext declaration() {
+			return GetRuleContext<DeclarationContext>(0);
+		}
+		public Block_itemContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_block_item; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitBlock_item(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Block_itemContext block_item() {
+		Block_itemContext _localctx = new Block_itemContext(Context, State);
+		EnterRule(_localctx, 8, RULE_block_item);
+		try {
+			State = 44;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case T__1:
+			case T__5:
+			case T__7:
+			case T__10:
+			case T__11:
+			case T__12:
+			case T__13:
+			case ID:
+			case INT:
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 42;
+				statement();
+				}
+				break;
+			case T__0:
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 43;
+				declaration();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -211,6 +390,18 @@ public partial class CGrammarParser : Parser {
 			base.CopyFrom(context);
 		}
 	}
+	public partial class ExpressionStatementContext : StatementContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public ExpressionStatementContext(StatementContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitExpressionStatement(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
 	public partial class ReturnStatementContext : StatementContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
 			return GetRuleContext<ExpressionContext>(0);
@@ -223,20 +414,152 @@ public partial class CGrammarParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
+	public partial class IfStatementContext : StatementContext {
+		public BodyContext then;
+		public BodyContext @else;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public BodyContext[] body() {
+			return GetRuleContexts<BodyContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public BodyContext body(int i) {
+			return GetRuleContext<BodyContext>(i);
+		}
+		public IfStatementContext(StatementContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitIfStatement(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
 
 	[RuleVersion(0)]
 	public StatementContext statement() {
 		StatementContext _localctx = new StatementContext(Context, State);
-		EnterRule(_localctx, 4, RULE_statement);
+		EnterRule(_localctx, 10, RULE_statement);
 		try {
-			_localctx = new ReturnStatementContext(_localctx);
+			State = 59;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case T__5:
+				_localctx = new ReturnStatementContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 46;
+				Match(T__5);
+				State = 47;
+				expression(0);
+				State = 48;
+				Match(T__6);
+				}
+				break;
+			case T__7:
+				_localctx = new IfStatementContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 50;
+				Match(T__7);
+				State = 51;
+				Match(T__1);
+				State = 52;
+				expression(0);
+				State = 53;
+				Match(T__2);
+				State = 54;
+				((IfStatementContext)_localctx).then = body();
+				{
+				State = 55;
+				Match(T__8);
+				State = 56;
+				((IfStatementContext)_localctx).@else = body();
+				}
+				}
+				break;
+			case T__1:
+			case T__10:
+			case T__11:
+			case T__12:
+			case T__13:
+			case ID:
+			case INT:
+				_localctx = new ExpressionStatementContext(_localctx);
+				EnterOuterAlt(_localctx, 3);
+				{
+				State = 58;
+				expression(0);
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class DeclarationContext : ParserRuleContext {
+		public DeclarationContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_declaration; } }
+	 
+		public DeclarationContext() { }
+		public virtual void CopyFrom(DeclarationContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class VariableDeclarationContext : DeclarationContext {
+		public IToken name;
+		public ExpressionContext value;
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID() { return GetToken(CGrammarParser.ID, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public VariableDeclarationContext(DeclarationContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitVariableDeclaration(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public DeclarationContext declaration() {
+		DeclarationContext _localctx = new DeclarationContext(Context, State);
+		EnterRule(_localctx, 12, RULE_declaration);
+		int _la;
+		try {
+			_localctx = new VariableDeclarationContext(_localctx);
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 26;
-			Match(T__5);
-			State = 27;
-			expression(0);
-			State = 28;
+			State = 61;
+			Match(T__0);
+			State = 62;
+			((VariableDeclarationContext)_localctx).name = Match(ID);
+			State = 65;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if (_la==T__9) {
+				{
+				State = 63;
+				Match(T__9);
+				State = 64;
+				((VariableDeclarationContext)_localctx).value = expression(0);
+				}
+			}
+
+			State = 67;
 			Match(T__6);
 			}
 		}
@@ -263,49 +586,18 @@ public partial class CGrammarParser : Parser {
 			base.CopyFrom(context);
 		}
 	}
-	public partial class BitwiseXorExpressionContext : ExpressionContext {
-		public ExpressionContext left;
-		public ExpressionContext right;
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
-			return GetRuleContexts<ExpressionContext>();
+	public partial class CompoundSubtractExpressionContext : ExpressionContext {
+		[System.Diagnostics.DebuggerNonUserCode] public TargetContext target() {
+			return GetRuleContext<TargetContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
-			return GetRuleContext<ExpressionContext>(i);
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
 		}
-		public BitwiseXorExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		public CompoundSubtractExpressionContext(ExpressionContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitBitwiseXorExpression(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-	public partial class ConstantExpressionContext : ExpressionContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ConstantContext constant() {
-			return GetRuleContext<ConstantContext>(0);
-		}
-		public ConstantExpressionContext(ExpressionContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitConstantExpression(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-	public partial class LessThanOrEqualExpressionContext : ExpressionContext {
-		public ExpressionContext left;
-		public ExpressionContext right;
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
-			return GetRuleContexts<ExpressionContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
-			return GetRuleContext<ExpressionContext>(i);
-		}
-		public LessThanOrEqualExpressionContext(ExpressionContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitLessThanOrEqualExpression(this);
+			if (typedVisitor != null) return typedVisitor.VisitCompoundSubtractExpression(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
@@ -338,20 +630,15 @@ public partial class CGrammarParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class NotEqualExpressionContext : ExpressionContext {
-		public ExpressionContext left;
-		public ExpressionContext right;
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
-			return GetRuleContexts<ExpressionContext>();
+	public partial class DecrementPrefixExpressionContext : ExpressionContext {
+		[System.Diagnostics.DebuggerNonUserCode] public TargetContext target() {
+			return GetRuleContext<TargetContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
-			return GetRuleContext<ExpressionContext>(i);
-		}
-		public NotEqualExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		public DecrementPrefixExpressionContext(ExpressionContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitNotEqualExpression(this);
+			if (typedVisitor != null) return typedVisitor.VisitDecrementPrefixExpression(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
@@ -389,7 +676,7 @@ public partial class CGrammarParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class LogicalOrExpressionContext : ExpressionContext {
+	public partial class BitwiseLeftShiftExpressionContext : ExpressionContext {
 		public ExpressionContext left;
 		public ExpressionContext right;
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
@@ -398,15 +685,15 @@ public partial class CGrammarParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
 			return GetRuleContext<ExpressionContext>(i);
 		}
-		public LogicalOrExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		public BitwiseLeftShiftExpressionContext(ExpressionContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitLogicalOrExpression(this);
+			if (typedVisitor != null) return typedVisitor.VisitBitwiseLeftShiftExpression(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class GreaterThanOrEqualExpressionContext : ExpressionContext {
+	public partial class BitwiseRightShiftExpressionContext : ExpressionContext {
 		public ExpressionContext left;
 		public ExpressionContext right;
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
@@ -415,45 +702,36 @@ public partial class CGrammarParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
 			return GetRuleContext<ExpressionContext>(i);
 		}
-		public GreaterThanOrEqualExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		public BitwiseRightShiftExpressionContext(ExpressionContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitGreaterThanOrEqualExpression(this);
+			if (typedVisitor != null) return typedVisitor.VisitBitwiseRightShiftExpression(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class DivideExpressionContext : ExpressionContext {
-		public ExpressionContext left;
-		public ExpressionContext right;
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
-			return GetRuleContexts<ExpressionContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
-			return GetRuleContext<ExpressionContext>(i);
-		}
-		public DivideExpressionContext(ExpressionContext context) { CopyFrom(context); }
+	public partial class VariableExpressionContext : ExpressionContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID() { return GetToken(CGrammarParser.ID, 0); }
+		public VariableExpressionContext(ExpressionContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitDivideExpression(this);
+			if (typedVisitor != null) return typedVisitor.VisitVariableExpression(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class BitwiseOrExpressionContext : ExpressionContext {
-		public ExpressionContext left;
-		public ExpressionContext right;
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
-			return GetRuleContexts<ExpressionContext>();
+	public partial class CompoundDivideExpressionContext : ExpressionContext {
+		[System.Diagnostics.DebuggerNonUserCode] public TargetContext target() {
+			return GetRuleContext<TargetContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
-			return GetRuleContext<ExpressionContext>(i);
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
 		}
-		public BitwiseOrExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		public CompoundDivideExpressionContext(ExpressionContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitBitwiseOrExpression(this);
+			if (typedVisitor != null) return typedVisitor.VisitCompoundDivideExpression(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
@@ -469,37 +747,48 @@ public partial class CGrammarParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class AddExpressionContext : ExpressionContext {
-		public ExpressionContext left;
-		public ExpressionContext right;
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
-			return GetRuleContexts<ExpressionContext>();
+	public partial class CompoundAddExpressionContext : ExpressionContext {
+		[System.Diagnostics.DebuggerNonUserCode] public TargetContext target() {
+			return GetRuleContext<TargetContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
-			return GetRuleContext<ExpressionContext>(i);
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
 		}
-		public AddExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		public CompoundAddExpressionContext(ExpressionContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitAddExpression(this);
+			if (typedVisitor != null) return typedVisitor.VisitCompoundAddExpression(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class SubtractExpressionContext : ExpressionContext {
-		public ExpressionContext left;
-		public ExpressionContext right;
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
-			return GetRuleContexts<ExpressionContext>();
+	public partial class CompoundMultiplyExpressionContext : ExpressionContext {
+		[System.Diagnostics.DebuggerNonUserCode] public TargetContext target() {
+			return GetRuleContext<TargetContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
-			return GetRuleContext<ExpressionContext>(i);
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
 		}
-		public SubtractExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		public CompoundMultiplyExpressionContext(ExpressionContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitSubtractExpression(this);
+			if (typedVisitor != null) return typedVisitor.VisitCompoundMultiplyExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class CompoundBitwiseXorExpressionContext : ExpressionContext {
+		[System.Diagnostics.DebuggerNonUserCode] public TargetContext target() {
+			return GetRuleContext<TargetContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public CompoundBitwiseXorExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitCompoundBitwiseXorExpression(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
@@ -583,6 +872,332 @@ public partial class CGrammarParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
+	public partial class BitwiseXorExpressionContext : ExpressionContext {
+		public ExpressionContext left;
+		public ExpressionContext right;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		public BitwiseXorExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitBitwiseXorExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class ConstantExpressionContext : ExpressionContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ConstantContext constant() {
+			return GetRuleContext<ConstantContext>(0);
+		}
+		public ConstantExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitConstantExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class CompoundModulusExpressionContext : ExpressionContext {
+		[System.Diagnostics.DebuggerNonUserCode] public TargetContext target() {
+			return GetRuleContext<TargetContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public CompoundModulusExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitCompoundModulusExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class LessThanOrEqualExpressionContext : ExpressionContext {
+		public ExpressionContext left;
+		public ExpressionContext right;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		public LessThanOrEqualExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitLessThanOrEqualExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class IncrementPostfixExpressionContext : ExpressionContext {
+		[System.Diagnostics.DebuggerNonUserCode] public TargetContext target() {
+			return GetRuleContext<TargetContext>(0);
+		}
+		public IncrementPostfixExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitIncrementPostfixExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class CompoundBitwiseRightShiftExpressionContext : ExpressionContext {
+		[System.Diagnostics.DebuggerNonUserCode] public TargetContext target() {
+			return GetRuleContext<TargetContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public CompoundBitwiseRightShiftExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitCompoundBitwiseRightShiftExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class AssignmentExpressionContext : ExpressionContext {
+		[System.Diagnostics.DebuggerNonUserCode] public TargetContext target() {
+			return GetRuleContext<TargetContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public AssignmentExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitAssignmentExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class NotEqualExpressionContext : ExpressionContext {
+		public ExpressionContext left;
+		public ExpressionContext right;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		public NotEqualExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitNotEqualExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class CompoundBitwiseAndExpressionContext : ExpressionContext {
+		[System.Diagnostics.DebuggerNonUserCode] public TargetContext target() {
+			return GetRuleContext<TargetContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public CompoundBitwiseAndExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitCompoundBitwiseAndExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class LogicalOrExpressionContext : ExpressionContext {
+		public ExpressionContext left;
+		public ExpressionContext right;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		public LogicalOrExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitLogicalOrExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class CommaExpressionContext : ExpressionContext {
+		public ExpressionContext left;
+		public ExpressionContext right;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		public CommaExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitCommaExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class IncrementPrefixExpressionContext : ExpressionContext {
+		[System.Diagnostics.DebuggerNonUserCode] public TargetContext target() {
+			return GetRuleContext<TargetContext>(0);
+		}
+		public IncrementPrefixExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitIncrementPrefixExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class GreaterThanOrEqualExpressionContext : ExpressionContext {
+		public ExpressionContext left;
+		public ExpressionContext right;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		public GreaterThanOrEqualExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitGreaterThanOrEqualExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class DivideExpressionContext : ExpressionContext {
+		public ExpressionContext left;
+		public ExpressionContext right;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		public DivideExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDivideExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class BitwiseOrExpressionContext : ExpressionContext {
+		public ExpressionContext left;
+		public ExpressionContext right;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		public BitwiseOrExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitBitwiseOrExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class AddExpressionContext : ExpressionContext {
+		public ExpressionContext left;
+		public ExpressionContext right;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		public AddExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitAddExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class SubtractExpressionContext : ExpressionContext {
+		public ExpressionContext left;
+		public ExpressionContext right;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		public SubtractExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitSubtractExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class CompoundBitwiseOrExpressionContext : ExpressionContext {
+		[System.Diagnostics.DebuggerNonUserCode] public TargetContext target() {
+			return GetRuleContext<TargetContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public CompoundBitwiseOrExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitCompoundBitwiseOrExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class DecrementPostfixExpressionContext : ExpressionContext {
+		[System.Diagnostics.DebuggerNonUserCode] public TargetContext target() {
+			return GetRuleContext<TargetContext>(0);
+		}
+		public DecrementPostfixExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDecrementPostfixExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class TernaryExpressionContext : ExpressionContext {
+		public ExpressionContext cond;
+		public ExpressionContext then;
+		public ExpressionContext @else;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		public TernaryExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTernaryExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class CompoundBitwiseLeftShiftExpressionContext : ExpressionContext {
+		[System.Diagnostics.DebuggerNonUserCode] public TargetContext target() {
+			return GetRuleContext<TargetContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public CompoundBitwiseLeftShiftExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitCompoundBitwiseLeftShiftExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
 
 	[RuleVersion(0)]
 	public ExpressionContext expression() {
@@ -594,87 +1209,283 @@ public partial class CGrammarParser : Parser {
 		int _parentState = State;
 		ExpressionContext _localctx = new ExpressionContext(Context, _parentState);
 		ExpressionContext _prevctx = _localctx;
-		int _startState = 6;
-		EnterRecursionRule(_localctx, 6, RULE_expression, _p);
+		int _startState = 14;
+		EnterRecursionRule(_localctx, 14, RULE_expression, _p);
 		try {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 40;
+			State = 135;
 			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case T__1:
+			switch ( Interpreter.AdaptivePredict(TokenStream,5,Context) ) {
+			case 1:
 				{
 				_localctx = new ParenthesizedExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
 
-				State = 31;
+				State = 70;
 				Match(T__1);
-				State = 32;
+				State = 71;
 				expression(0);
-				State = 33;
+				State = 72;
 				Match(T__2);
 				}
 				break;
-			case T__7:
-				{
-				_localctx = new NotExpressionContext(_localctx);
-				Context = _localctx;
-				_prevctx = _localctx;
-				State = 35;
-				Match(T__7);
-				State = 36;
-				expression(19);
-				}
-				break;
-			case T__8:
-				{
-				_localctx = new InvertExpressionContext(_localctx);
-				Context = _localctx;
-				_prevctx = _localctx;
-				State = 37;
-				Match(T__8);
-				State = 38;
-				expression(18);
-				}
-				break;
-			case INT:
+			case 2:
 				{
 				_localctx = new ConstantExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 39;
+				State = 74;
 				constant();
 				}
 				break;
-			default:
-				throw new NoViableAltException(this);
+			case 3:
+				{
+				_localctx = new AssignmentExpressionContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
+				State = 75;
+				target();
+				State = 76;
+				Match(T__9);
+				State = 77;
+				expression(0);
+				State = 78;
+				Match(T__6);
+				}
+				break;
+			case 4:
+				{
+				_localctx = new VariableExpressionContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
+				State = 80;
+				Match(ID);
+				}
+				break;
+			case 5:
+				{
+				_localctx = new NotExpressionContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
+				State = 81;
+				Match(T__10);
+				State = 82;
+				expression(36);
+				}
+				break;
+			case 6:
+				{
+				_localctx = new InvertExpressionContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
+				State = 83;
+				Match(T__11);
+				State = 84;
+				expression(35);
+				}
+				break;
+			case 7:
+				{
+				_localctx = new IncrementPrefixExpressionContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
+				State = 85;
+				Match(T__12);
+				State = 86;
+				target();
+				}
+				break;
+			case 8:
+				{
+				_localctx = new DecrementPrefixExpressionContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
+				State = 87;
+				Match(T__13);
+				State = 88;
+				target();
+				}
+				break;
+			case 9:
+				{
+				_localctx = new IncrementPostfixExpressionContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
+				State = 89;
+				target();
+				State = 90;
+				Match(T__12);
+				}
+				break;
+			case 10:
+				{
+				_localctx = new DecrementPostfixExpressionContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
+				State = 92;
+				target();
+				State = 93;
+				Match(T__13);
+				}
+				break;
+			case 11:
+				{
+				_localctx = new CompoundMultiplyExpressionContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
+				State = 95;
+				target();
+				State = 96;
+				Match(T__32);
+				State = 97;
+				expression(12);
+				}
+				break;
+			case 12:
+				{
+				_localctx = new CompoundDivideExpressionContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
+				State = 99;
+				target();
+				State = 100;
+				Match(T__33);
+				State = 101;
+				expression(11);
+				}
+				break;
+			case 13:
+				{
+				_localctx = new CompoundModulusExpressionContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
+				State = 103;
+				target();
+				State = 104;
+				Match(T__34);
+				State = 105;
+				expression(10);
+				}
+				break;
+			case 14:
+				{
+				_localctx = new CompoundAddExpressionContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
+				State = 107;
+				target();
+				State = 108;
+				Match(T__35);
+				State = 109;
+				expression(9);
+				}
+				break;
+			case 15:
+				{
+				_localctx = new CompoundSubtractExpressionContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
+				State = 111;
+				target();
+				State = 112;
+				Match(T__36);
+				State = 113;
+				expression(8);
+				}
+				break;
+			case 16:
+				{
+				_localctx = new CompoundBitwiseAndExpressionContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
+				State = 115;
+				target();
+				State = 116;
+				Match(T__37);
+				State = 117;
+				expression(7);
+				}
+				break;
+			case 17:
+				{
+				_localctx = new CompoundBitwiseOrExpressionContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
+				State = 119;
+				target();
+				State = 120;
+				Match(T__38);
+				State = 121;
+				expression(6);
+				}
+				break;
+			case 18:
+				{
+				_localctx = new CompoundBitwiseXorExpressionContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
+				State = 123;
+				target();
+				State = 124;
+				Match(T__39);
+				State = 125;
+				expression(5);
+				}
+				break;
+			case 19:
+				{
+				_localctx = new CompoundBitwiseLeftShiftExpressionContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
+				State = 127;
+				target();
+				State = 128;
+				Match(T__40);
+				State = 129;
+				expression(4);
+				}
+				break;
+			case 20:
+				{
+				_localctx = new CompoundBitwiseRightShiftExpressionContext(_localctx);
+				Context = _localctx;
+				_prevctx = _localctx;
+				State = 131;
+				target();
+				State = 132;
+				Match(T__41);
+				State = 133;
+				expression(3);
+				}
+				break;
 			}
 			Context.Stop = TokenStream.LT(-1);
-			State = 92;
+			State = 202;
 			ErrorHandler.Sync(this);
-			_alt = Interpreter.AdaptivePredict(TokenStream,3,Context);
+			_alt = Interpreter.AdaptivePredict(TokenStream,7,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( ParseListeners!=null )
 						TriggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					State = 90;
+					State = 200;
 					ErrorHandler.Sync(this);
-					switch ( Interpreter.AdaptivePredict(TokenStream,2,Context) ) {
+					switch ( Interpreter.AdaptivePredict(TokenStream,6,Context) ) {
 					case 1:
 						{
 						_localctx = new MultiplyExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((MultiplyExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 42;
-						if (!(Precpred(Context, 17))) throw new FailedPredicateException(this, "Precpred(Context, 17)");
-						State = 43;
-						Match(T__9);
-						State = 44;
-						((MultiplyExpressionContext)_localctx).right = expression(18);
+						State = 137;
+						if (!(Precpred(Context, 30))) throw new FailedPredicateException(this, "Precpred(Context, 30)");
+						State = 138;
+						Match(T__14);
+						State = 139;
+						((MultiplyExpressionContext)_localctx).right = expression(31);
 						}
 						break;
 					case 2:
@@ -682,12 +1493,12 @@ public partial class CGrammarParser : Parser {
 						_localctx = new DivideExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((DivideExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 45;
-						if (!(Precpred(Context, 16))) throw new FailedPredicateException(this, "Precpred(Context, 16)");
-						State = 46;
-						Match(T__10);
-						State = 47;
-						((DivideExpressionContext)_localctx).right = expression(17);
+						State = 140;
+						if (!(Precpred(Context, 29))) throw new FailedPredicateException(this, "Precpred(Context, 29)");
+						State = 141;
+						Match(T__15);
+						State = 142;
+						((DivideExpressionContext)_localctx).right = expression(30);
 						}
 						break;
 					case 3:
@@ -695,12 +1506,12 @@ public partial class CGrammarParser : Parser {
 						_localctx = new ModulusExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((ModulusExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 48;
-						if (!(Precpred(Context, 15))) throw new FailedPredicateException(this, "Precpred(Context, 15)");
-						State = 49;
-						Match(T__11);
-						State = 50;
-						((ModulusExpressionContext)_localctx).right = expression(16);
+						State = 143;
+						if (!(Precpred(Context, 28))) throw new FailedPredicateException(this, "Precpred(Context, 28)");
+						State = 144;
+						Match(T__16);
+						State = 145;
+						((ModulusExpressionContext)_localctx).right = expression(29);
 						}
 						break;
 					case 4:
@@ -708,12 +1519,12 @@ public partial class CGrammarParser : Parser {
 						_localctx = new AddExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((AddExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 51;
-						if (!(Precpred(Context, 14))) throw new FailedPredicateException(this, "Precpred(Context, 14)");
-						State = 52;
-						Match(T__12);
-						State = 53;
-						((AddExpressionContext)_localctx).right = expression(15);
+						State = 146;
+						if (!(Precpred(Context, 27))) throw new FailedPredicateException(this, "Precpred(Context, 27)");
+						State = 147;
+						Match(T__17);
+						State = 148;
+						((AddExpressionContext)_localctx).right = expression(28);
 						}
 						break;
 					case 5:
@@ -721,12 +1532,12 @@ public partial class CGrammarParser : Parser {
 						_localctx = new SubtractExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((SubtractExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 54;
-						if (!(Precpred(Context, 13))) throw new FailedPredicateException(this, "Precpred(Context, 13)");
-						State = 55;
-						Match(T__13);
-						State = 56;
-						((SubtractExpressionContext)_localctx).right = expression(14);
+						State = 149;
+						if (!(Precpred(Context, 26))) throw new FailedPredicateException(this, "Precpred(Context, 26)");
+						State = 150;
+						Match(T__18);
+						State = 151;
+						((SubtractExpressionContext)_localctx).right = expression(27);
 						}
 						break;
 					case 6:
@@ -734,12 +1545,12 @@ public partial class CGrammarParser : Parser {
 						_localctx = new LessThanExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((LessThanExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 57;
-						if (!(Precpred(Context, 12))) throw new FailedPredicateException(this, "Precpred(Context, 12)");
-						State = 58;
-						Match(T__14);
-						State = 59;
-						((LessThanExpressionContext)_localctx).right = expression(13);
+						State = 152;
+						if (!(Precpred(Context, 25))) throw new FailedPredicateException(this, "Precpred(Context, 25)");
+						State = 153;
+						Match(T__19);
+						State = 154;
+						((LessThanExpressionContext)_localctx).right = expression(26);
 						}
 						break;
 					case 7:
@@ -747,12 +1558,12 @@ public partial class CGrammarParser : Parser {
 						_localctx = new GreaterThanExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((GreaterThanExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 60;
-						if (!(Precpred(Context, 11))) throw new FailedPredicateException(this, "Precpred(Context, 11)");
-						State = 61;
-						Match(T__15);
-						State = 62;
-						((GreaterThanExpressionContext)_localctx).right = expression(12);
+						State = 155;
+						if (!(Precpred(Context, 24))) throw new FailedPredicateException(this, "Precpred(Context, 24)");
+						State = 156;
+						Match(T__20);
+						State = 157;
+						((GreaterThanExpressionContext)_localctx).right = expression(25);
 						}
 						break;
 					case 8:
@@ -760,12 +1571,12 @@ public partial class CGrammarParser : Parser {
 						_localctx = new LessThanOrEqualExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((LessThanOrEqualExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 63;
-						if (!(Precpred(Context, 10))) throw new FailedPredicateException(this, "Precpred(Context, 10)");
-						State = 64;
-						Match(T__16);
-						State = 65;
-						((LessThanOrEqualExpressionContext)_localctx).right = expression(11);
+						State = 158;
+						if (!(Precpred(Context, 23))) throw new FailedPredicateException(this, "Precpred(Context, 23)");
+						State = 159;
+						Match(T__21);
+						State = 160;
+						((LessThanOrEqualExpressionContext)_localctx).right = expression(24);
 						}
 						break;
 					case 9:
@@ -773,12 +1584,12 @@ public partial class CGrammarParser : Parser {
 						_localctx = new GreaterThanOrEqualExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((GreaterThanOrEqualExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 66;
-						if (!(Precpred(Context, 9))) throw new FailedPredicateException(this, "Precpred(Context, 9)");
-						State = 67;
-						Match(T__17);
-						State = 68;
-						((GreaterThanOrEqualExpressionContext)_localctx).right = expression(10);
+						State = 161;
+						if (!(Precpred(Context, 22))) throw new FailedPredicateException(this, "Precpred(Context, 22)");
+						State = 162;
+						Match(T__22);
+						State = 163;
+						((GreaterThanOrEqualExpressionContext)_localctx).right = expression(23);
 						}
 						break;
 					case 10:
@@ -786,12 +1597,12 @@ public partial class CGrammarParser : Parser {
 						_localctx = new EqualExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((EqualExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 69;
-						if (!(Precpred(Context, 8))) throw new FailedPredicateException(this, "Precpred(Context, 8)");
-						State = 70;
-						Match(T__18);
-						State = 71;
-						((EqualExpressionContext)_localctx).right = expression(9);
+						State = 164;
+						if (!(Precpred(Context, 21))) throw new FailedPredicateException(this, "Precpred(Context, 21)");
+						State = 165;
+						Match(T__23);
+						State = 166;
+						((EqualExpressionContext)_localctx).right = expression(22);
 						}
 						break;
 					case 11:
@@ -799,12 +1610,12 @@ public partial class CGrammarParser : Parser {
 						_localctx = new NotEqualExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((NotEqualExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 72;
-						if (!(Precpred(Context, 7))) throw new FailedPredicateException(this, "Precpred(Context, 7)");
-						State = 73;
-						Match(T__19);
-						State = 74;
-						((NotEqualExpressionContext)_localctx).right = expression(8);
+						State = 167;
+						if (!(Precpred(Context, 20))) throw new FailedPredicateException(this, "Precpred(Context, 20)");
+						State = 168;
+						Match(T__24);
+						State = 169;
+						((NotEqualExpressionContext)_localctx).right = expression(21);
 						}
 						break;
 					case 12:
@@ -812,12 +1623,12 @@ public partial class CGrammarParser : Parser {
 						_localctx = new BitwiseAndExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((BitwiseAndExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 75;
-						if (!(Precpred(Context, 6))) throw new FailedPredicateException(this, "Precpred(Context, 6)");
-						State = 76;
-						Match(T__20);
-						State = 77;
-						((BitwiseAndExpressionContext)_localctx).right = expression(7);
+						State = 170;
+						if (!(Precpred(Context, 19))) throw new FailedPredicateException(this, "Precpred(Context, 19)");
+						State = 171;
+						Match(T__25);
+						State = 172;
+						((BitwiseAndExpressionContext)_localctx).right = expression(20);
 						}
 						break;
 					case 13:
@@ -825,12 +1636,12 @@ public partial class CGrammarParser : Parser {
 						_localctx = new BitwiseOrExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((BitwiseOrExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 78;
-						if (!(Precpred(Context, 5))) throw new FailedPredicateException(this, "Precpred(Context, 5)");
-						State = 79;
-						Match(T__21);
-						State = 80;
-						((BitwiseOrExpressionContext)_localctx).right = expression(6);
+						State = 173;
+						if (!(Precpred(Context, 18))) throw new FailedPredicateException(this, "Precpred(Context, 18)");
+						State = 174;
+						Match(T__26);
+						State = 175;
+						((BitwiseOrExpressionContext)_localctx).right = expression(19);
 						}
 						break;
 					case 14:
@@ -838,46 +1649,102 @@ public partial class CGrammarParser : Parser {
 						_localctx = new BitwiseXorExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((BitwiseXorExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 81;
-						if (!(Precpred(Context, 4))) throw new FailedPredicateException(this, "Precpred(Context, 4)");
-						State = 82;
-						Match(T__22);
-						State = 83;
-						((BitwiseXorExpressionContext)_localctx).right = expression(5);
+						State = 176;
+						if (!(Precpred(Context, 17))) throw new FailedPredicateException(this, "Precpred(Context, 17)");
+						State = 177;
+						Match(T__27);
+						State = 178;
+						((BitwiseXorExpressionContext)_localctx).right = expression(18);
 						}
 						break;
 					case 15:
 						{
-						_localctx = new LogicalAndExpressionContext(new ExpressionContext(_parentctx, _parentState));
-						((LogicalAndExpressionContext)_localctx).left = _prevctx;
+						_localctx = new BitwiseLeftShiftExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((BitwiseLeftShiftExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 84;
-						if (!(Precpred(Context, 3))) throw new FailedPredicateException(this, "Precpred(Context, 3)");
-						State = 85;
-						Match(T__23);
-						State = 86;
-						((LogicalAndExpressionContext)_localctx).right = expression(4);
+						State = 179;
+						if (!(Precpred(Context, 16))) throw new FailedPredicateException(this, "Precpred(Context, 16)");
+						State = 180;
+						Match(T__28);
+						State = 181;
+						((BitwiseLeftShiftExpressionContext)_localctx).right = expression(17);
 						}
 						break;
 					case 16:
 						{
+						_localctx = new BitwiseRightShiftExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((BitwiseRightShiftExpressionContext)_localctx).left = _prevctx;
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 182;
+						if (!(Precpred(Context, 15))) throw new FailedPredicateException(this, "Precpred(Context, 15)");
+						State = 183;
+						Match(T__29);
+						State = 184;
+						((BitwiseRightShiftExpressionContext)_localctx).right = expression(16);
+						}
+						break;
+					case 17:
+						{
+						_localctx = new LogicalAndExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((LogicalAndExpressionContext)_localctx).left = _prevctx;
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 185;
+						if (!(Precpred(Context, 14))) throw new FailedPredicateException(this, "Precpred(Context, 14)");
+						State = 186;
+						Match(T__30);
+						State = 187;
+						((LogicalAndExpressionContext)_localctx).right = expression(15);
+						}
+						break;
+					case 18:
+						{
 						_localctx = new LogicalOrExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((LogicalOrExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 87;
+						State = 188;
+						if (!(Precpred(Context, 13))) throw new FailedPredicateException(this, "Precpred(Context, 13)");
+						State = 189;
+						Match(T__31);
+						State = 190;
+						((LogicalOrExpressionContext)_localctx).right = expression(14);
+						}
+						break;
+					case 19:
+						{
+						_localctx = new CommaExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((CommaExpressionContext)_localctx).left = _prevctx;
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 191;
 						if (!(Precpred(Context, 2))) throw new FailedPredicateException(this, "Precpred(Context, 2)");
-						State = 88;
-						Match(T__24);
-						State = 89;
-						((LogicalOrExpressionContext)_localctx).right = expression(3);
+						State = 192;
+						Match(T__42);
+						State = 193;
+						((CommaExpressionContext)_localctx).right = expression(3);
+						}
+						break;
+					case 20:
+						{
+						_localctx = new TernaryExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((TernaryExpressionContext)_localctx).cond = _prevctx;
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 194;
+						if (!(Precpred(Context, 1))) throw new FailedPredicateException(this, "Precpred(Context, 1)");
+						State = 195;
+						Match(T__43);
+						State = 196;
+						((TernaryExpressionContext)_localctx).then = expression(0);
+						State = 197;
+						Match(T__44);
+						State = 198;
+						((TernaryExpressionContext)_localctx).@else = expression(2);
 						}
 						break;
 					}
 					} 
 				}
-				State = 94;
+				State = 204;
 				ErrorHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(TokenStream,3,Context);
+				_alt = Interpreter.AdaptivePredict(TokenStream,7,Context);
 			}
 			}
 		}
@@ -918,13 +1785,59 @@ public partial class CGrammarParser : Parser {
 	[RuleVersion(0)]
 	public ConstantContext constant() {
 		ConstantContext _localctx = new ConstantContext(Context, State);
-		EnterRule(_localctx, 8, RULE_constant);
+		EnterRule(_localctx, 16, RULE_constant);
 		try {
 			_localctx = new IntConstantContext(_localctx);
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 95;
+			State = 205;
 			Match(INT);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class TargetContext : ParserRuleContext {
+		public TargetContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_target; } }
+	 
+		public TargetContext() { }
+		public virtual void CopyFrom(TargetContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class VariableTargetContext : TargetContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID() { return GetToken(CGrammarParser.ID, 0); }
+		public VariableTargetContext(TargetContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitVariableTarget(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public TargetContext target() {
+		TargetContext _localctx = new TargetContext(Context, State);
+		EnterRule(_localctx, 18, RULE_target);
+		try {
+			_localctx = new VariableTargetContext(_localctx);
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 207;
+			Match(ID);
 			}
 		}
 		catch (RecognitionException re) {
@@ -940,63 +1853,106 @@ public partial class CGrammarParser : Parser {
 
 	public override bool Sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 		switch (ruleIndex) {
-		case 3: return expression_sempred((ExpressionContext)_localctx, predIndex);
+		case 7: return expression_sempred((ExpressionContext)_localctx, predIndex);
 		}
 		return true;
 	}
 	private bool expression_sempred(ExpressionContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 0: return Precpred(Context, 17);
-		case 1: return Precpred(Context, 16);
-		case 2: return Precpred(Context, 15);
-		case 3: return Precpred(Context, 14);
-		case 4: return Precpred(Context, 13);
-		case 5: return Precpred(Context, 12);
-		case 6: return Precpred(Context, 11);
-		case 7: return Precpred(Context, 10);
-		case 8: return Precpred(Context, 9);
-		case 9: return Precpred(Context, 8);
-		case 10: return Precpred(Context, 7);
-		case 11: return Precpred(Context, 6);
-		case 12: return Precpred(Context, 5);
-		case 13: return Precpred(Context, 4);
-		case 14: return Precpred(Context, 3);
-		case 15: return Precpred(Context, 2);
+		case 0: return Precpred(Context, 30);
+		case 1: return Precpred(Context, 29);
+		case 2: return Precpred(Context, 28);
+		case 3: return Precpred(Context, 27);
+		case 4: return Precpred(Context, 26);
+		case 5: return Precpred(Context, 25);
+		case 6: return Precpred(Context, 24);
+		case 7: return Precpred(Context, 23);
+		case 8: return Precpred(Context, 22);
+		case 9: return Precpred(Context, 21);
+		case 10: return Precpred(Context, 20);
+		case 11: return Precpred(Context, 19);
+		case 12: return Precpred(Context, 18);
+		case 13: return Precpred(Context, 17);
+		case 14: return Precpred(Context, 16);
+		case 15: return Precpred(Context, 15);
+		case 16: return Precpred(Context, 14);
+		case 17: return Precpred(Context, 13);
+		case 18: return Precpred(Context, 2);
+		case 19: return Precpred(Context, 1);
 		}
 		return true;
 	}
 
 	private static int[] _serializedATN = {
-		4,1,27,98,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,1,0,1,0,1,0,1,1,1,1,
-		1,1,1,1,1,1,1,1,5,1,20,8,1,10,1,12,1,23,9,1,1,1,1,1,1,2,1,2,1,2,1,2,1,
-		3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,3,3,41,8,3,1,3,1,3,1,3,1,3,1,3,1,
-		3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,
-		1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,
-		3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,5,3,91,8,3,10,3,12,3,94,9,3,1,4,1,4,1,4,
-		0,1,6,5,0,2,4,6,8,0,0,112,0,10,1,0,0,0,2,13,1,0,0,0,4,26,1,0,0,0,6,40,
-		1,0,0,0,8,95,1,0,0,0,10,11,3,2,1,0,11,12,5,0,0,1,12,1,1,0,0,0,13,14,5,
-		1,0,0,14,15,5,26,0,0,15,16,5,2,0,0,16,17,5,3,0,0,17,21,5,4,0,0,18,20,3,
-		4,2,0,19,18,1,0,0,0,20,23,1,0,0,0,21,19,1,0,0,0,21,22,1,0,0,0,22,24,1,
-		0,0,0,23,21,1,0,0,0,24,25,5,5,0,0,25,3,1,0,0,0,26,27,5,6,0,0,27,28,3,6,
-		3,0,28,29,5,7,0,0,29,5,1,0,0,0,30,31,6,3,-1,0,31,32,5,2,0,0,32,33,3,6,
-		3,0,33,34,5,3,0,0,34,41,1,0,0,0,35,36,5,8,0,0,36,41,3,6,3,19,37,38,5,9,
-		0,0,38,41,3,6,3,18,39,41,3,8,4,0,40,30,1,0,0,0,40,35,1,0,0,0,40,37,1,0,
-		0,0,40,39,1,0,0,0,41,92,1,0,0,0,42,43,10,17,0,0,43,44,5,10,0,0,44,91,3,
-		6,3,18,45,46,10,16,0,0,46,47,5,11,0,0,47,91,3,6,3,17,48,49,10,15,0,0,49,
-		50,5,12,0,0,50,91,3,6,3,16,51,52,10,14,0,0,52,53,5,13,0,0,53,91,3,6,3,
-		15,54,55,10,13,0,0,55,56,5,14,0,0,56,91,3,6,3,14,57,58,10,12,0,0,58,59,
-		5,15,0,0,59,91,3,6,3,13,60,61,10,11,0,0,61,62,5,16,0,0,62,91,3,6,3,12,
-		63,64,10,10,0,0,64,65,5,17,0,0,65,91,3,6,3,11,66,67,10,9,0,0,67,68,5,18,
-		0,0,68,91,3,6,3,10,69,70,10,8,0,0,70,71,5,19,0,0,71,91,3,6,3,9,72,73,10,
-		7,0,0,73,74,5,20,0,0,74,91,3,6,3,8,75,76,10,6,0,0,76,77,5,21,0,0,77,91,
-		3,6,3,7,78,79,10,5,0,0,79,80,5,22,0,0,80,91,3,6,3,6,81,82,10,4,0,0,82,
-		83,5,23,0,0,83,91,3,6,3,5,84,85,10,3,0,0,85,86,5,24,0,0,86,91,3,6,3,4,
-		87,88,10,2,0,0,88,89,5,25,0,0,89,91,3,6,3,3,90,42,1,0,0,0,90,45,1,0,0,
-		0,90,48,1,0,0,0,90,51,1,0,0,0,90,54,1,0,0,0,90,57,1,0,0,0,90,60,1,0,0,
-		0,90,63,1,0,0,0,90,66,1,0,0,0,90,69,1,0,0,0,90,72,1,0,0,0,90,75,1,0,0,
-		0,90,78,1,0,0,0,90,81,1,0,0,0,90,84,1,0,0,0,90,87,1,0,0,0,91,94,1,0,0,
-		0,92,90,1,0,0,0,92,93,1,0,0,0,93,7,1,0,0,0,94,92,1,0,0,0,95,96,5,27,0,
-		0,96,9,1,0,0,0,4,21,40,90,92
+		4,1,49,210,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
+		7,7,2,8,7,8,2,9,7,9,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,2,3,2,32,
+		8,2,1,3,1,3,5,3,36,8,3,10,3,12,3,39,9,3,1,3,1,3,1,4,1,4,3,4,45,8,4,1,5,
+		1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,3,5,60,8,5,1,6,1,6,1,6,
+		1,6,3,6,66,8,6,1,6,1,6,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,
+		1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,
+		7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,
+		1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,
+		7,1,7,3,7,136,8,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,
+		1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,
+		7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,
+		1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,5,7,201,8,
+		7,10,7,12,7,204,9,7,1,8,1,8,1,9,1,9,1,9,0,1,14,10,0,2,4,6,8,10,12,14,16,
+		18,0,0,244,0,20,1,0,0,0,2,23,1,0,0,0,4,31,1,0,0,0,6,33,1,0,0,0,8,44,1,
+		0,0,0,10,59,1,0,0,0,12,61,1,0,0,0,14,135,1,0,0,0,16,205,1,0,0,0,18,207,
+		1,0,0,0,20,21,3,2,1,0,21,22,5,0,0,1,22,1,1,0,0,0,23,24,5,1,0,0,24,25,5,
+		46,0,0,25,26,5,2,0,0,26,27,5,3,0,0,27,28,3,6,3,0,28,3,1,0,0,0,29,32,3,
+		10,5,0,30,32,3,6,3,0,31,29,1,0,0,0,31,30,1,0,0,0,32,5,1,0,0,0,33,37,5,
+		4,0,0,34,36,3,8,4,0,35,34,1,0,0,0,36,39,1,0,0,0,37,35,1,0,0,0,37,38,1,
+		0,0,0,38,40,1,0,0,0,39,37,1,0,0,0,40,41,5,5,0,0,41,7,1,0,0,0,42,45,3,10,
+		5,0,43,45,3,12,6,0,44,42,1,0,0,0,44,43,1,0,0,0,45,9,1,0,0,0,46,47,5,6,
+		0,0,47,48,3,14,7,0,48,49,5,7,0,0,49,60,1,0,0,0,50,51,5,8,0,0,51,52,5,2,
+		0,0,52,53,3,14,7,0,53,54,5,3,0,0,54,55,3,4,2,0,55,56,5,9,0,0,56,57,3,4,
+		2,0,57,60,1,0,0,0,58,60,3,14,7,0,59,46,1,0,0,0,59,50,1,0,0,0,59,58,1,0,
+		0,0,60,11,1,0,0,0,61,62,5,1,0,0,62,65,5,46,0,0,63,64,5,10,0,0,64,66,3,
+		14,7,0,65,63,1,0,0,0,65,66,1,0,0,0,66,67,1,0,0,0,67,68,5,7,0,0,68,13,1,
+		0,0,0,69,70,6,7,-1,0,70,71,5,2,0,0,71,72,3,14,7,0,72,73,5,3,0,0,73,136,
+		1,0,0,0,74,136,3,16,8,0,75,76,3,18,9,0,76,77,5,10,0,0,77,78,3,14,7,0,78,
+		79,5,7,0,0,79,136,1,0,0,0,80,136,5,46,0,0,81,82,5,11,0,0,82,136,3,14,7,
+		36,83,84,5,12,0,0,84,136,3,14,7,35,85,86,5,13,0,0,86,136,3,18,9,0,87,88,
+		5,14,0,0,88,136,3,18,9,0,89,90,3,18,9,0,90,91,5,13,0,0,91,136,1,0,0,0,
+		92,93,3,18,9,0,93,94,5,14,0,0,94,136,1,0,0,0,95,96,3,18,9,0,96,97,5,33,
+		0,0,97,98,3,14,7,12,98,136,1,0,0,0,99,100,3,18,9,0,100,101,5,34,0,0,101,
+		102,3,14,7,11,102,136,1,0,0,0,103,104,3,18,9,0,104,105,5,35,0,0,105,106,
+		3,14,7,10,106,136,1,0,0,0,107,108,3,18,9,0,108,109,5,36,0,0,109,110,3,
+		14,7,9,110,136,1,0,0,0,111,112,3,18,9,0,112,113,5,37,0,0,113,114,3,14,
+		7,8,114,136,1,0,0,0,115,116,3,18,9,0,116,117,5,38,0,0,117,118,3,14,7,7,
+		118,136,1,0,0,0,119,120,3,18,9,0,120,121,5,39,0,0,121,122,3,14,7,6,122,
+		136,1,0,0,0,123,124,3,18,9,0,124,125,5,40,0,0,125,126,3,14,7,5,126,136,
+		1,0,0,0,127,128,3,18,9,0,128,129,5,41,0,0,129,130,3,14,7,4,130,136,1,0,
+		0,0,131,132,3,18,9,0,132,133,5,42,0,0,133,134,3,14,7,3,134,136,1,0,0,0,
+		135,69,1,0,0,0,135,74,1,0,0,0,135,75,1,0,0,0,135,80,1,0,0,0,135,81,1,0,
+		0,0,135,83,1,0,0,0,135,85,1,0,0,0,135,87,1,0,0,0,135,89,1,0,0,0,135,92,
+		1,0,0,0,135,95,1,0,0,0,135,99,1,0,0,0,135,103,1,0,0,0,135,107,1,0,0,0,
+		135,111,1,0,0,0,135,115,1,0,0,0,135,119,1,0,0,0,135,123,1,0,0,0,135,127,
+		1,0,0,0,135,131,1,0,0,0,136,202,1,0,0,0,137,138,10,30,0,0,138,139,5,15,
+		0,0,139,201,3,14,7,31,140,141,10,29,0,0,141,142,5,16,0,0,142,201,3,14,
+		7,30,143,144,10,28,0,0,144,145,5,17,0,0,145,201,3,14,7,29,146,147,10,27,
+		0,0,147,148,5,18,0,0,148,201,3,14,7,28,149,150,10,26,0,0,150,151,5,19,
+		0,0,151,201,3,14,7,27,152,153,10,25,0,0,153,154,5,20,0,0,154,201,3,14,
+		7,26,155,156,10,24,0,0,156,157,5,21,0,0,157,201,3,14,7,25,158,159,10,23,
+		0,0,159,160,5,22,0,0,160,201,3,14,7,24,161,162,10,22,0,0,162,163,5,23,
+		0,0,163,201,3,14,7,23,164,165,10,21,0,0,165,166,5,24,0,0,166,201,3,14,
+		7,22,167,168,10,20,0,0,168,169,5,25,0,0,169,201,3,14,7,21,170,171,10,19,
+		0,0,171,172,5,26,0,0,172,201,3,14,7,20,173,174,10,18,0,0,174,175,5,27,
+		0,0,175,201,3,14,7,19,176,177,10,17,0,0,177,178,5,28,0,0,178,201,3,14,
+		7,18,179,180,10,16,0,0,180,181,5,29,0,0,181,201,3,14,7,17,182,183,10,15,
+		0,0,183,184,5,30,0,0,184,201,3,14,7,16,185,186,10,14,0,0,186,187,5,31,
+		0,0,187,201,3,14,7,15,188,189,10,13,0,0,189,190,5,32,0,0,190,201,3,14,
+		7,14,191,192,10,2,0,0,192,193,5,43,0,0,193,201,3,14,7,3,194,195,10,1,0,
+		0,195,196,5,44,0,0,196,197,3,14,7,0,197,198,5,45,0,0,198,199,3,14,7,2,
+		199,201,1,0,0,0,200,137,1,0,0,0,200,140,1,0,0,0,200,143,1,0,0,0,200,146,
+		1,0,0,0,200,149,1,0,0,0,200,152,1,0,0,0,200,155,1,0,0,0,200,158,1,0,0,
+		0,200,161,1,0,0,0,200,164,1,0,0,0,200,167,1,0,0,0,200,170,1,0,0,0,200,
+		173,1,0,0,0,200,176,1,0,0,0,200,179,1,0,0,0,200,182,1,0,0,0,200,185,1,
+		0,0,0,200,188,1,0,0,0,200,191,1,0,0,0,200,194,1,0,0,0,201,204,1,0,0,0,
+		202,200,1,0,0,0,202,203,1,0,0,0,203,15,1,0,0,0,204,202,1,0,0,0,205,206,
+		5,47,0,0,206,17,1,0,0,0,207,208,5,46,0,0,208,19,1,0,0,0,8,31,37,44,59,
+		65,135,200,202
 	};
 
 	public static readonly ATN _ATN =

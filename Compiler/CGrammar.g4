@@ -2,24 +2,56 @@ grammar CGrammar;
 
 ID: [a-zA-Z_][a-zA-Z0-9_]*;
 INT: [0-9]+;
+WS: [ \t\r\n]+ -> skip;
+COMMENT: '//' .*? ([\n] | EOF) -> channel(HIDDEN);
+
 
 program
     : function EOF
     ;
     
 function
-    : 'int' ID '(' ')' '{' statement* '}'
+    : 'int' name=ID '(' ')' block
+    ;
+   
+body
+    : statement
+    | block
+    ;
+   
+block
+    : '{' block_item* '}'
+    ;
+    
+block_item
+    : statement
+    | declaration
     ;
     
 statement
     : 'return' expression ';' #returnStatement
+    | 'if' '(' expression ')' then=body ('else' else=body) #ifStatement
+    | expression #expressionStatement
+    ;
+    
+    
+declaration
+    : 'int' name=ID ('=' value=expression)? ';' #variableDeclaration
     ;
 
 expression
     : '(' expression ')' #parenthesizedExpression
+    | constant #constantExpression
+    | target '=' expression ';' #assignmentExpression
+    | ID #variableExpression
     
     | '!' expression #notExpression
     | '~' expression #invertExpression
+    
+    | '++' target #incrementPrefixExpression
+    | '--' target #decrementPrefixExpression
+    | target '++' #incrementPostfixExpression
+    | target '--' #decrementPostfixExpression
     
     | left=expression '*' right=expression #multiplyExpression
     | left=expression '/' right=expression #divideExpression
@@ -39,12 +71,35 @@ expression
     | left=expression '|' right=expression #bitwiseOrExpression
     | left=expression '^' right=expression #bitwiseXorExpression
     
+    | left=expression '<<' right=expression #bitwiseLeftShiftExpression
+    | left=expression '>>' right=expression #bitwiseRightShiftExpression
+    
     | left=expression '&&' right=expression #logicalAndExpression
     | left=expression '||' right=expression #logicalOrExpression
     
-    | constant #constantExpression
+    | target '*=' expression #compoundMultiplyExpression
+    | target '/=' expression #compoundDivideExpression
+    | target '%=' expression #compoundModulusExpression
+    
+    | target '+=' expression #compoundAddExpression
+    | target '-=' expression #compoundSubtractExpression
+    
+    | target '&=' expression #compoundBitwiseAndExpression
+    | target '|=' expression #compoundBitwiseOrExpression
+    | target '^=' expression #compoundBitwiseXorExpression
+    
+    | target '<<=' expression #compoundBitwiseLeftShiftExpression
+    | target '>>=' expression #compoundBitwiseRightShiftExpression
+    
+    | left=expression ',' right=expression #commaExpression
+    
+    | cond=expression '?' then=expression ':' else=expression #ternaryExpression
     ;
     
 constant
     : INT # intConstant
+    ;
+    
+target
+    : ID # variableTarget
     ;

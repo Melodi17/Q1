@@ -29,7 +29,7 @@ public class Assembler
 
     private void ResolveLabels()
     {
-        int offset = Q1Cpu.ProgramStart;
+        int offset = Q1Layout.ProgramStart;
         int pos = 0;
         foreach (string line in this.InputLines)
         {
