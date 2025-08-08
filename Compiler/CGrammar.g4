@@ -1,5 +1,9 @@
 grammar CGrammar;
 
+options {
+    contextSuperClass = Q1.Compiler.Context;
+}
+
 ID: [a-zA-Z_][a-zA-Z0-9_]*;
 INT: [0-9]+;
 WS: [ \t\r\n]+ -> skip;
@@ -7,11 +11,12 @@ COMMENT: '//' .*? ([\n] | EOF) -> channel(HIDDEN);
 
 
 program
-    : function EOF
+    : function+ EOF
     ;
     
 function
-    : 'int' name=ID '(' ')' block
+    : 'int' name=ID '(' ( types+='int' params+=ID (',' types+='int' params+=ID )* )? ')' ';' #functionPrototype
+    | 'int' name=ID '(' ( types+='int' params+=ID (',' types+='int' params+=ID )* )? ')' block #functionDefinition
     ;
    
 block
@@ -26,8 +31,15 @@ block_item
 statement
     : 'return' expression ';' #returnStatement
     | 'if' '(' expression ')' then=statement ('else' else=statement)? #ifStatement
-    | expression #expressionStatement
+    | 'for' '(' (initializer=expression)? ';' cond=expression? ';' post=expression? ')' body=statement #forExprStatement
+    | 'for' '(' initializer=declaration cond=expression? ';' post=expression? ')' body=statement #forDeclStatement
+    | 'while' '(' cond=expression ')' body=statement #whileStatement
+    | 'do' body=statement 'while' '(' cond=expression ')' ';' #doWhileStatement
+    | 'break' ';' #breakStatement
+    | 'continue' ';' #continueStatement
+    | expression ';' #expressionStatement
     | block #blockStatement
+    | ';' #nullStatement
     ;
     
     
@@ -37,9 +49,12 @@ declaration
 
 expression
     : '(' expression ')' #parenthesizedExpression
+//    | left=expression ',' right=expression #commaExpression
     | constant #constantExpression
-    | target '=' expression ';' #assignmentExpression
+    | target '=' expression #assignmentExpression
     | ID #variableExpression
+    
+    | ID '(' ( params+=expression (',' params+=expression )* )? ')' #callExpression
     
     | '!' expression #notExpression
     | '~' expression #invertExpression
@@ -86,8 +101,6 @@ expression
     
     | target '<<=' expression #compoundBitwiseLeftShiftExpression
     | target '>>=' expression #compoundBitwiseRightShiftExpression
-    
-    | left=expression ',' right=expression #commaExpression
     
     | cond=expression '?' then=expression ':' else=expression #ternaryExpression
     ;

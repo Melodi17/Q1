@@ -38,11 +38,19 @@ public interface ICGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitProgram([NotNull] CGrammarParser.ProgramContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="CGrammarParser.function"/>.
+	/// Visit a parse tree produced by the <c>functionPrototype</c>
+	/// labeled alternative in <see cref="CGrammarParser.function"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitFunction([NotNull] CGrammarParser.FunctionContext context);
+	Result VisitFunctionPrototype([NotNull] CGrammarParser.FunctionPrototypeContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>functionDefinition</c>
+	/// labeled alternative in <see cref="CGrammarParser.function"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFunctionDefinition([NotNull] CGrammarParser.FunctionDefinitionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="CGrammarParser.block"/>.
 	/// </summary>
@@ -70,6 +78,48 @@ public interface ICGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitIfStatement([NotNull] CGrammarParser.IfStatementContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>forExprStatement</c>
+	/// labeled alternative in <see cref="CGrammarParser.statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitForExprStatement([NotNull] CGrammarParser.ForExprStatementContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>forDeclStatement</c>
+	/// labeled alternative in <see cref="CGrammarParser.statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitForDeclStatement([NotNull] CGrammarParser.ForDeclStatementContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>whileStatement</c>
+	/// labeled alternative in <see cref="CGrammarParser.statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitWhileStatement([NotNull] CGrammarParser.WhileStatementContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>doWhileStatement</c>
+	/// labeled alternative in <see cref="CGrammarParser.statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDoWhileStatement([NotNull] CGrammarParser.DoWhileStatementContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>breakStatement</c>
+	/// labeled alternative in <see cref="CGrammarParser.statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitBreakStatement([NotNull] CGrammarParser.BreakStatementContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>continueStatement</c>
+	/// labeled alternative in <see cref="CGrammarParser.statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitContinueStatement([NotNull] CGrammarParser.ContinueStatementContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>expressionStatement</c>
 	/// labeled alternative in <see cref="CGrammarParser.statement"/>.
 	/// </summary>
@@ -83,6 +133,13 @@ public interface ICGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitBlockStatement([NotNull] CGrammarParser.BlockStatementContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>nullStatement</c>
+	/// labeled alternative in <see cref="CGrammarParser.statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitNullStatement([NotNull] CGrammarParser.NullStatementContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>variableDeclaration</c>
 	/// labeled alternative in <see cref="CGrammarParser.declaration"/>.
@@ -294,13 +351,6 @@ public interface ICGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitLogicalOrExpression([NotNull] CGrammarParser.LogicalOrExpressionContext context);
 	/// <summary>
-	/// Visit a parse tree produced by the <c>commaExpression</c>
-	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitCommaExpression([NotNull] CGrammarParser.CommaExpressionContext context);
-	/// <summary>
 	/// Visit a parse tree produced by the <c>incrementPrefixExpression</c>
 	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
 	/// </summary>
@@ -328,6 +378,13 @@ public interface ICGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitBitwiseOrExpression([NotNull] CGrammarParser.BitwiseOrExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>callExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCallExpression([NotNull] CGrammarParser.CallExpressionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>addExpression</c>
 	/// labeled alternative in <see cref="CGrammarParser.expression"/>.

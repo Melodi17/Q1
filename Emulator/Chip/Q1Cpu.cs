@@ -49,6 +49,10 @@ public partial class Q1Cpu
         u16 instruction = this.FetchInstruction(out u8 op, out u8 m1, out u8 m2, out _);
         if (instruction != 0x0101)
             Console.WriteLine($"CPU.Clock: {pc:X4} |  {Disassembler.ParseInstruction(instruction)}");
+        for (int i = Q1Layout.StackStart; i < this.SP; i += 2)
+        {
+            Console.WriteLine($"Stack value: {this.Bus.ReadWord((u16) i)}");
+        }
 
         bool ex = m2 > 0;
         switch (m1, ex)

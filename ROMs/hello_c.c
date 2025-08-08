@@ -1,8 +1,9 @@
+int add(int a, int b)
+{
+    return a + b;
+}
+
 int main() 
 {
-    //comment
-    int a = 5;
-    if (a == 5)
-        return 99;
-    return 0;
+    return add(1, 2);
 }
