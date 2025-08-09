@@ -44,7 +44,7 @@ statement
     
     
 declaration
-    : 'int' name=ID ('=' value=expression)? ';' #variableDeclaration
+    : 'int' ptr='*' name=ID ('=' value=expression)? ';' #variableDeclaration
     ;
 
 expression
@@ -52,6 +52,8 @@ expression
 //    | left=expression ',' right=expression #commaExpression
     | constant #constantExpression
     | target '=' expression #assignmentExpression
+    | '*' expression #dereferenceExpression
+    | '&' target #addressOfExpression
     | ID #variableExpression
     
     | ID '(' ( params+=expression (',' params+=expression )* )? ')' #callExpression

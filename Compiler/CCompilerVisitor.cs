@@ -6,12 +6,16 @@ using Emulator;
 
 public class CCompilerVisitor : CGrammarBaseVisitor<string?>
 {
-    private int                                          _branchCount   = 1;
-    private List<string>                                 _instructions  = new();
-    private Stack<Dictionary<string, VariableReference>> _variableStack = new();
-    private List<FunctionReference>                      _methods       = new();
+    private        int                                          _branchCount   = 1;
+    private        List<string>                                 _instructions  = new();
+    private        Stack<Dictionary<string, VariableReference>> _variableStack = new();
+    private        List<FunctionReference>                      _methods       = new();
     private static int                                          _memLowest     = Q1Layout.FreeMemoryStart;
     private static int                                          _memPointer    = CCompilerVisitor._memLowest;
+
+    private List<(CGrammarParser.FunctionDefinitionContext context,
+        FunctionReference function, FunctionOverload overload,
+        List<string> paramNames, List<string> paramTypes)> _functionBodies = new();
 
     private const int ColumnWidth = 30;
 
@@ -92,6 +96,12 @@ public class CCompilerVisitor : CGrammarBaseVisitor<string?>
     {
         Instruction("jmp _main");
         this.Visit(program);
+
+        foreach ((CGrammarParser.FunctionDefinitionContext context, 
+                     FunctionReference function, FunctionOverload overload, 
+                     List<string> paramNames, List<string> paramTypes) in this._functionBodies)
+            this.VisitFunctionBody(context, function, overload, paramNames, paramTypes);
+
         return this._instructions;
     }
 
@@ -100,13 +110,13 @@ public class CCompilerVisitor : CGrammarBaseVisitor<string?>
         FunctionReference? function = this._methods.FirstOrDefault(x => x.Name == name);
         if (function != null)
             return function;
-        
+
         function = new FunctionReference(name, type);
         this._methods.Add(function);
 
         return function;
     }
-    
+
     private FunctionReference GetFunctionReference(string name)
     {
         FunctionReference? function = this._methods.FirstOrDefault(x => x.Name == name);
@@ -126,7 +136,7 @@ public class CCompilerVisitor : CGrammarBaseVisitor<string?>
 
         FunctionReference function = this.CreateOrGetFunctionReference(functionName, type);
         FunctionOverload overload = function.CreateOverloadWithoutBody(parameterNames, parameterTypes);
-        
+
         function.Overloads.Add(overload);
 
         return null;
@@ -135,18 +145,24 @@ public class CCompilerVisitor : CGrammarBaseVisitor<string?>
     {
         string functionName = context.name.Text;
         string type = "int";
-        
+
         List<string> paramTypes = context._types.Select(x => x.Text).ToList();
         List<string> paramNames = context._params.Select(x => x.Text).ToList();
 
         FunctionReference function = this.CreateOrGetFunctionReference(functionName, type);
         FunctionOverload overload = function.CreateOverloadWithBody(paramNames, paramTypes);
 
+        this._functionBodies.Add((context, function, overload, paramNames, paramTypes));
+
+        return null;
+    }
+    private void VisitFunctionBody(CGrammarParser.FunctionDefinitionContext context, FunctionReference function, FunctionOverload overload, List<string> paramNames, List<string> paramTypes)
+    {
         this.Branch(function.GetBranchName(overload), function.GetBranchFriendlyName(overload));
 
         if (paramNames.Count > 0)
             this.Instruction("pop V0", "preserve function return address");
-        
+
         Dictionary<string, VariableReference> scope = this.EnterScope();
         foreach ((string paramName, string paramType) in paramNames.Zip(paramTypes))
         {
@@ -155,18 +171,16 @@ public class CCompilerVisitor : CGrammarBaseVisitor<string?>
             scope[paramName] = new(addr, paramSize);
             this.Instruction($"pop [${addr:X4}]", $"param {paramType} {paramName}");
         }
-        
+
         if (paramNames.Count > 0)
             this.Instruction("push V0", "restore function return address");
-        
+
         this.VisitChildren(context);
         this.ExitScope();
-        
+
         this.Instruction("mov 0, V0", "fallback return 0");
         this.Instruction("ret");
         this.Blank();
-
-        return null;
     }
 
     public override string? VisitCallExpression(CGrammarParser.CallExpressionContext context)
@@ -178,7 +192,7 @@ public class CCompilerVisitor : CGrammarBaseVisitor<string?>
 
         // We reverse arugments so when we perform pop, its in the right order
         CGrammarParser.ExpressionContext[] argumentsReversed = context._params.Reverse().ToArray();
-        
+
         for (int i = 0; i < argumentsReversed.Length; i++)
         {
             CGrammarParser.ExpressionContext argument = argumentsReversed[i];
@@ -187,7 +201,7 @@ public class CCompilerVisitor : CGrammarBaseVisitor<string?>
 
             this.Instruction($"push {result}", $"arg {overload.ParameterTypes[i]} {overload.ParameterNames[i]}");
         }
-        
+
         this.Instruction($"call {function.GetBranchName(overload)}", function.GetBranchFriendlyName(overload));
 
         return "V0";
@@ -813,6 +827,28 @@ public class CCompilerVisitor : CGrammarBaseVisitor<string?>
         this.Instruction($"jmp {context.LoopBodyBranch}", "continue");
 
         return null;
+    }
+
+    public override string? VisitAddressOfExpression(CGrammarParser.AddressOfExpressionContext context)
+    {
+        string target = this.Visit(context.target())
+                        ?? throw new CompilerException("Address of target was not a targetable expression");
+
+        if (target.StartsWith("@"))
+            return target[1..];
+
+        if (target.StartsWith("[") && target.EndsWith("]"))
+            return target[1..^1];
+
+        throw new CompilerException($"Could not get address of target '{target}'");
+    }
+    public override string? VisitDereferenceExpression(CGrammarParser.DereferenceExpressionContext context)
+    {
+        string value = this.Visit(context.expression())
+                       ?? throw new CompilerException("Dereference pointer was not an expression");
+        
+        this.Instruction($"mov {value}, V0", "move pointer into register for dereference");
+        return "[V0]";
     }
 
     public override string? VisitErrorNode(IErrorNode node)

@@ -59,7 +59,6 @@ internal class Program
                 // Thread.Sleep(1);
                 //
                 cpu.Clock();
-                Thread.Sleep(1000);
             }
             Console.WriteLine($"Exit code: 0x{cpu.V[0]:X4}");
         });

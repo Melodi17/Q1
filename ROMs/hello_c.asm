@@ -1,24 +1,21 @@
     jmp _main
-_add_int_a__int_b:            ; int add(int a, int b)
-    pop V0                    ; Pop return address to register, to preserve during parameter access
-    pop [$51FF]               ; param int a
-    pop [$5201]               ; param int b
-    push V0                   ; Restore function return address
-    push [$51FF]              ; left operand
-    mov [$5201], V1           ; right operand
-    pop V0                    ; get left operand back
-    add V0, V1                ; compute addition
-    mov AX, V0                ; return value
-    ret
-    mov 0, V0                 ; fallback return 0
-    ret
-
 _main:                        ; int main()
-    push 2                    ; arg int a
-    push 1                    ; arg int b
-    call _add_int_a__int_b    ; int add(int a, int b)
-    mov V0, V0                ; return value
-    ret
+    mov 1, [$51FF]            ; int x = 1
+    mov 0, [$5201]            ; int i = 0
+_body_1:
+    push [$5201]              ; left operand
+    mov 10, V1                ; right operand
+    pop V0                    ; get left operand back
+    lt V0, V1                 ; compute less than check
+    not LX
+    bz
+    jmp _end_2                ; if for condition fails, jump to end
+    mult [$51FF], 2           ; compute multiplication
+    mov AX, [$51FF]           ; store back into left param
+    push [$5201]              ; i++
+    inc [$5201]
+    pop V0
+_end_2:
     mov 0, V0                 ; fallback return 0
     ret
 

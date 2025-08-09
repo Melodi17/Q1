@@ -148,6 +148,13 @@ public interface ICGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitVariableDeclaration([NotNull] CGrammarParser.VariableDeclarationContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>addressOfExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitAddressOfExpression([NotNull] CGrammarParser.AddressOfExpressionContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>compoundSubtractExpression</c>
 	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
 	/// </summary>
@@ -273,6 +280,13 @@ public interface ICGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitInvertExpression([NotNull] CGrammarParser.InvertExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>dereferenceExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDereferenceExpression([NotNull] CGrammarParser.DereferenceExpressionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>equalExpression</c>
 	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
