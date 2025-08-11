@@ -42,31 +42,31 @@ public partial class CGrammarParser : Parser {
 		T__24=25, T__25=26, T__26=27, T__27=28, T__28=29, T__29=30, T__30=31, 
 		T__31=32, T__32=33, T__33=34, T__34=35, T__35=36, T__36=37, T__37=38, 
 		T__38=39, T__39=40, T__40=41, T__41=42, T__42=43, T__43=44, T__44=45, 
-		T__45=46, T__46=47, T__47=48, T__48=49, T__49=50, ID=51, INT=52, WS=53, 
-		COMMENT=54;
+		T__45=46, T__46=47, T__47=48, T__48=49, T__49=50, T__50=51, T__51=52, 
+		T__52=53, HEX=54, ID=55, INT=56, WS=57, COMMENT=58;
 	public const int
 		RULE_program = 0, RULE_function = 1, RULE_block = 2, RULE_block_item = 3, 
 		RULE_statement = 4, RULE_declaration = 5, RULE_expression = 6, RULE_constant = 7, 
-		RULE_target = 8;
+		RULE_type = 8, RULE_target = 9;
 	public static readonly string[] ruleNames = {
 		"program", "function", "block", "block_item", "statement", "declaration", 
-		"expression", "constant", "target"
+		"expression", "constant", "type", "target"
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, "'int'", "'('", "','", "')'", "';'", "'{'", "'}'", "'return'", "'if'", 
-		"'else'", "'for'", "'while'", "'do'", "'break'", "'continue'", "'*'", 
-		"'='", "'&'", "'!'", "'~'", "'++'", "'--'", "'/'", "'%'", "'+'", "'-'", 
+		null, "'('", "','", "')'", "';'", "'{'", "'}'", "'return'", "'if'", "'else'", 
+		"'for'", "'while'", "'do'", "'break'", "'continue'", "'='", "'*'", "'&'", 
+		"'['", "']'", "'!'", "'~'", "'++'", "'--'", "'/'", "'%'", "'+'", "'-'", 
 		"'<'", "'>'", "'<='", "'>='", "'=='", "'!='", "'|'", "'^'", "'<<'", "'>>'", 
 		"'&&'", "'||'", "'*='", "'/='", "'%='", "'+='", "'-='", "'&='", "'|='", 
-		"'^='", "'<<='", "'>>='", "'?'", "':'"
+		"'^='", "'<<='", "'>>='", "'?'", "':'", "'int'", "'char'"
 	};
 	private static readonly string[] _SymbolicNames = {
 		null, null, null, null, null, null, null, null, null, null, null, null, 
 		null, null, null, null, null, null, null, null, null, null, null, null, 
 		null, null, null, null, null, null, null, null, null, null, null, null, 
 		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, "ID", "INT", "WS", "COMMENT"
+		null, null, null, null, null, null, "HEX", "ID", "INT", "WS", "COMMENT"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -129,21 +129,21 @@ public partial class CGrammarParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 19;
+			State = 21;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			do {
 				{
 				{
-				State = 18;
+				State = 20;
 				function();
 				}
 				}
-				State = 21;
+				State = 23;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-			} while ( _la==T__0 );
-			State = 23;
+			} while ( _la==T__51 || _la==T__52 );
+			State = 25;
 			Match(Eof);
 			}
 		}
@@ -171,11 +171,18 @@ public partial class CGrammarParser : Parser {
 		}
 	}
 	public partial class FunctionPrototypeContext : FunctionContext {
+		public TypeContext rtype;
 		public IToken name;
-		public IToken s1;
-		public IList<IToken> _types = new List<IToken>();
+		public TypeContext _type;
+		public IList<TypeContext> _types = new List<TypeContext>();
 		public IToken _ID;
 		public IList<IToken> _params = new List<IToken>();
+		[System.Diagnostics.DebuggerNonUserCode] public TypeContext[] type() {
+			return GetRuleContexts<TypeContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public TypeContext type(int i) {
+			return GetRuleContext<TypeContext>(i);
+		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] ID() { return GetTokens(CGrammarParser.ID); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID(int i) {
 			return GetToken(CGrammarParser.ID, i);
@@ -189,13 +196,20 @@ public partial class CGrammarParser : Parser {
 		}
 	}
 	public partial class FunctionDefinitionContext : FunctionContext {
+		public TypeContext rtype;
 		public IToken name;
-		public IToken s1;
-		public IList<IToken> _types = new List<IToken>();
+		public TypeContext _type;
+		public IList<TypeContext> _types = new List<TypeContext>();
 		public IToken _ID;
 		public IList<IToken> _params = new List<IToken>();
 		[System.Diagnostics.DebuggerNonUserCode] public BlockContext block() {
 			return GetRuleContext<BlockContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public TypeContext[] type() {
+			return GetRuleContexts<TypeContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public TypeContext type(int i) {
+			return GetRuleContext<TypeContext>(i);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] ID() { return GetTokens(CGrammarParser.ID); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID(int i) {
@@ -216,106 +230,106 @@ public partial class CGrammarParser : Parser {
 		EnterRule(_localctx, 2, RULE_function);
 		int _la;
 		try {
-			State = 59;
+			State = 65;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,5,Context) ) {
 			case 1:
 				_localctx = new FunctionPrototypeContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 25;
-				Match(T__0);
-				State = 26;
-				((FunctionPrototypeContext)_localctx).name = Match(ID);
 				State = 27;
-				Match(T__1);
-				State = 38;
+				((FunctionPrototypeContext)_localctx).rtype = type(0);
+				State = 28;
+				((FunctionPrototypeContext)_localctx).name = Match(ID);
+				State = 29;
+				Match(T__0);
+				State = 41;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				if (_la==T__0) {
+				if (_la==T__51 || _la==T__52) {
 					{
-					State = 28;
-					((FunctionPrototypeContext)_localctx).s1 = Match(T__0);
-					((FunctionPrototypeContext)_localctx)._types.Add(((FunctionPrototypeContext)_localctx).s1);
-					State = 29;
+					State = 30;
+					((FunctionPrototypeContext)_localctx)._type = type(0);
+					((FunctionPrototypeContext)_localctx)._types.Add(((FunctionPrototypeContext)_localctx)._type);
+					State = 31;
 					((FunctionPrototypeContext)_localctx)._ID = Match(ID);
 					((FunctionPrototypeContext)_localctx)._params.Add(((FunctionPrototypeContext)_localctx)._ID);
-					State = 35;
+					State = 38;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
-					while (_la==T__2) {
+					while (_la==T__1) {
 						{
 						{
-						State = 30;
-						Match(T__2);
-						State = 31;
-						((FunctionPrototypeContext)_localctx).s1 = Match(T__0);
-						((FunctionPrototypeContext)_localctx)._types.Add(((FunctionPrototypeContext)_localctx).s1);
 						State = 32;
+						Match(T__1);
+						State = 33;
+						((FunctionPrototypeContext)_localctx)._type = type(0);
+						((FunctionPrototypeContext)_localctx)._types.Add(((FunctionPrototypeContext)_localctx)._type);
+						State = 34;
 						((FunctionPrototypeContext)_localctx)._ID = Match(ID);
 						((FunctionPrototypeContext)_localctx)._params.Add(((FunctionPrototypeContext)_localctx)._ID);
 						}
 						}
-						State = 37;
+						State = 40;
 						ErrorHandler.Sync(this);
 						_la = TokenStream.LA(1);
 					}
 					}
 				}
 
-				State = 40;
+				State = 43;
+				Match(T__2);
+				State = 44;
 				Match(T__3);
-				State = 41;
-				Match(T__4);
 				}
 				break;
 			case 2:
 				_localctx = new FunctionDefinitionContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 42;
-				Match(T__0);
-				State = 43;
+				State = 46;
+				((FunctionDefinitionContext)_localctx).rtype = type(0);
+				State = 47;
 				((FunctionDefinitionContext)_localctx).name = Match(ID);
-				State = 44;
-				Match(T__1);
-				State = 55;
+				State = 48;
+				Match(T__0);
+				State = 60;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				if (_la==T__0) {
+				if (_la==T__51 || _la==T__52) {
 					{
-					State = 45;
-					((FunctionDefinitionContext)_localctx).s1 = Match(T__0);
-					((FunctionDefinitionContext)_localctx)._types.Add(((FunctionDefinitionContext)_localctx).s1);
-					State = 46;
+					State = 49;
+					((FunctionDefinitionContext)_localctx)._type = type(0);
+					((FunctionDefinitionContext)_localctx)._types.Add(((FunctionDefinitionContext)_localctx)._type);
+					State = 50;
 					((FunctionDefinitionContext)_localctx)._ID = Match(ID);
 					((FunctionDefinitionContext)_localctx)._params.Add(((FunctionDefinitionContext)_localctx)._ID);
-					State = 52;
+					State = 57;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
-					while (_la==T__2) {
+					while (_la==T__1) {
 						{
 						{
-						State = 47;
-						Match(T__2);
-						State = 48;
-						((FunctionDefinitionContext)_localctx).s1 = Match(T__0);
-						((FunctionDefinitionContext)_localctx)._types.Add(((FunctionDefinitionContext)_localctx).s1);
-						State = 49;
+						State = 51;
+						Match(T__1);
+						State = 52;
+						((FunctionDefinitionContext)_localctx)._type = type(0);
+						((FunctionDefinitionContext)_localctx)._types.Add(((FunctionDefinitionContext)_localctx)._type);
+						State = 53;
 						((FunctionDefinitionContext)_localctx)._ID = Match(ID);
 						((FunctionDefinitionContext)_localctx)._params.Add(((FunctionDefinitionContext)_localctx)._ID);
 						}
 						}
-						State = 54;
+						State = 59;
 						ErrorHandler.Sync(this);
 						_la = TokenStream.LA(1);
 					}
 					}
 				}
 
-				State = 57;
-				Match(T__3);
-				State = 58;
+				State = 62;
+				Match(T__2);
+				State = 63;
 				block();
 				}
 				break;
@@ -360,24 +374,24 @@ public partial class CGrammarParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 61;
-			Match(T__5);
-			State = 65;
+			State = 67;
+			Match(T__4);
+			State = 71;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 6755399449312102L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 139611588464442802L) != 0)) {
 				{
 				{
-				State = 62;
+				State = 68;
 				block_item();
 				}
 				}
-				State = 67;
+				State = 73;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 68;
-			Match(T__6);
+			State = 74;
+			Match(T__5);
 			}
 		}
 		catch (RecognitionException re) {
@@ -416,37 +430,39 @@ public partial class CGrammarParser : Parser {
 		Block_itemContext _localctx = new Block_itemContext(Context, State);
 		EnterRule(_localctx, 6, RULE_block_item);
 		try {
-			State = 72;
+			State = 78;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
-			case T__1:
+			case T__0:
+			case T__3:
 			case T__4:
-			case T__5:
+			case T__6:
 			case T__7:
-			case T__8:
+			case T__9:
 			case T__10:
 			case T__11:
 			case T__12:
 			case T__13:
-			case T__14:
 			case T__15:
-			case T__17:
-			case T__18:
+			case T__16:
 			case T__19:
 			case T__20:
 			case T__21:
+			case T__22:
+			case HEX:
 			case ID:
 			case INT:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 70;
+				State = 76;
 				statement();
 				}
 				break;
-			case T__0:
+			case T__51:
+			case T__52:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 71;
+				State = 77;
 				declaration();
 				}
 				break;
@@ -648,43 +664,43 @@ public partial class CGrammarParser : Parser {
 		EnterRule(_localctx, 8, RULE_statement);
 		int _la;
 		try {
-			State = 138;
+			State = 144;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,14,Context) ) {
 			case 1:
 				_localctx = new ReturnStatementContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 74;
-				Match(T__7);
-				State = 75;
+				State = 80;
+				Match(T__6);
+				State = 81;
 				expression(0);
-				State = 76;
-				Match(T__4);
+				State = 82;
+				Match(T__3);
 				}
 				break;
 			case 2:
 				_localctx = new IfStatementContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 78;
-				Match(T__8);
-				State = 79;
-				Match(T__1);
-				State = 80;
-				expression(0);
-				State = 81;
-				Match(T__3);
-				State = 82;
-				((IfStatementContext)_localctx).then = statement();
+				State = 84;
+				Match(T__7);
 				State = 85;
+				Match(T__0);
+				State = 86;
+				expression(0);
+				State = 87;
+				Match(T__2);
+				State = 88;
+				((IfStatementContext)_localctx).then = statement();
+				State = 91;
 				ErrorHandler.Sync(this);
 				switch ( Interpreter.AdaptivePredict(TokenStream,8,Context) ) {
 				case 1:
 					{
-					State = 83;
-					Match(T__9);
-					State = 84;
+					State = 89;
+					Match(T__8);
+					State = 90;
 					((IfStatementContext)_localctx).@else = statement();
 					}
 					break;
@@ -695,47 +711,47 @@ public partial class CGrammarParser : Parser {
 				_localctx = new ForExprStatementContext(_localctx);
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 87;
-				Match(T__10);
-				State = 88;
-				Match(T__1);
-				State = 90;
+				State = 93;
+				Match(T__9);
+				State = 94;
+				Match(T__0);
+				State = 96;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 6755399449247748L) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 126100789582299138L) != 0)) {
 					{
-					State = 89;
+					State = 95;
 					((ForExprStatementContext)_localctx).initializer = expression(0);
 					}
 				}
 
-				State = 92;
-				Match(T__4);
-				State = 94;
+				State = 98;
+				Match(T__3);
+				State = 100;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 6755399449247748L) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 126100789582299138L) != 0)) {
 					{
-					State = 93;
+					State = 99;
 					((ForExprStatementContext)_localctx).cond = expression(0);
 					}
 				}
 
-				State = 96;
-				Match(T__4);
-				State = 98;
+				State = 102;
+				Match(T__3);
+				State = 104;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 6755399449247748L) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 126100789582299138L) != 0)) {
 					{
-					State = 97;
+					State = 103;
 					((ForExprStatementContext)_localctx).post = expression(0);
 					}
 				}
 
-				State = 100;
-				Match(T__3);
-				State = 101;
+				State = 106;
+				Match(T__2);
+				State = 107;
 				((ForExprStatementContext)_localctx).body = statement();
 				}
 				break;
@@ -743,37 +759,37 @@ public partial class CGrammarParser : Parser {
 				_localctx = new ForDeclStatementContext(_localctx);
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 102;
-				Match(T__10);
-				State = 103;
-				Match(T__1);
-				State = 104;
+				State = 108;
+				Match(T__9);
+				State = 109;
+				Match(T__0);
+				State = 110;
 				((ForDeclStatementContext)_localctx).initializer = declaration();
-				State = 106;
+				State = 112;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 6755399449247748L) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 126100789582299138L) != 0)) {
 					{
-					State = 105;
+					State = 111;
 					((ForDeclStatementContext)_localctx).cond = expression(0);
 					}
 				}
 
-				State = 108;
-				Match(T__4);
-				State = 110;
+				State = 114;
+				Match(T__3);
+				State = 116;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 6755399449247748L) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 126100789582299138L) != 0)) {
 					{
-					State = 109;
+					State = 115;
 					((ForDeclStatementContext)_localctx).post = expression(0);
 					}
 				}
 
-				State = 112;
-				Match(T__3);
-				State = 113;
+				State = 118;
+				Match(T__2);
+				State = 119;
 				((ForDeclStatementContext)_localctx).body = statement();
 				}
 				break;
@@ -781,15 +797,15 @@ public partial class CGrammarParser : Parser {
 				_localctx = new WhileStatementContext(_localctx);
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 115;
-				Match(T__11);
-				State = 116;
-				Match(T__1);
-				State = 117;
+				State = 121;
+				Match(T__10);
+				State = 122;
+				Match(T__0);
+				State = 123;
 				((WhileStatementContext)_localctx).cond = expression(0);
-				State = 118;
-				Match(T__3);
-				State = 119;
+				State = 124;
+				Match(T__2);
+				State = 125;
 				((WhileStatementContext)_localctx).body = statement();
 				}
 				break;
@@ -797,57 +813,57 @@ public partial class CGrammarParser : Parser {
 				_localctx = new DoWhileStatementContext(_localctx);
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 121;
-				Match(T__12);
-				State = 122;
-				((DoWhileStatementContext)_localctx).body = statement();
-				State = 123;
-				Match(T__11);
-				State = 124;
-				Match(T__1);
-				State = 125;
-				((DoWhileStatementContext)_localctx).cond = expression(0);
-				State = 126;
-				Match(T__3);
 				State = 127;
-				Match(T__4);
+				Match(T__11);
+				State = 128;
+				((DoWhileStatementContext)_localctx).body = statement();
+				State = 129;
+				Match(T__10);
+				State = 130;
+				Match(T__0);
+				State = 131;
+				((DoWhileStatementContext)_localctx).cond = expression(0);
+				State = 132;
+				Match(T__2);
+				State = 133;
+				Match(T__3);
 				}
 				break;
 			case 7:
 				_localctx = new BreakStatementContext(_localctx);
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 129;
-				Match(T__13);
-				State = 130;
-				Match(T__4);
+				State = 135;
+				Match(T__12);
+				State = 136;
+				Match(T__3);
 				}
 				break;
 			case 8:
 				_localctx = new ContinueStatementContext(_localctx);
 				EnterOuterAlt(_localctx, 8);
 				{
-				State = 131;
-				Match(T__14);
-				State = 132;
-				Match(T__4);
+				State = 137;
+				Match(T__13);
+				State = 138;
+				Match(T__3);
 				}
 				break;
 			case 9:
 				_localctx = new ExpressionStatementContext(_localctx);
 				EnterOuterAlt(_localctx, 9);
 				{
-				State = 133;
+				State = 139;
 				expression(0);
-				State = 134;
-				Match(T__4);
+				State = 140;
+				Match(T__3);
 				}
 				break;
 			case 10:
 				_localctx = new BlockStatementContext(_localctx);
 				EnterOuterAlt(_localctx, 10);
 				{
-				State = 136;
+				State = 142;
 				block();
 				}
 				break;
@@ -855,8 +871,8 @@ public partial class CGrammarParser : Parser {
 				_localctx = new NullStatementContext(_localctx);
 				EnterOuterAlt(_localctx, 11);
 				{
-				State = 137;
-				Match(T__4);
+				State = 143;
+				Match(T__3);
 				}
 				break;
 			}
@@ -885,9 +901,11 @@ public partial class CGrammarParser : Parser {
 		}
 	}
 	public partial class VariableDeclarationContext : DeclarationContext {
-		public IToken ptr;
 		public IToken name;
 		public ExpressionContext value;
+		[System.Diagnostics.DebuggerNonUserCode] public TypeContext type() {
+			return GetRuleContext<TypeContext>(0);
+		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID() { return GetToken(CGrammarParser.ID, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
 			return GetRuleContext<ExpressionContext>(0);
@@ -910,26 +928,24 @@ public partial class CGrammarParser : Parser {
 			_localctx = new VariableDeclarationContext(_localctx);
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 140;
-			Match(T__0);
-			State = 141;
-			((VariableDeclarationContext)_localctx).ptr = Match(T__15);
-			State = 142;
+			State = 146;
+			type(0);
+			State = 147;
 			((VariableDeclarationContext)_localctx).name = Match(ID);
-			State = 145;
+			State = 150;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if (_la==T__16) {
+			if (_la==T__14) {
 				{
-				State = 143;
-				Match(T__16);
-				State = 144;
+				State = 148;
+				Match(T__14);
+				State = 149;
 				((VariableDeclarationContext)_localctx).value = expression(0);
 				}
 			}
 
-			State = 147;
-			Match(T__4);
+			State = 152;
+			Match(T__3);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1221,6 +1237,23 @@ public partial class CGrammarParser : Parser {
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitLogicalAndExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class IndexExpressionContext : ExpressionContext {
+		public ExpressionContext obj;
+		public ExpressionContext indexer;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		public IndexExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitIndexExpression(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
@@ -1610,7 +1643,7 @@ public partial class CGrammarParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 231;
+			State = 236;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,18,Context) ) {
 			case 1:
@@ -1619,12 +1652,12 @@ public partial class CGrammarParser : Parser {
 				Context = _localctx;
 				_prevctx = _localctx;
 
-				State = 150;
-				Match(T__1);
-				State = 151;
+				State = 155;
+				Match(T__0);
+				State = 156;
 				expression(0);
-				State = 152;
-				Match(T__3);
+				State = 157;
+				Match(T__2);
 				}
 				break;
 			case 2:
@@ -1632,7 +1665,7 @@ public partial class CGrammarParser : Parser {
 				_localctx = new ConstantExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 154;
+				State = 159;
 				constant();
 				}
 				break;
@@ -1641,12 +1674,12 @@ public partial class CGrammarParser : Parser {
 				_localctx = new AssignmentExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 155;
+				State = 160;
 				target();
-				State = 156;
-				Match(T__16);
-				State = 157;
-				expression(40);
+				State = 161;
+				Match(T__14);
+				State = 162;
+				expression(41);
 				}
 				break;
 			case 4:
@@ -1654,10 +1687,10 @@ public partial class CGrammarParser : Parser {
 				_localctx = new DereferenceExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 159;
+				State = 164;
 				Match(T__15);
-				State = 160;
-				expression(39);
+				State = 165;
+				expression(40);
 				}
 				break;
 			case 5:
@@ -1665,9 +1698,9 @@ public partial class CGrammarParser : Parser {
 				_localctx = new AddressOfExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 161;
-				Match(T__17);
-				State = 162;
+				State = 166;
+				Match(T__16);
+				State = 167;
 				target();
 				}
 				break;
@@ -1676,7 +1709,7 @@ public partial class CGrammarParser : Parser {
 				_localctx = new VariableExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 163;
+				State = 168;
 				Match(ID);
 				}
 				break;
@@ -1685,40 +1718,40 @@ public partial class CGrammarParser : Parser {
 				_localctx = new CallExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 164;
+				State = 169;
 				Match(ID);
-				State = 165;
-				Match(T__1);
-				State = 174;
+				State = 170;
+				Match(T__0);
+				State = 179;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 6755399449247748L) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 126100789582299138L) != 0)) {
 					{
-					State = 166;
+					State = 171;
 					((CallExpressionContext)_localctx)._expression = expression(0);
 					((CallExpressionContext)_localctx)._params.Add(((CallExpressionContext)_localctx)._expression);
-					State = 171;
+					State = 176;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
-					while (_la==T__2) {
+					while (_la==T__1) {
 						{
 						{
-						State = 167;
-						Match(T__2);
-						State = 168;
+						State = 172;
+						Match(T__1);
+						State = 173;
 						((CallExpressionContext)_localctx)._expression = expression(0);
 						((CallExpressionContext)_localctx)._params.Add(((CallExpressionContext)_localctx)._expression);
 						}
 						}
-						State = 173;
+						State = 178;
 						ErrorHandler.Sync(this);
 						_la = TokenStream.LA(1);
 					}
 					}
 				}
 
-				State = 176;
-				Match(T__3);
+				State = 181;
+				Match(T__2);
 				}
 				break;
 			case 8:
@@ -1726,9 +1759,9 @@ public partial class CGrammarParser : Parser {
 				_localctx = new NotExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 177;
-				Match(T__18);
-				State = 178;
+				State = 182;
+				Match(T__19);
+				State = 183;
 				expression(35);
 				}
 				break;
@@ -1737,9 +1770,9 @@ public partial class CGrammarParser : Parser {
 				_localctx = new InvertExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 179;
-				Match(T__19);
-				State = 180;
+				State = 184;
+				Match(T__20);
+				State = 185;
 				expression(34);
 				}
 				break;
@@ -1748,9 +1781,9 @@ public partial class CGrammarParser : Parser {
 				_localctx = new IncrementPrefixExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 181;
-				Match(T__20);
-				State = 182;
+				State = 186;
+				Match(T__21);
+				State = 187;
 				target();
 				}
 				break;
@@ -1759,9 +1792,9 @@ public partial class CGrammarParser : Parser {
 				_localctx = new DecrementPrefixExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 183;
-				Match(T__21);
-				State = 184;
+				State = 188;
+				Match(T__22);
+				State = 189;
 				target();
 				}
 				break;
@@ -1770,10 +1803,10 @@ public partial class CGrammarParser : Parser {
 				_localctx = new IncrementPostfixExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 185;
+				State = 190;
 				target();
-				State = 186;
-				Match(T__20);
+				State = 191;
+				Match(T__21);
 				}
 				break;
 			case 13:
@@ -1781,10 +1814,10 @@ public partial class CGrammarParser : Parser {
 				_localctx = new DecrementPostfixExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 188;
+				State = 193;
 				target();
-				State = 189;
-				Match(T__21);
+				State = 194;
+				Match(T__22);
 				}
 				break;
 			case 14:
@@ -1792,11 +1825,11 @@ public partial class CGrammarParser : Parser {
 				_localctx = new CompoundMultiplyExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 191;
+				State = 196;
 				target();
-				State = 192;
-				Match(T__38);
-				State = 193;
+				State = 197;
+				Match(T__39);
+				State = 198;
 				expression(11);
 				}
 				break;
@@ -1805,11 +1838,11 @@ public partial class CGrammarParser : Parser {
 				_localctx = new CompoundDivideExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 195;
+				State = 200;
 				target();
-				State = 196;
-				Match(T__39);
-				State = 197;
+				State = 201;
+				Match(T__40);
+				State = 202;
 				expression(10);
 				}
 				break;
@@ -1818,11 +1851,11 @@ public partial class CGrammarParser : Parser {
 				_localctx = new CompoundModulusExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 199;
+				State = 204;
 				target();
-				State = 200;
-				Match(T__40);
-				State = 201;
+				State = 205;
+				Match(T__41);
+				State = 206;
 				expression(9);
 				}
 				break;
@@ -1831,11 +1864,11 @@ public partial class CGrammarParser : Parser {
 				_localctx = new CompoundAddExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 203;
+				State = 208;
 				target();
-				State = 204;
-				Match(T__41);
-				State = 205;
+				State = 209;
+				Match(T__42);
+				State = 210;
 				expression(8);
 				}
 				break;
@@ -1844,11 +1877,11 @@ public partial class CGrammarParser : Parser {
 				_localctx = new CompoundSubtractExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 207;
+				State = 212;
 				target();
-				State = 208;
-				Match(T__42);
-				State = 209;
+				State = 213;
+				Match(T__43);
+				State = 214;
 				expression(7);
 				}
 				break;
@@ -1857,11 +1890,11 @@ public partial class CGrammarParser : Parser {
 				_localctx = new CompoundBitwiseAndExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 211;
+				State = 216;
 				target();
-				State = 212;
-				Match(T__43);
-				State = 213;
+				State = 217;
+				Match(T__44);
+				State = 218;
 				expression(6);
 				}
 				break;
@@ -1870,11 +1903,11 @@ public partial class CGrammarParser : Parser {
 				_localctx = new CompoundBitwiseOrExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 215;
+				State = 220;
 				target();
-				State = 216;
-				Match(T__44);
-				State = 217;
+				State = 221;
+				Match(T__45);
+				State = 222;
 				expression(5);
 				}
 				break;
@@ -1883,11 +1916,11 @@ public partial class CGrammarParser : Parser {
 				_localctx = new CompoundBitwiseXorExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 219;
+				State = 224;
 				target();
-				State = 220;
-				Match(T__45);
-				State = 221;
+				State = 225;
+				Match(T__46);
+				State = 226;
 				expression(4);
 				}
 				break;
@@ -1896,11 +1929,11 @@ public partial class CGrammarParser : Parser {
 				_localctx = new CompoundBitwiseLeftShiftExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 223;
+				State = 228;
 				target();
-				State = 224;
-				Match(T__46);
-				State = 225;
+				State = 229;
+				Match(T__47);
+				State = 230;
 				expression(3);
 				}
 				break;
@@ -1909,17 +1942,17 @@ public partial class CGrammarParser : Parser {
 				_localctx = new CompoundBitwiseRightShiftExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 227;
+				State = 232;
 				target();
-				State = 228;
-				Match(T__47);
-				State = 229;
+				State = 233;
+				Match(T__48);
+				State = 234;
 				expression(2);
 				}
 				break;
 			}
 			Context.Stop = TokenStream.LT(-1);
-			State = 295;
+			State = 305;
 			ErrorHandler.Sync(this);
 			_alt = Interpreter.AdaptivePredict(TokenStream,20,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
@@ -1928,7 +1961,7 @@ public partial class CGrammarParser : Parser {
 						TriggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					State = 293;
+					State = 303;
 					ErrorHandler.Sync(this);
 					switch ( Interpreter.AdaptivePredict(TokenStream,19,Context) ) {
 					case 1:
@@ -1936,11 +1969,11 @@ public partial class CGrammarParser : Parser {
 						_localctx = new MultiplyExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((MultiplyExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 233;
+						State = 238;
 						if (!(Precpred(Context, 29))) throw new FailedPredicateException(this, "Precpred(Context, 29)");
-						State = 234;
+						State = 239;
 						Match(T__15);
-						State = 235;
+						State = 240;
 						((MultiplyExpressionContext)_localctx).right = expression(30);
 						}
 						break;
@@ -1949,11 +1982,11 @@ public partial class CGrammarParser : Parser {
 						_localctx = new DivideExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((DivideExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 236;
+						State = 241;
 						if (!(Precpred(Context, 28))) throw new FailedPredicateException(this, "Precpred(Context, 28)");
-						State = 237;
-						Match(T__22);
-						State = 238;
+						State = 242;
+						Match(T__23);
+						State = 243;
 						((DivideExpressionContext)_localctx).right = expression(29);
 						}
 						break;
@@ -1962,11 +1995,11 @@ public partial class CGrammarParser : Parser {
 						_localctx = new ModulusExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((ModulusExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 239;
+						State = 244;
 						if (!(Precpred(Context, 27))) throw new FailedPredicateException(this, "Precpred(Context, 27)");
-						State = 240;
-						Match(T__23);
-						State = 241;
+						State = 245;
+						Match(T__24);
+						State = 246;
 						((ModulusExpressionContext)_localctx).right = expression(28);
 						}
 						break;
@@ -1975,11 +2008,11 @@ public partial class CGrammarParser : Parser {
 						_localctx = new AddExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((AddExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 242;
+						State = 247;
 						if (!(Precpred(Context, 26))) throw new FailedPredicateException(this, "Precpred(Context, 26)");
-						State = 243;
-						Match(T__24);
-						State = 244;
+						State = 248;
+						Match(T__25);
+						State = 249;
 						((AddExpressionContext)_localctx).right = expression(27);
 						}
 						break;
@@ -1988,11 +2021,11 @@ public partial class CGrammarParser : Parser {
 						_localctx = new SubtractExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((SubtractExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 245;
+						State = 250;
 						if (!(Precpred(Context, 25))) throw new FailedPredicateException(this, "Precpred(Context, 25)");
-						State = 246;
-						Match(T__25);
-						State = 247;
+						State = 251;
+						Match(T__26);
+						State = 252;
 						((SubtractExpressionContext)_localctx).right = expression(26);
 						}
 						break;
@@ -2001,11 +2034,11 @@ public partial class CGrammarParser : Parser {
 						_localctx = new LessThanExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((LessThanExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 248;
+						State = 253;
 						if (!(Precpred(Context, 24))) throw new FailedPredicateException(this, "Precpred(Context, 24)");
-						State = 249;
-						Match(T__26);
-						State = 250;
+						State = 254;
+						Match(T__27);
+						State = 255;
 						((LessThanExpressionContext)_localctx).right = expression(25);
 						}
 						break;
@@ -2014,11 +2047,11 @@ public partial class CGrammarParser : Parser {
 						_localctx = new GreaterThanExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((GreaterThanExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 251;
+						State = 256;
 						if (!(Precpred(Context, 23))) throw new FailedPredicateException(this, "Precpred(Context, 23)");
-						State = 252;
-						Match(T__27);
-						State = 253;
+						State = 257;
+						Match(T__28);
+						State = 258;
 						((GreaterThanExpressionContext)_localctx).right = expression(24);
 						}
 						break;
@@ -2027,11 +2060,11 @@ public partial class CGrammarParser : Parser {
 						_localctx = new LessThanOrEqualExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((LessThanOrEqualExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 254;
+						State = 259;
 						if (!(Precpred(Context, 22))) throw new FailedPredicateException(this, "Precpred(Context, 22)");
-						State = 255;
-						Match(T__28);
-						State = 256;
+						State = 260;
+						Match(T__29);
+						State = 261;
 						((LessThanOrEqualExpressionContext)_localctx).right = expression(23);
 						}
 						break;
@@ -2040,11 +2073,11 @@ public partial class CGrammarParser : Parser {
 						_localctx = new GreaterThanOrEqualExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((GreaterThanOrEqualExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 257;
+						State = 262;
 						if (!(Precpred(Context, 21))) throw new FailedPredicateException(this, "Precpred(Context, 21)");
-						State = 258;
-						Match(T__29);
-						State = 259;
+						State = 263;
+						Match(T__30);
+						State = 264;
 						((GreaterThanOrEqualExpressionContext)_localctx).right = expression(22);
 						}
 						break;
@@ -2053,11 +2086,11 @@ public partial class CGrammarParser : Parser {
 						_localctx = new EqualExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((EqualExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 260;
+						State = 265;
 						if (!(Precpred(Context, 20))) throw new FailedPredicateException(this, "Precpred(Context, 20)");
-						State = 261;
-						Match(T__30);
-						State = 262;
+						State = 266;
+						Match(T__31);
+						State = 267;
 						((EqualExpressionContext)_localctx).right = expression(21);
 						}
 						break;
@@ -2066,11 +2099,11 @@ public partial class CGrammarParser : Parser {
 						_localctx = new NotEqualExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((NotEqualExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 263;
+						State = 268;
 						if (!(Precpred(Context, 19))) throw new FailedPredicateException(this, "Precpred(Context, 19)");
-						State = 264;
-						Match(T__31);
-						State = 265;
+						State = 269;
+						Match(T__32);
+						State = 270;
 						((NotEqualExpressionContext)_localctx).right = expression(20);
 						}
 						break;
@@ -2079,11 +2112,11 @@ public partial class CGrammarParser : Parser {
 						_localctx = new BitwiseAndExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((BitwiseAndExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 266;
+						State = 271;
 						if (!(Precpred(Context, 18))) throw new FailedPredicateException(this, "Precpred(Context, 18)");
-						State = 267;
-						Match(T__17);
-						State = 268;
+						State = 272;
+						Match(T__16);
+						State = 273;
 						((BitwiseAndExpressionContext)_localctx).right = expression(19);
 						}
 						break;
@@ -2092,11 +2125,11 @@ public partial class CGrammarParser : Parser {
 						_localctx = new BitwiseOrExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((BitwiseOrExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 269;
+						State = 274;
 						if (!(Precpred(Context, 17))) throw new FailedPredicateException(this, "Precpred(Context, 17)");
-						State = 270;
-						Match(T__32);
-						State = 271;
+						State = 275;
+						Match(T__33);
+						State = 276;
 						((BitwiseOrExpressionContext)_localctx).right = expression(18);
 						}
 						break;
@@ -2105,11 +2138,11 @@ public partial class CGrammarParser : Parser {
 						_localctx = new BitwiseXorExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((BitwiseXorExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 272;
+						State = 277;
 						if (!(Precpred(Context, 16))) throw new FailedPredicateException(this, "Precpred(Context, 16)");
-						State = 273;
-						Match(T__33);
-						State = 274;
+						State = 278;
+						Match(T__34);
+						State = 279;
 						((BitwiseXorExpressionContext)_localctx).right = expression(17);
 						}
 						break;
@@ -2118,11 +2151,11 @@ public partial class CGrammarParser : Parser {
 						_localctx = new BitwiseLeftShiftExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((BitwiseLeftShiftExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 275;
+						State = 280;
 						if (!(Precpred(Context, 15))) throw new FailedPredicateException(this, "Precpred(Context, 15)");
-						State = 276;
-						Match(T__34);
-						State = 277;
+						State = 281;
+						Match(T__35);
+						State = 282;
 						((BitwiseLeftShiftExpressionContext)_localctx).right = expression(16);
 						}
 						break;
@@ -2131,11 +2164,11 @@ public partial class CGrammarParser : Parser {
 						_localctx = new BitwiseRightShiftExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((BitwiseRightShiftExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 278;
+						State = 283;
 						if (!(Precpred(Context, 14))) throw new FailedPredicateException(this, "Precpred(Context, 14)");
-						State = 279;
-						Match(T__35);
-						State = 280;
+						State = 284;
+						Match(T__36);
+						State = 285;
 						((BitwiseRightShiftExpressionContext)_localctx).right = expression(15);
 						}
 						break;
@@ -2144,11 +2177,11 @@ public partial class CGrammarParser : Parser {
 						_localctx = new LogicalAndExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((LogicalAndExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 281;
+						State = 286;
 						if (!(Precpred(Context, 13))) throw new FailedPredicateException(this, "Precpred(Context, 13)");
-						State = 282;
-						Match(T__36);
-						State = 283;
+						State = 287;
+						Match(T__37);
+						State = 288;
 						((LogicalAndExpressionContext)_localctx).right = expression(14);
 						}
 						break;
@@ -2157,11 +2190,11 @@ public partial class CGrammarParser : Parser {
 						_localctx = new LogicalOrExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((LogicalOrExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 284;
+						State = 289;
 						if (!(Precpred(Context, 12))) throw new FailedPredicateException(this, "Precpred(Context, 12)");
-						State = 285;
-						Match(T__37);
-						State = 286;
+						State = 290;
+						Match(T__38);
+						State = 291;
 						((LogicalOrExpressionContext)_localctx).right = expression(13);
 						}
 						break;
@@ -2170,22 +2203,37 @@ public partial class CGrammarParser : Parser {
 						_localctx = new TernaryExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((TernaryExpressionContext)_localctx).cond = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 287;
+						State = 292;
 						if (!(Precpred(Context, 1))) throw new FailedPredicateException(this, "Precpred(Context, 1)");
-						State = 288;
-						Match(T__48);
-						State = 289;
-						((TernaryExpressionContext)_localctx).then = expression(0);
-						State = 290;
+						State = 293;
 						Match(T__49);
-						State = 291;
+						State = 294;
+						((TernaryExpressionContext)_localctx).then = expression(0);
+						State = 295;
+						Match(T__50);
+						State = 296;
 						((TernaryExpressionContext)_localctx).@else = expression(2);
+						}
+						break;
+					case 20:
+						{
+						_localctx = new IndexExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((IndexExpressionContext)_localctx).obj = _prevctx;
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 298;
+						if (!(Precpred(Context, 36))) throw new FailedPredicateException(this, "Precpred(Context, 36)");
+						State = 299;
+						Match(T__17);
+						State = 300;
+						((IndexExpressionContext)_localctx).indexer = expression(0);
+						State = 301;
+						Match(T__18);
 						}
 						break;
 					}
 					} 
 				}
-				State = 297;
+				State = 307;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,20,Context);
 			}
@@ -2224,17 +2272,43 @@ public partial class CGrammarParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
+	public partial class HexConstantContext : ConstantContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HEX() { return GetToken(CGrammarParser.HEX, 0); }
+		public HexConstantContext(ConstantContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitHexConstant(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
 
 	[RuleVersion(0)]
 	public ConstantContext constant() {
 		ConstantContext _localctx = new ConstantContext(Context, State);
 		EnterRule(_localctx, 14, RULE_constant);
 		try {
-			_localctx = new IntConstantContext(_localctx);
-			EnterOuterAlt(_localctx, 1);
-			{
-			State = 298;
-			Match(INT);
+			State = 310;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case INT:
+				_localctx = new IntConstantContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 308;
+				Match(INT);
+				}
+				break;
+			case HEX:
+				_localctx = new HexConstantContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 309;
+				Match(HEX);
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -2244,6 +2318,94 @@ public partial class CGrammarParser : Parser {
 		}
 		finally {
 			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class TypeContext : Q1.Compiler.Context {
+		[System.Diagnostics.DebuggerNonUserCode] public TypeContext type() {
+			return GetRuleContext<TypeContext>(0);
+		}
+		public TypeContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_type; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICGrammarVisitor<TResult> typedVisitor = visitor as ICGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitType(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public TypeContext type() {
+		return type(0);
+	}
+
+	private TypeContext type(int _p) {
+		ParserRuleContext _parentctx = Context;
+		int _parentState = State;
+		TypeContext _localctx = new TypeContext(Context, _parentState);
+		TypeContext _prevctx = _localctx;
+		int _startState = 16;
+		EnterRecursionRule(_localctx, 16, RULE_type, _p);
+		try {
+			int _alt;
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 315;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case T__51:
+				{
+				State = 313;
+				Match(T__51);
+				}
+				break;
+			case T__52:
+				{
+				State = 314;
+				Match(T__52);
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+			Context.Stop = TokenStream.LT(-1);
+			State = 321;
+			ErrorHandler.Sync(this);
+			_alt = Interpreter.AdaptivePredict(TokenStream,23,Context);
+			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
+				if ( _alt==1 ) {
+					if ( ParseListeners!=null )
+						TriggerExitRuleEvent();
+					_prevctx = _localctx;
+					{
+					{
+					_localctx = new TypeContext(_parentctx, _parentState);
+					PushNewRecursionContext(_localctx, _startState, RULE_type);
+					State = 317;
+					if (!(Precpred(Context, 1))) throw new FailedPredicateException(this, "Precpred(Context, 1)");
+					State = 318;
+					Match(T__15);
+					}
+					} 
+				}
+				State = 323;
+				ErrorHandler.Sync(this);
+				_alt = Interpreter.AdaptivePredict(TokenStream,23,Context);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			UnrollRecursionContexts(_parentctx);
 		}
 		return _localctx;
 	}
@@ -2274,12 +2436,12 @@ public partial class CGrammarParser : Parser {
 	[RuleVersion(0)]
 	public TargetContext target() {
 		TargetContext _localctx = new TargetContext(Context, State);
-		EnterRule(_localctx, 16, RULE_target);
+		EnterRule(_localctx, 18, RULE_target);
 		try {
 			_localctx = new VariableTargetContext(_localctx);
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 300;
+			State = 324;
 			Match(ID);
 			}
 		}
@@ -2297,6 +2459,7 @@ public partial class CGrammarParser : Parser {
 	public override bool Sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 		switch (ruleIndex) {
 		case 6: return expression_sempred((ExpressionContext)_localctx, predIndex);
+		case 8: return type_sempred((TypeContext)_localctx, predIndex);
 		}
 		return true;
 	}
@@ -2321,113 +2484,128 @@ public partial class CGrammarParser : Parser {
 		case 16: return Precpred(Context, 13);
 		case 17: return Precpred(Context, 12);
 		case 18: return Precpred(Context, 1);
+		case 19: return Precpred(Context, 36);
+		}
+		return true;
+	}
+	private bool type_sempred(TypeContext _localctx, int predIndex) {
+		switch (predIndex) {
+		case 20: return Precpred(Context, 1);
 		}
 		return true;
 	}
 
 	private static int[] _serializedATN = {
-		4,1,54,303,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
-		7,7,2,8,7,8,1,0,4,0,20,8,0,11,0,12,0,21,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,
-		1,1,1,1,1,5,1,34,8,1,10,1,12,1,37,9,1,3,1,39,8,1,1,1,1,1,1,1,1,1,1,1,1,
-		1,1,1,1,1,1,1,1,1,5,1,51,8,1,10,1,12,1,54,9,1,3,1,56,8,1,1,1,1,1,3,1,60,
-		8,1,1,2,1,2,5,2,64,8,2,10,2,12,2,67,9,2,1,2,1,2,1,3,1,3,3,3,73,8,3,1,4,
-		1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,3,4,86,8,4,1,4,1,4,1,4,3,4,91,
-		8,4,1,4,1,4,3,4,95,8,4,1,4,1,4,3,4,99,8,4,1,4,1,4,1,4,1,4,1,4,1,4,3,4,
-		107,8,4,1,4,1,4,3,4,111,8,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,
-		4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,3,4,139,
-		8,4,1,5,1,5,1,5,1,5,1,5,3,5,146,8,5,1,5,1,5,1,6,1,6,1,6,1,6,1,6,1,6,1,
-		6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,5,6,170,8,6,10,6,
-		12,6,173,9,6,3,6,175,8,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,
+		4,1,58,327,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
+		7,7,2,8,7,8,2,9,7,9,1,0,4,0,22,8,0,11,0,12,0,23,1,0,1,0,1,1,1,1,1,1,1,
+		1,1,1,1,1,1,1,1,1,1,1,5,1,37,8,1,10,1,12,1,40,9,1,3,1,42,8,1,1,1,1,1,1,
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5,1,56,8,1,10,1,12,1,59,9,1,3,1,
+		61,8,1,1,1,1,1,1,1,3,1,66,8,1,1,2,1,2,5,2,70,8,2,10,2,12,2,73,9,2,1,2,
+		1,2,1,3,1,3,3,3,79,8,3,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,3,4,
+		92,8,4,1,4,1,4,1,4,3,4,97,8,4,1,4,1,4,3,4,101,8,4,1,4,1,4,3,4,105,8,4,
+		1,4,1,4,1,4,1,4,1,4,1,4,3,4,113,8,4,1,4,1,4,3,4,117,8,4,1,4,1,4,1,4,1,
+		4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,
+		1,4,1,4,1,4,1,4,1,4,3,4,145,8,4,1,5,1,5,1,5,1,5,3,5,151,8,5,1,5,1,5,1,
 		6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,
-		1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,
-		6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,3,6,232,8,6,1,6,1,6,1,6,1,6,1,6,1,6,
+		1,6,1,6,5,6,175,8,6,10,6,12,6,178,9,6,3,6,180,8,6,1,6,1,6,1,6,1,6,1,6,
 		1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,
 		6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,
+		1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,3,6,237,8,
+		6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,
 		1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,
-		6,1,6,5,6,294,8,6,10,6,12,6,297,9,6,1,7,1,7,1,8,1,8,1,8,0,1,12,9,0,2,4,
-		6,8,10,12,14,16,0,0,361,0,19,1,0,0,0,2,59,1,0,0,0,4,61,1,0,0,0,6,72,1,
-		0,0,0,8,138,1,0,0,0,10,140,1,0,0,0,12,231,1,0,0,0,14,298,1,0,0,0,16,300,
-		1,0,0,0,18,20,3,2,1,0,19,18,1,0,0,0,20,21,1,0,0,0,21,19,1,0,0,0,21,22,
-		1,0,0,0,22,23,1,0,0,0,23,24,5,0,0,1,24,1,1,0,0,0,25,26,5,1,0,0,26,27,5,
-		51,0,0,27,38,5,2,0,0,28,29,5,1,0,0,29,35,5,51,0,0,30,31,5,3,0,0,31,32,
-		5,1,0,0,32,34,5,51,0,0,33,30,1,0,0,0,34,37,1,0,0,0,35,33,1,0,0,0,35,36,
-		1,0,0,0,36,39,1,0,0,0,37,35,1,0,0,0,38,28,1,0,0,0,38,39,1,0,0,0,39,40,
-		1,0,0,0,40,41,5,4,0,0,41,60,5,5,0,0,42,43,5,1,0,0,43,44,5,51,0,0,44,55,
-		5,2,0,0,45,46,5,1,0,0,46,52,5,51,0,0,47,48,5,3,0,0,48,49,5,1,0,0,49,51,
-		5,51,0,0,50,47,1,0,0,0,51,54,1,0,0,0,52,50,1,0,0,0,52,53,1,0,0,0,53,56,
-		1,0,0,0,54,52,1,0,0,0,55,45,1,0,0,0,55,56,1,0,0,0,56,57,1,0,0,0,57,58,
-		5,4,0,0,58,60,3,4,2,0,59,25,1,0,0,0,59,42,1,0,0,0,60,3,1,0,0,0,61,65,5,
-		6,0,0,62,64,3,6,3,0,63,62,1,0,0,0,64,67,1,0,0,0,65,63,1,0,0,0,65,66,1,
-		0,0,0,66,68,1,0,0,0,67,65,1,0,0,0,68,69,5,7,0,0,69,5,1,0,0,0,70,73,3,8,
-		4,0,71,73,3,10,5,0,72,70,1,0,0,0,72,71,1,0,0,0,73,7,1,0,0,0,74,75,5,8,
-		0,0,75,76,3,12,6,0,76,77,5,5,0,0,77,139,1,0,0,0,78,79,5,9,0,0,79,80,5,
-		2,0,0,80,81,3,12,6,0,81,82,5,4,0,0,82,85,3,8,4,0,83,84,5,10,0,0,84,86,
-		3,8,4,0,85,83,1,0,0,0,85,86,1,0,0,0,86,139,1,0,0,0,87,88,5,11,0,0,88,90,
-		5,2,0,0,89,91,3,12,6,0,90,89,1,0,0,0,90,91,1,0,0,0,91,92,1,0,0,0,92,94,
-		5,5,0,0,93,95,3,12,6,0,94,93,1,0,0,0,94,95,1,0,0,0,95,96,1,0,0,0,96,98,
-		5,5,0,0,97,99,3,12,6,0,98,97,1,0,0,0,98,99,1,0,0,0,99,100,1,0,0,0,100,
-		101,5,4,0,0,101,139,3,8,4,0,102,103,5,11,0,0,103,104,5,2,0,0,104,106,3,
-		10,5,0,105,107,3,12,6,0,106,105,1,0,0,0,106,107,1,0,0,0,107,108,1,0,0,
-		0,108,110,5,5,0,0,109,111,3,12,6,0,110,109,1,0,0,0,110,111,1,0,0,0,111,
-		112,1,0,0,0,112,113,5,4,0,0,113,114,3,8,4,0,114,139,1,0,0,0,115,116,5,
-		12,0,0,116,117,5,2,0,0,117,118,3,12,6,0,118,119,5,4,0,0,119,120,3,8,4,
-		0,120,139,1,0,0,0,121,122,5,13,0,0,122,123,3,8,4,0,123,124,5,12,0,0,124,
-		125,5,2,0,0,125,126,3,12,6,0,126,127,5,4,0,0,127,128,5,5,0,0,128,139,1,
-		0,0,0,129,130,5,14,0,0,130,139,5,5,0,0,131,132,5,15,0,0,132,139,5,5,0,
-		0,133,134,3,12,6,0,134,135,5,5,0,0,135,139,1,0,0,0,136,139,3,4,2,0,137,
-		139,5,5,0,0,138,74,1,0,0,0,138,78,1,0,0,0,138,87,1,0,0,0,138,102,1,0,0,
-		0,138,115,1,0,0,0,138,121,1,0,0,0,138,129,1,0,0,0,138,131,1,0,0,0,138,
-		133,1,0,0,0,138,136,1,0,0,0,138,137,1,0,0,0,139,9,1,0,0,0,140,141,5,1,
-		0,0,141,142,5,16,0,0,142,145,5,51,0,0,143,144,5,17,0,0,144,146,3,12,6,
-		0,145,143,1,0,0,0,145,146,1,0,0,0,146,147,1,0,0,0,147,148,5,5,0,0,148,
-		11,1,0,0,0,149,150,6,6,-1,0,150,151,5,2,0,0,151,152,3,12,6,0,152,153,5,
-		4,0,0,153,232,1,0,0,0,154,232,3,14,7,0,155,156,3,16,8,0,156,157,5,17,0,
-		0,157,158,3,12,6,40,158,232,1,0,0,0,159,160,5,16,0,0,160,232,3,12,6,39,
-		161,162,5,18,0,0,162,232,3,16,8,0,163,232,5,51,0,0,164,165,5,51,0,0,165,
-		174,5,2,0,0,166,171,3,12,6,0,167,168,5,3,0,0,168,170,3,12,6,0,169,167,
-		1,0,0,0,170,173,1,0,0,0,171,169,1,0,0,0,171,172,1,0,0,0,172,175,1,0,0,
-		0,173,171,1,0,0,0,174,166,1,0,0,0,174,175,1,0,0,0,175,176,1,0,0,0,176,
-		232,5,4,0,0,177,178,5,19,0,0,178,232,3,12,6,35,179,180,5,20,0,0,180,232,
-		3,12,6,34,181,182,5,21,0,0,182,232,3,16,8,0,183,184,5,22,0,0,184,232,3,
-		16,8,0,185,186,3,16,8,0,186,187,5,21,0,0,187,232,1,0,0,0,188,189,3,16,
-		8,0,189,190,5,22,0,0,190,232,1,0,0,0,191,192,3,16,8,0,192,193,5,39,0,0,
-		193,194,3,12,6,11,194,232,1,0,0,0,195,196,3,16,8,0,196,197,5,40,0,0,197,
-		198,3,12,6,10,198,232,1,0,0,0,199,200,3,16,8,0,200,201,5,41,0,0,201,202,
-		3,12,6,9,202,232,1,0,0,0,203,204,3,16,8,0,204,205,5,42,0,0,205,206,3,12,
-		6,8,206,232,1,0,0,0,207,208,3,16,8,0,208,209,5,43,0,0,209,210,3,12,6,7,
-		210,232,1,0,0,0,211,212,3,16,8,0,212,213,5,44,0,0,213,214,3,12,6,6,214,
-		232,1,0,0,0,215,216,3,16,8,0,216,217,5,45,0,0,217,218,3,12,6,5,218,232,
-		1,0,0,0,219,220,3,16,8,0,220,221,5,46,0,0,221,222,3,12,6,4,222,232,1,0,
-		0,0,223,224,3,16,8,0,224,225,5,47,0,0,225,226,3,12,6,3,226,232,1,0,0,0,
-		227,228,3,16,8,0,228,229,5,48,0,0,229,230,3,12,6,2,230,232,1,0,0,0,231,
-		149,1,0,0,0,231,154,1,0,0,0,231,155,1,0,0,0,231,159,1,0,0,0,231,161,1,
-		0,0,0,231,163,1,0,0,0,231,164,1,0,0,0,231,177,1,0,0,0,231,179,1,0,0,0,
-		231,181,1,0,0,0,231,183,1,0,0,0,231,185,1,0,0,0,231,188,1,0,0,0,231,191,
-		1,0,0,0,231,195,1,0,0,0,231,199,1,0,0,0,231,203,1,0,0,0,231,207,1,0,0,
-		0,231,211,1,0,0,0,231,215,1,0,0,0,231,219,1,0,0,0,231,223,1,0,0,0,231,
-		227,1,0,0,0,232,295,1,0,0,0,233,234,10,29,0,0,234,235,5,16,0,0,235,294,
-		3,12,6,30,236,237,10,28,0,0,237,238,5,23,0,0,238,294,3,12,6,29,239,240,
-		10,27,0,0,240,241,5,24,0,0,241,294,3,12,6,28,242,243,10,26,0,0,243,244,
-		5,25,0,0,244,294,3,12,6,27,245,246,10,25,0,0,246,247,5,26,0,0,247,294,
-		3,12,6,26,248,249,10,24,0,0,249,250,5,27,0,0,250,294,3,12,6,25,251,252,
-		10,23,0,0,252,253,5,28,0,0,253,294,3,12,6,24,254,255,10,22,0,0,255,256,
-		5,29,0,0,256,294,3,12,6,23,257,258,10,21,0,0,258,259,5,30,0,0,259,294,
-		3,12,6,22,260,261,10,20,0,0,261,262,5,31,0,0,262,294,3,12,6,21,263,264,
-		10,19,0,0,264,265,5,32,0,0,265,294,3,12,6,20,266,267,10,18,0,0,267,268,
-		5,18,0,0,268,294,3,12,6,19,269,270,10,17,0,0,270,271,5,33,0,0,271,294,
-		3,12,6,18,272,273,10,16,0,0,273,274,5,34,0,0,274,294,3,12,6,17,275,276,
-		10,15,0,0,276,277,5,35,0,0,277,294,3,12,6,16,278,279,10,14,0,0,279,280,
-		5,36,0,0,280,294,3,12,6,15,281,282,10,13,0,0,282,283,5,37,0,0,283,294,
-		3,12,6,14,284,285,10,12,0,0,285,286,5,38,0,0,286,294,3,12,6,13,287,288,
-		10,1,0,0,288,289,5,49,0,0,289,290,3,12,6,0,290,291,5,50,0,0,291,292,3,
-		12,6,2,292,294,1,0,0,0,293,233,1,0,0,0,293,236,1,0,0,0,293,239,1,0,0,0,
-		293,242,1,0,0,0,293,245,1,0,0,0,293,248,1,0,0,0,293,251,1,0,0,0,293,254,
-		1,0,0,0,293,257,1,0,0,0,293,260,1,0,0,0,293,263,1,0,0,0,293,266,1,0,0,
-		0,293,269,1,0,0,0,293,272,1,0,0,0,293,275,1,0,0,0,293,278,1,0,0,0,293,
-		281,1,0,0,0,293,284,1,0,0,0,293,287,1,0,0,0,294,297,1,0,0,0,295,293,1,
-		0,0,0,295,296,1,0,0,0,296,13,1,0,0,0,297,295,1,0,0,0,298,299,5,52,0,0,
-		299,15,1,0,0,0,300,301,5,51,0,0,301,17,1,0,0,0,21,21,35,38,52,55,59,65,
-		72,85,90,94,98,106,110,138,145,171,174,231,293,295
+		6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,
+		1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,5,6,304,8,6,10,6,12,
+		6,307,9,6,1,7,1,7,3,7,311,8,7,1,8,1,8,1,8,3,8,316,8,8,1,8,1,8,5,8,320,
+		8,8,10,8,12,8,323,9,8,1,9,1,9,1,9,0,2,12,16,10,0,2,4,6,8,10,12,14,16,18,
+		0,0,388,0,21,1,0,0,0,2,65,1,0,0,0,4,67,1,0,0,0,6,78,1,0,0,0,8,144,1,0,
+		0,0,10,146,1,0,0,0,12,236,1,0,0,0,14,310,1,0,0,0,16,315,1,0,0,0,18,324,
+		1,0,0,0,20,22,3,2,1,0,21,20,1,0,0,0,22,23,1,0,0,0,23,21,1,0,0,0,23,24,
+		1,0,0,0,24,25,1,0,0,0,25,26,5,0,0,1,26,1,1,0,0,0,27,28,3,16,8,0,28,29,
+		5,55,0,0,29,41,5,1,0,0,30,31,3,16,8,0,31,38,5,55,0,0,32,33,5,2,0,0,33,
+		34,3,16,8,0,34,35,5,55,0,0,35,37,1,0,0,0,36,32,1,0,0,0,37,40,1,0,0,0,38,
+		36,1,0,0,0,38,39,1,0,0,0,39,42,1,0,0,0,40,38,1,0,0,0,41,30,1,0,0,0,41,
+		42,1,0,0,0,42,43,1,0,0,0,43,44,5,3,0,0,44,45,5,4,0,0,45,66,1,0,0,0,46,
+		47,3,16,8,0,47,48,5,55,0,0,48,60,5,1,0,0,49,50,3,16,8,0,50,57,5,55,0,0,
+		51,52,5,2,0,0,52,53,3,16,8,0,53,54,5,55,0,0,54,56,1,0,0,0,55,51,1,0,0,
+		0,56,59,1,0,0,0,57,55,1,0,0,0,57,58,1,0,0,0,58,61,1,0,0,0,59,57,1,0,0,
+		0,60,49,1,0,0,0,60,61,1,0,0,0,61,62,1,0,0,0,62,63,5,3,0,0,63,64,3,4,2,
+		0,64,66,1,0,0,0,65,27,1,0,0,0,65,46,1,0,0,0,66,3,1,0,0,0,67,71,5,5,0,0,
+		68,70,3,6,3,0,69,68,1,0,0,0,70,73,1,0,0,0,71,69,1,0,0,0,71,72,1,0,0,0,
+		72,74,1,0,0,0,73,71,1,0,0,0,74,75,5,6,0,0,75,5,1,0,0,0,76,79,3,8,4,0,77,
+		79,3,10,5,0,78,76,1,0,0,0,78,77,1,0,0,0,79,7,1,0,0,0,80,81,5,7,0,0,81,
+		82,3,12,6,0,82,83,5,4,0,0,83,145,1,0,0,0,84,85,5,8,0,0,85,86,5,1,0,0,86,
+		87,3,12,6,0,87,88,5,3,0,0,88,91,3,8,4,0,89,90,5,9,0,0,90,92,3,8,4,0,91,
+		89,1,0,0,0,91,92,1,0,0,0,92,145,1,0,0,0,93,94,5,10,0,0,94,96,5,1,0,0,95,
+		97,3,12,6,0,96,95,1,0,0,0,96,97,1,0,0,0,97,98,1,0,0,0,98,100,5,4,0,0,99,
+		101,3,12,6,0,100,99,1,0,0,0,100,101,1,0,0,0,101,102,1,0,0,0,102,104,5,
+		4,0,0,103,105,3,12,6,0,104,103,1,0,0,0,104,105,1,0,0,0,105,106,1,0,0,0,
+		106,107,5,3,0,0,107,145,3,8,4,0,108,109,5,10,0,0,109,110,5,1,0,0,110,112,
+		3,10,5,0,111,113,3,12,6,0,112,111,1,0,0,0,112,113,1,0,0,0,113,114,1,0,
+		0,0,114,116,5,4,0,0,115,117,3,12,6,0,116,115,1,0,0,0,116,117,1,0,0,0,117,
+		118,1,0,0,0,118,119,5,3,0,0,119,120,3,8,4,0,120,145,1,0,0,0,121,122,5,
+		11,0,0,122,123,5,1,0,0,123,124,3,12,6,0,124,125,5,3,0,0,125,126,3,8,4,
+		0,126,145,1,0,0,0,127,128,5,12,0,0,128,129,3,8,4,0,129,130,5,11,0,0,130,
+		131,5,1,0,0,131,132,3,12,6,0,132,133,5,3,0,0,133,134,5,4,0,0,134,145,1,
+		0,0,0,135,136,5,13,0,0,136,145,5,4,0,0,137,138,5,14,0,0,138,145,5,4,0,
+		0,139,140,3,12,6,0,140,141,5,4,0,0,141,145,1,0,0,0,142,145,3,4,2,0,143,
+		145,5,4,0,0,144,80,1,0,0,0,144,84,1,0,0,0,144,93,1,0,0,0,144,108,1,0,0,
+		0,144,121,1,0,0,0,144,127,1,0,0,0,144,135,1,0,0,0,144,137,1,0,0,0,144,
+		139,1,0,0,0,144,142,1,0,0,0,144,143,1,0,0,0,145,9,1,0,0,0,146,147,3,16,
+		8,0,147,150,5,55,0,0,148,149,5,15,0,0,149,151,3,12,6,0,150,148,1,0,0,0,
+		150,151,1,0,0,0,151,152,1,0,0,0,152,153,5,4,0,0,153,11,1,0,0,0,154,155,
+		6,6,-1,0,155,156,5,1,0,0,156,157,3,12,6,0,157,158,5,3,0,0,158,237,1,0,
+		0,0,159,237,3,14,7,0,160,161,3,18,9,0,161,162,5,15,0,0,162,163,3,12,6,
+		41,163,237,1,0,0,0,164,165,5,16,0,0,165,237,3,12,6,40,166,167,5,17,0,0,
+		167,237,3,18,9,0,168,237,5,55,0,0,169,170,5,55,0,0,170,179,5,1,0,0,171,
+		176,3,12,6,0,172,173,5,2,0,0,173,175,3,12,6,0,174,172,1,0,0,0,175,178,
+		1,0,0,0,176,174,1,0,0,0,176,177,1,0,0,0,177,180,1,0,0,0,178,176,1,0,0,
+		0,179,171,1,0,0,0,179,180,1,0,0,0,180,181,1,0,0,0,181,237,5,3,0,0,182,
+		183,5,20,0,0,183,237,3,12,6,35,184,185,5,21,0,0,185,237,3,12,6,34,186,
+		187,5,22,0,0,187,237,3,18,9,0,188,189,5,23,0,0,189,237,3,18,9,0,190,191,
+		3,18,9,0,191,192,5,22,0,0,192,237,1,0,0,0,193,194,3,18,9,0,194,195,5,23,
+		0,0,195,237,1,0,0,0,196,197,3,18,9,0,197,198,5,40,0,0,198,199,3,12,6,11,
+		199,237,1,0,0,0,200,201,3,18,9,0,201,202,5,41,0,0,202,203,3,12,6,10,203,
+		237,1,0,0,0,204,205,3,18,9,0,205,206,5,42,0,0,206,207,3,12,6,9,207,237,
+		1,0,0,0,208,209,3,18,9,0,209,210,5,43,0,0,210,211,3,12,6,8,211,237,1,0,
+		0,0,212,213,3,18,9,0,213,214,5,44,0,0,214,215,3,12,6,7,215,237,1,0,0,0,
+		216,217,3,18,9,0,217,218,5,45,0,0,218,219,3,12,6,6,219,237,1,0,0,0,220,
+		221,3,18,9,0,221,222,5,46,0,0,222,223,3,12,6,5,223,237,1,0,0,0,224,225,
+		3,18,9,0,225,226,5,47,0,0,226,227,3,12,6,4,227,237,1,0,0,0,228,229,3,18,
+		9,0,229,230,5,48,0,0,230,231,3,12,6,3,231,237,1,0,0,0,232,233,3,18,9,0,
+		233,234,5,49,0,0,234,235,3,12,6,2,235,237,1,0,0,0,236,154,1,0,0,0,236,
+		159,1,0,0,0,236,160,1,0,0,0,236,164,1,0,0,0,236,166,1,0,0,0,236,168,1,
+		0,0,0,236,169,1,0,0,0,236,182,1,0,0,0,236,184,1,0,0,0,236,186,1,0,0,0,
+		236,188,1,0,0,0,236,190,1,0,0,0,236,193,1,0,0,0,236,196,1,0,0,0,236,200,
+		1,0,0,0,236,204,1,0,0,0,236,208,1,0,0,0,236,212,1,0,0,0,236,216,1,0,0,
+		0,236,220,1,0,0,0,236,224,1,0,0,0,236,228,1,0,0,0,236,232,1,0,0,0,237,
+		305,1,0,0,0,238,239,10,29,0,0,239,240,5,16,0,0,240,304,3,12,6,30,241,242,
+		10,28,0,0,242,243,5,24,0,0,243,304,3,12,6,29,244,245,10,27,0,0,245,246,
+		5,25,0,0,246,304,3,12,6,28,247,248,10,26,0,0,248,249,5,26,0,0,249,304,
+		3,12,6,27,250,251,10,25,0,0,251,252,5,27,0,0,252,304,3,12,6,26,253,254,
+		10,24,0,0,254,255,5,28,0,0,255,304,3,12,6,25,256,257,10,23,0,0,257,258,
+		5,29,0,0,258,304,3,12,6,24,259,260,10,22,0,0,260,261,5,30,0,0,261,304,
+		3,12,6,23,262,263,10,21,0,0,263,264,5,31,0,0,264,304,3,12,6,22,265,266,
+		10,20,0,0,266,267,5,32,0,0,267,304,3,12,6,21,268,269,10,19,0,0,269,270,
+		5,33,0,0,270,304,3,12,6,20,271,272,10,18,0,0,272,273,5,17,0,0,273,304,
+		3,12,6,19,274,275,10,17,0,0,275,276,5,34,0,0,276,304,3,12,6,18,277,278,
+		10,16,0,0,278,279,5,35,0,0,279,304,3,12,6,17,280,281,10,15,0,0,281,282,
+		5,36,0,0,282,304,3,12,6,16,283,284,10,14,0,0,284,285,5,37,0,0,285,304,
+		3,12,6,15,286,287,10,13,0,0,287,288,5,38,0,0,288,304,3,12,6,14,289,290,
+		10,12,0,0,290,291,5,39,0,0,291,304,3,12,6,13,292,293,10,1,0,0,293,294,
+		5,50,0,0,294,295,3,12,6,0,295,296,5,51,0,0,296,297,3,12,6,2,297,304,1,
+		0,0,0,298,299,10,36,0,0,299,300,5,18,0,0,300,301,3,12,6,0,301,302,5,19,
+		0,0,302,304,1,0,0,0,303,238,1,0,0,0,303,241,1,0,0,0,303,244,1,0,0,0,303,
+		247,1,0,0,0,303,250,1,0,0,0,303,253,1,0,0,0,303,256,1,0,0,0,303,259,1,
+		0,0,0,303,262,1,0,0,0,303,265,1,0,0,0,303,268,1,0,0,0,303,271,1,0,0,0,
+		303,274,1,0,0,0,303,277,1,0,0,0,303,280,1,0,0,0,303,283,1,0,0,0,303,286,
+		1,0,0,0,303,289,1,0,0,0,303,292,1,0,0,0,303,298,1,0,0,0,304,307,1,0,0,
+		0,305,303,1,0,0,0,305,306,1,0,0,0,306,13,1,0,0,0,307,305,1,0,0,0,308,311,
+		5,56,0,0,309,311,5,54,0,0,310,308,1,0,0,0,310,309,1,0,0,0,311,15,1,0,0,
+		0,312,313,6,8,-1,0,313,316,5,52,0,0,314,316,5,53,0,0,315,312,1,0,0,0,315,
+		314,1,0,0,0,316,321,1,0,0,0,317,318,10,1,0,0,318,320,5,16,0,0,319,317,
+		1,0,0,0,320,323,1,0,0,0,321,319,1,0,0,0,321,322,1,0,0,0,322,17,1,0,0,0,
+		323,321,1,0,0,0,324,325,5,55,0,0,325,19,1,0,0,0,24,23,38,41,57,60,65,71,
+		78,91,96,100,104,112,116,144,150,176,179,236,303,305,310,315,321
 	};
 
 	public static readonly ATN _ATN =

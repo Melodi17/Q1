@@ -274,6 +274,13 @@ public interface ICGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitLogicalAndExpression([NotNull] CGrammarParser.LogicalAndExpressionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>indexExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitIndexExpression([NotNull] CGrammarParser.IndexExpressionContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>invertExpression</c>
 	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
 	/// </summary>
@@ -448,6 +455,19 @@ public interface ICGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitIntConstant([NotNull] CGrammarParser.IntConstantContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>hexConstant</c>
+	/// labeled alternative in <see cref="CGrammarParser.constant"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitHexConstant([NotNull] CGrammarParser.HexConstantContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="CGrammarParser.type"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitType([NotNull] CGrammarParser.TypeContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>variableTarget</c>
 	/// labeled alternative in <see cref="CGrammarParser.target"/>.

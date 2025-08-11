@@ -4,6 +4,8 @@ options {
     contextSuperClass = Q1.Compiler.Context;
 }
 
+HEX: '0x' [0-9a-fA-F];
+
 ID: [a-zA-Z_][a-zA-Z0-9_]*;
 INT: [0-9]+;
 WS: [ \t\r\n]+ -> skip;
@@ -15,8 +17,8 @@ program
     ;
     
 function
-    : 'int' name=ID '(' ( types+='int' params+=ID (',' types+='int' params+=ID )* )? ')' ';' #functionPrototype
-    | 'int' name=ID '(' ( types+='int' params+=ID (',' types+='int' params+=ID )* )? ')' block #functionDefinition
+    : rtype=type name=ID '(' ( types+=type params+=ID (',' types+=type params+=ID )* )? ')' ';' #functionPrototype
+    | rtype=type name=ID '(' ( types+=type params+=ID (',' types+=type params+=ID )* )? ')' block #functionDefinition
     ;
    
 block
@@ -44,7 +46,7 @@ statement
     
     
 declaration
-    : 'int' ptr='*' name=ID ('=' value=expression)? ';' #variableDeclaration
+    : type name=ID ('=' value=expression)? ';' #variableDeclaration
     ;
 
 expression
@@ -57,6 +59,7 @@ expression
     | ID #variableExpression
     
     | ID '(' ( params+=expression (',' params+=expression )* )? ')' #callExpression
+    | obj=expression '[' indexer=expression ']' #indexExpression
     
     | '!' expression #notExpression
     | '~' expression #invertExpression
@@ -109,6 +112,13 @@ expression
     
 constant
     : INT # intConstant
+    | HEX # hexConstant
+    ;
+    
+type
+    : 'int' #intType
+    | 'char' #charType
+    | type '*' #pointerType
     ;
     
 target

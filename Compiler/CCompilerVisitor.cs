@@ -268,6 +268,13 @@ public class CCompilerVisitor : CGrammarBaseVisitor<string?>
             throw new CompilerException($"Invalid integer value: {valueString}");
     }
 
+    public override string? VisitHexConstant(CGrammarParser.HexConstantContext context)
+    {
+        string valueString = context.HEX().GetText();
+        valueString = valueString[2..]; // Remove 0x
+        return $"${valueString}";
+    }
+
     public override string? VisitNotExpression(CGrammarParser.NotExpressionContext context)
     {
         string? value = this.Visit(context.expression());
@@ -890,4 +897,10 @@ public class CCompilerVisitor : CGrammarBaseVisitor<string?>
         }
         return result;
     }
+}
+
+public class CType
+{
+    public string
+    public int Size;
 }
