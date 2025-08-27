@@ -4,13 +4,16 @@ options {
     contextSuperClass = Q1.Compiler.Context;
 }
 
-HEX: '0x' [0-9a-fA-F];
+HEX: '0x' [0-9a-fA-F]+;
 
 ID: [a-zA-Z_][a-zA-Z0-9_]*;
 INT: [0-9]+;
 WS: [ \t\r\n]+ -> skip;
 COMMENT: '//' .*? ([\n] | EOF) -> channel(HIDDEN);
+DIRECTIVE: '#' .*? ([\n] | EOF) -> channel(HIDDEN);
 
+LETTER: '\'' . '\'';
+STRING: '"' .*? '"';
 
 program
     : function+ EOF
@@ -52,6 +55,7 @@ declaration
 expression
     : '(' expression ')' #parenthesizedExpression
 //    | left=expression ',' right=expression #commaExpression
+    | 'new' type '[' INT? ']' '{' ( params+=expression (',' params+=expression )* )? '}' #arrayExpression
     | constant #constantExpression
     | target '=' expression #assignmentExpression
     | '*' expression #dereferenceExpression
@@ -59,7 +63,7 @@ expression
     | ID #variableExpression
     
     | ID '(' ( params+=expression (',' params+=expression )* )? ')' #callExpression
-    | obj=expression '[' indexer=expression ']' #indexExpression
+    | obj=target '[' indexer=expression ']' #indexExpression
     
     | '!' expression #notExpression
     | '~' expression #invertExpression
@@ -113,14 +117,17 @@ expression
 constant
     : INT # intConstant
     | HEX # hexConstant
+    | LETTER # charConstant
+    | STRING # stringConstant
     ;
     
 type
-    : 'int' #intType
-    | 'char' #charType
-    | type '*' #pointerType
+    : 'int'
+    | 'char'
+    | type '*'
     ;
     
 target
     : ID # variableTarget
+    | obj=target '[' indexer=expression ']' #indexerTarget
     ;

@@ -309,6 +309,13 @@ public interface ICGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitBitwiseXorExpression([NotNull] CGrammarParser.BitwiseXorExpressionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>arrayExpression</c>
+	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitArrayExpression([NotNull] CGrammarParser.ArrayExpressionContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>constantExpression</c>
 	/// labeled alternative in <see cref="CGrammarParser.expression"/>.
 	/// </summary>
@@ -463,11 +470,32 @@ public interface ICGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitHexConstant([NotNull] CGrammarParser.HexConstantContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>charConstant</c>
+	/// labeled alternative in <see cref="CGrammarParser.constant"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCharConstant([NotNull] CGrammarParser.CharConstantContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>stringConstant</c>
+	/// labeled alternative in <see cref="CGrammarParser.constant"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitStringConstant([NotNull] CGrammarParser.StringConstantContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="CGrammarParser.type"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitType([NotNull] CGrammarParser.TypeContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>indexerTarget</c>
+	/// labeled alternative in <see cref="CGrammarParser.target"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitIndexerTarget([NotNull] CGrammarParser.IndexerTargetContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>variableTarget</c>
 	/// labeled alternative in <see cref="CGrammarParser.target"/>.

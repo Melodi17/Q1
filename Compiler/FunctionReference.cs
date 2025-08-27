@@ -2,15 +2,16 @@ namespace Q1.Compiler;
 
 using System.Reflection.Metadata;
 using System.Text;
+using visitors;
 
 public class FunctionReference
 {
     // TODO: Implement return type
     public string                 Name;
-    public string                 Type;
+    public CType                 Type;
     public List<FunctionOverload> Overloads = new();
 
-    public FunctionReference(string name, string type)
+    public FunctionReference(string name, CType type)
     {
         this.Type = type;
         this.Name = name;
@@ -18,7 +19,7 @@ public class FunctionReference
 
     public string GetBranchName(FunctionOverload overload)
     {
-        List<(string paramName, string paramType)> parameters = overload
+        List<(string paramName, CType paramType)> parameters = overload
             .ParameterNames
             .Zip(overload.ParameterTypes)
             .ToList();
@@ -37,7 +38,7 @@ public class FunctionReference
 
     public string GetBranchFriendlyName(FunctionOverload overload)
     {
-        List<(string paramName, string paramType)> parameters = overload
+        List<(string paramName, CType paramType)> parameters = overload
             .ParameterNames
             .Zip(overload.ParameterTypes)
             .ToList();
@@ -54,7 +55,7 @@ public class FunctionReference
         return branchName.ToString();
     }
 
-    public FunctionOverload CreateOverloadWithBody(List<string> parameterNames, List<string> parameterTypes)
+    public FunctionOverload CreateOverloadWithBody(List<string> parameterNames, List<CType> parameterTypes)
     {
         FunctionOverload? existingOverload = this.Overloads
             .FirstOrDefault(x => x.ParamsMatch(parameterNames, parameterTypes));
@@ -76,7 +77,7 @@ public class FunctionReference
         }
     }
 
-    public FunctionOverload CreateOverloadWithoutBody(List<string> parameterNames, List<string> parameterTypes)
+    public FunctionOverload CreateOverloadWithoutBody(List<string> parameterNames, List<CType> parameterTypes)
     {
         FunctionOverload? existingOverload = this.Overloads
             .FirstOrDefault(x => x.ParamsMatch(parameterNames, parameterTypes));
@@ -109,19 +110,18 @@ public class FunctionReference
 
 public class FunctionOverload
 {
-    // TODO: Implement return type
-    public List<string> ParameterTypes;
+    public List<CType> ParameterTypes;
     public List<string> ParameterNames;
     public bool         BodyImplemented;
 
-    public FunctionOverload(List<string> parameterNames, List<string> parameterTypes, bool bodyImplemented)
+    public FunctionOverload(List<string> parameterNames, List<CType> parameterTypes, bool bodyImplemented)
     {
         this.ParameterTypes  = parameterTypes;
         this.ParameterNames  = parameterNames;
         this.BodyImplemented = bodyImplemented;
     }
 
-    public bool ParamsMatch(List<string> parameterNames, List<string> parameterTypes)
+    public bool ParamsMatch(List<string> parameterNames, List<CType> parameterTypes)
     {
         return this.ParameterNames.SequenceEqual(parameterNames)
                && this.ParameterTypes.SequenceEqual(parameterTypes);

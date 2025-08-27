@@ -2,7 +2,7 @@ namespace Q1.Assembler;
 
 using CommandLine;
 
-public class Options
+public class AssemblerOptions
 {
     [Option('i', "input", Required = true, HelpText = "Input file to assemble.")]
     public string InputFile { get; set; }

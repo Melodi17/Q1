@@ -6,15 +6,14 @@ public class Program
 {
     static void Main(string[] args)
     {
-        Parser.Default.ParseArguments<Options>(args).WithParsed(Program.Main);
+        Parser.Default.ParseArguments<AssemblerOptions>(args).WithParsed(Program.Main);
     }
 
-    static void Main(Options options)
+    public static void Main(AssemblerOptions assemblerOptions)
     {
-        Environment.CurrentDirectory = Path.GetDirectoryName(options.InputFile) ?? Environment.CurrentDirectory;
-        options.InputFile = Path.GetFileName(options.InputFile);
+        assemblerOptions.InputFile = assemblerOptions.InputFile;
         
-        string[] input = File.ReadAllLines(options.InputFile);
+        string[] input = File.ReadAllLines(assemblerOptions.InputFile);
 
         try
         {
@@ -23,9 +22,9 @@ public class Program
             if (bin.Length > 8 * 1024)
                 throw new AssemblerException("Assembled binary exceeds maximum size of 8KB.");
 
-            File.WriteAllBytes(options.OutputFile, bin);
+            File.WriteAllBytes(assemblerOptions.OutputFile, bin);
 
-            Console.WriteLine($"Assembled {options.InputFile} to {options.OutputFile} ({bin.Length} bytes)");
+            Console.WriteLine($"Assembled {assemblerOptions.InputFile} to {assemblerOptions.OutputFile} ({bin.Length} bytes)");
         }
         catch (AssemblerException ex)
         {

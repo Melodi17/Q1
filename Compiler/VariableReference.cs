@@ -1,13 +1,15 @@
 namespace Q1.Compiler;
 
+using visitors;
+
 public class VariableReference
 {
     public int Address;
-    public int Size;
+    public CType Type;
     
-    public VariableReference(int address, int size)
+    public VariableReference(int address, CType type)
     {
         this.Address = address;
-        this.Size    = size;
+        this.Type    = type;
     }
 }

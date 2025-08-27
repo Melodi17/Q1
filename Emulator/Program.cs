@@ -7,21 +7,21 @@ using Chip;
 using CommandLine;
 using Microsoft.Xna.Framework;
 
-internal class Program
+public class Program
 {
     public static void Main(string[] args)
     {
-        Parser.Default.ParseArguments<Options>(args).WithParsed(Program.Main);
+        Parser.Default.ParseArguments<EmulatorOptions>(args).WithParsed(Program.Main);
     }
 
-    static void Main(Options options)
+    public static void Main(EmulatorOptions emulatorOptions)
     {
         Q1Cpu cpu = new();
         Bus bus = new(u16.MinValue, u16.MaxValue);
         RamDevice rom = new(Q1Layout.Rom.start, Q1Layout.Rom.size);
-        File.ReadAllBytes(options.InputFile).CopyTo(rom.Memory, 0);
+        File.ReadAllBytes(emulatorOptions.InputFile).CopyTo(rom.Memory, 0);
         
-        DisplayDevice display = new(16, 64, 32, Q1Layout.Display);
+        DisplayDevice display = new(Q1Layout.DisplayPaletteSize, Q1Layout.DisplayWidth, Q1Layout.DisplayHeight, Q1Layout.Display.start);
         display.SetPalette([
             Color.Red,
             Color.Green,
@@ -40,6 +40,8 @@ internal class Program
             Color.LightBlue,
             Color.LightGreen
         ]);
+
+        HIDDevice hid = new(Q1Layout.Hid.start);
         
         RamDevice memory = new(Q1Layout.Memory.start, Q1Layout.Memory.size);
         
@@ -47,6 +49,7 @@ internal class Program
         rom.AttachToBus(bus);
         display.AttachToBus(bus);
         memory.AttachToBus(bus);
+        hid.AttachToBus(bus);
 
         Thread t = new(() =>
         {
@@ -65,12 +68,13 @@ internal class Program
         t.IsBackground = true;
         t.Start();
 
-        using DisplayEngine game = new(64, 32, 10,
+        using DisplayEngine game = new(Q1Layout.DisplayWidth, Q1Layout.DisplayHeight, 5,
+            hid,
             tex =>
             {
                 display.OutputTexture = tex;
                 Console.WriteLine("Display surface initialized.");
-            }, () => display.Clock(), () => cpu.AbortRequested);
+            }, () => display.Clock(), () => false);
         game.Run();
         
         Console.WriteLine("Display surface closed. Waiting for CPU thread to finish...");
