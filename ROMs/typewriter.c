@@ -1,5 +1,7 @@
 #load "font.bin"
-#include "lib.c"
+#include "std.c"
+#include "screen.c"
+#include "hid.c"
 
 int drawChar(int ch, int x, int y, int color)
 {
@@ -14,8 +16,8 @@ int drawChar(int ch, int x, int y, int color)
         for (int xOff = 0; xOff < 8; xOff++)
         {
             int bit = (row >> (7 - xOff)) & 1;
-            int pix = bit ? 8 : color;
-            setPixel(x + xOff, y + yOff, pix);
+            int pix = bit ? COLOR_BLACK : color;
+            screen_setPixel(x + xOff, y + yOff, pix);
         }
     }
 }
@@ -45,20 +47,20 @@ int main()
         {
             x = 0;
             y = 0;
-            clear(8);
+            screen_clear(COLOR_BLACK);
         }
 
-        int sk = readKey();
-        while (getKeyState(sk)) { }
+        int sk = hid_waitForPressedKey();
+        while (hid_getKeyState(sk)) { }
 
-        if (sk == SK_NL)
+        if (sk == SK_NEWLINE)
         {
             y += 8;
             x = 0;
             continue;
         }
 
-        if (sk == SK_BS)
+        if (sk == SK_BACKSPACE)
         {
             x -= 8;
             if (x < 0)
@@ -66,8 +68,11 @@ int main()
             drawChar(' ', x, y, 1);
             continue;
         }
+
+        if (hid_getKeyState(SK_SHIFT))
+            sk += ('a' - 'A');
         
-        drawChar(sk, x, y, 1);
+        drawChar(sk, x, y, COLOR_RED);
         x += 8;
     }
 }

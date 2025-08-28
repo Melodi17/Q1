@@ -1,23 +1,25 @@
-#include "lib.c"
+#include "std.c"
+#include "hid.c"
+#include "screen.c"
 
 int main()
 {
 	int color = 0;
     while (true)
     {
-      	int mouseIndex = getMouseIndex();
-		int mouseState = getMouseState();
+      	int mouseIndex = hid_getMouseIndex();
+		int mouseState = hid_getMouseState();
 
         if (mouseState & MS_LEFT)
-            setPixel(mouseIndex, (color % 3) + 1);
+            screen_setPixel(mouseIndex, (color % 3) + 1);
 
-        if (getKeyState(SK_C))
-            clear(COLOR_BLACK);
+        if (hid_getKeyState(SK_C))
+            screen_clear(COLOR_BLACK);
 
- 		if (getKeyState(SK_A))
+ 		if (hid_getKeyState(SK_A))
 		{
             color++;
-			while (getKeyState(SK_A)) { }
+			while (hid_getKeyState(SK_A)) { }
 		}
     }
 }

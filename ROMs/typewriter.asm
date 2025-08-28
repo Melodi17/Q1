@@ -1,6 +1,6 @@
     jmp _main
     .include "font.bin"
-_setPixel_int_x__int_y__int_c:; int setPixel(int x, int y, int c)
+_screen_setPixel_int_x__int_y__int_c:; int screen_setPixel(int x, int y, int c)
     pop V0                    ; preserve function return address
     pop [$71FF]               ; param int x
     pop [$7201]               ; param int y
@@ -26,7 +26,7 @@ _setPixel_int_x__int_y__int_c:; int setPixel(int x, int y, int c)
     mov 0, V0                 ; fallback return 0
     ret
 
-_setPixel_int_i__int_c:       ; int setPixel(int i, int c)
+_screen_setPixel_int_i__int_c:; int screen_setPixel(int i, int c)
     pop V0                    ; preserve function return address
     pop [$7209]               ; param int i
     pop [$720B]               ; param int c
@@ -42,7 +42,7 @@ _setPixel_int_i__int_c:       ; int setPixel(int i, int c)
     mov 0, V0                 ; fallback return 0
     ret
 
-_clear_int_c:                 ; int clear(int c)
+_screen_clear_int_c:          ; int screen_clear(int c)
     pop V0                    ; preserve function return address
     pop [$720F]               ; param int c
     push V0                   ; restore function return address
@@ -75,11 +75,11 @@ _end_2:
     mov 0, V0                 ; fallback return 0
     ret
 
-_getKeyState_int_scanCode:    ; int getKeyState(int scanCode)
+_hid_getKeyState_int_scanCode:; int hid_getKeyState(int scanCode)
     pop V0                    ; preserve function return address
     pop [$7215]               ; param int scanCode
     push V0                   ; restore function return address
-    mov $6033, [$7217]        ; int hid = $6033
+    mov $6033, [$7217]        ; int sk_table = $6033
     push [$7215]              ; left operand
     mov 8, V1                 ; right operand
     pop V0                    ; get left operand back
@@ -119,7 +119,7 @@ _getKeyState_int_scanCode:    ; int getKeyState(int scanCode)
     mov 0, V0                 ; fallback return 0
     ret
 
-_getPressedKey:               ; int getPressedKey()
+_hid_getPressedKey:           ; int hid_getPressedKey()
     mov 0, [$721F]            ; int sk = 0
 _body_3:
     push [$721F]              ; left operand
@@ -130,7 +130,7 @@ _body_3:
     bz
     jmp _end_4                ; if for condition fails, jump to end
     push [$721F]              ; arg int scanCode
-    call _getKeyState_int_scanCode; int getKeyState(int scanCode)
+    call _hid_getKeyState_int_scanCode; int hid_getKeyState(int scanCode)
     cmp V0, 0                 ; logical and
     not
     bz
@@ -163,12 +163,12 @@ _end_4:
     mov 0, V0                 ; fallback return 0
     ret
 
-_readKey:                     ; int readKey()
+_hid_waitForPressedKey:       ; int hid_waitForPressedKey()
 _body_8:
     not 1
     bz
     jmp _end_9                ; if while condition fails, jump to end
-    call _getPressedKey       ; int getPressedKey()
+    call _hid_getPressedKey   ; int hid_getPressedKey()
     mov V0, [$7221]           ; int sk = V0
     push [$7221]              ; left operand
     mov 0, V1                 ; right operand
@@ -186,14 +186,14 @@ _end_9:
     mov 0, V0                 ; fallback return 0
     ret
 
-_getMouseIndex:               ; int getMouseIndex()
+_hid_getMouseIndex:           ; int hid_getMouseIndex()
     mov $602F, V0             ; move pointer into register for dereference
     mov [V0], V0              ; return value
     ret
     mov 0, V0                 ; fallback return 0
     ret
 
-_getMouseState:               ; int getMouseState()
+_hid_getMouseState:           ; int hid_getMouseState()
     push $602F                ; left operand
     mov 2, V1                 ; right operand
     pop V0                    ; get left operand back
@@ -283,7 +283,7 @@ _end_16:
     pop V0                    ; get left operand back
     add V0, V1                ; compute addition
     push AX                   ; arg int c
-    call _setPixel_int_x__int_y__int_c; int setPixel(int x, int y, int c)
+    call _screen_setPixel_int_x__int_y__int_c; int screen_setPixel(int x, int y, int c)
     push [$7233]              ; i++
     inc [$7233]
     pop V0
@@ -383,13 +383,13 @@ _end_23:
     mov 0, [$7247]            ; [$7247] = 0
     mov 0, [$7249]            ; [$7249] = 0
     push 8                    ; arg int c
-    call _clear_int_c         ; int clear(int c)
+    call _screen_clear_int_c  ; int screen_clear(int c)
 _end_24:
-    call _readKey             ; int readKey()
+    call _hid_waitForPressedKey; int hid_waitForPressedKey()
     mov V0, [$724B]           ; int sk = V0
 _body_25:
     push [$724B]              ; arg int scanCode
-    call _getKeyState_int_scanCode; int getKeyState(int scanCode)
+    call _hid_getKeyState_int_scanCode; int hid_getKeyState(int scanCode)
     not V0
     bz
     jmp _end_26               ; if while condition fails, jump to end
@@ -442,6 +442,23 @@ _end_29:
     call _drawChar_int_ch__int_x__int_y__int_color; int drawChar(int ch, int x, int y, int color)
     jmp _body_19              ; continue
 _end_28:
+    push 160                  ; arg int scanCode
+    call _hid_getKeyState_int_scanCode; int hid_getKeyState(int scanCode)
+    not V0
+    bz                        ; check if condition
+    jmp _end_30               ; if succeeds, continue, else jump to end
+    push [$724B]              ; left operand
+    push 97                   ; left operand
+    mov 65, V1                ; right operand
+    pop V0                    ; get left operand back
+    sub V0, V1                ; compute subtraction
+    mov AX, V1                ; right operand
+    pop V0                    ; get left operand back
+    add V0, V1                ; compute addition
+    push AX                   ; computation results
+    pop V1                    ; get computation results back
+    mov V1, [$724B]           ; store back into left param
+_end_30:
     push 1                    ; arg int ch
     push [$7249]              ; arg int x
     push [$7247]              ; arg int y

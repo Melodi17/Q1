@@ -50,7 +50,7 @@ public static class Preprocessor
             }
 
             // expand macros
-            foreach (KeyValuePair<string, string> kvp in Defines)
+            foreach (KeyValuePair<string, string> kvp in Defines.OrderByDescending(k => k.Key.Length))
                 line = line.Replace(kvp.Key, kvp.Value);
 
             output.Add(line);
