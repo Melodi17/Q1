@@ -26,7 +26,6 @@ public static class Preprocessor
 
             if (line.StartsWith("#include"))
             {
-                // simple format: #include "file"
                 Match match = Regex.Match(line, "#include\\s+\"([^\"]+)\"");
                 if (match.Success)
                 {
@@ -37,7 +36,6 @@ public static class Preprocessor
             }
             else if (line.StartsWith("#define"))
             {
-                // simple format: #define NAME VALUE
                 Match match = Regex.Match(line, "#define\\s+(\\w+)\\s+(.*)");
                 if (match.Success)
                     Defines[match.Groups[1].Value] = match.Groups[2].Value;

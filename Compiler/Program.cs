@@ -2,7 +2,6 @@
 
 using System.Text;
 using Antlr4.Runtime;
-using Antlr4.Runtime.Misc;
 using CommandLine;
 using visitors;
 using Parser = CommandLine.Parser;
@@ -41,33 +40,22 @@ public class Program
             IEnumerable<string> result = compiler.Compile(parser.program());
 
             File.WriteAllLines(options.OutputFile, result);
+            if (options.Verbose)
+            {
+                Console.WriteLine();
+                foreach (string line in result)
+                    Console.WriteLine(line);
+                Console.WriteLine();
+            }
 
-            Console.WriteLine("Compilation successful.");
+            Console.WriteLine($"Compilation successful. ({result.Count(x=>x != string.Empty)} instructions)");
         }
         catch (CompilerException ex)
         {
-            Console.WriteLine($"{ex.Message}");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Error.WriteLine($"Error: {ex.Message}");
+            Console.ResetColor();
+            Environment.Exit(1);
         }
     }
-}
-
-public class PreprocessingCharStream : ICharStream
-{
-    private readonly AntlrInputStream inner;
-
-    public PreprocessingCharStream(string filePath)
-    {
-        string preprocessed = Preprocessor.Process(filePath);
-        inner = new AntlrInputStream(preprocessed);
-    }
-
-    public int Index => inner.Index;
-    public int Size => inner.Size;
-    public string SourceName => inner.SourceName;
-    public void Consume() => inner.Consume();
-    public int LA(int i) => inner.LA(i);
-    public int Mark() => inner.Mark();
-    public void Release(int marker) => inner.Release(marker);
-    public void Seek(int index) => inner.Seek(index);
-    public string GetText(Interval interval) => inner.GetText(interval);
 }

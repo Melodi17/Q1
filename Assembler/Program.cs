@@ -24,7 +24,7 @@ public class Program
 
             File.WriteAllBytes(assemblerOptions.OutputFile, bin);
 
-            Console.WriteLine($"Assembled {assemblerOptions.InputFile} to {assemblerOptions.OutputFile} ({bin.Length} bytes)");
+            Console.WriteLine($"Assembled {assemblerOptions.InputFile} -> {assemblerOptions.OutputFile}. ({bin.Length} bytes)");
         }
         catch (AssemblerException ex)
         {

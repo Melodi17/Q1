@@ -28,7 +28,8 @@ class Program
                 {
                     CommentCompilationMode = options.CommentCompilationMode,
                     InputFile = options.InputFile,
-                    OutputFile = compiledFile
+                    OutputFile = compiledFile,
+                    Verbose = options.Verbose
                 });
 
         if (!options.NoAssemble)
@@ -67,4 +68,7 @@ class Options
 
     [Option("no-emulate", HelpText = "Skip emulation")]
     public bool NoEmulate { get; set; } = false;
+    
+    [Option('v', "verbose", HelpText = "Enable verbose output")]
+    public bool Verbose { get; set; } = false;
 }

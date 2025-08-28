@@ -12,4 +12,7 @@ public class CompilerOptions
 
     [Option('c', "comment-compilation", Required = false, HelpText = "Comments to preserve in the compiled result")]
     public CommentCompilationMode CommentCompilationMode { get; set; } = CommentCompilationMode.UserDefined;
+    
+    [Option('v', "verbose", Required = false, HelpText = "Enable verbose output during compilation.")]
+    public bool Verbose { get; set; } = false;
 }

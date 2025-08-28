@@ -68,9 +68,6 @@ int main()
             drawChar(' ', x, y, 1);
             continue;
         }
-
-        if (hid_getKeyState(SK_SHIFT))
-            sk += ('a' - 'A');
         
         drawChar(sk, x, y, COLOR_RED);
         x += 8;
