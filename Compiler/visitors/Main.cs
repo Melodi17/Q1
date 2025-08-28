@@ -152,7 +152,7 @@ public partial class CCompilerVisitor : CGrammarBaseVisitor<object?>
                 .TrimEnd('\n')
                 .Trim();
 
-            this.Instruction("." + directive);
+            this.Instruction(directive);
         }
 
         return base.VisitErrorNode(node);

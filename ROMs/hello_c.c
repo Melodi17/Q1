@@ -1,4 +1,4 @@
-#include "ROMs/font.bin"
+#load "font.bin"
 
 int drawChar(int ch, int x, int y, int color)
 {

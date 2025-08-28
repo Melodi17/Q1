@@ -77,6 +77,7 @@ public class DisplayEngine : Game
         foreach (Keys newKey in keys.Except(this._oldKeys ?? []))
         {
             this._hid.SetKeyboard((u8) newKey, true);
+            Console.WriteLine((u8) newKey);
         }
         
         foreach (Keys oldKey in this._oldKeys?.Except(keys) ?? [])
