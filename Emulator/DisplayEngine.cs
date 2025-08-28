@@ -17,6 +17,7 @@ public class DisplayEngine : Game
     private SpriteBatch _spriteBatch;
 
     private Texture2D _texture;
+    private Keys[]? _oldKeys = null;
     public int Scaling { get; }
     public int Width { get; }
     public int Height { get; }
@@ -66,10 +67,24 @@ public class DisplayEngine : Game
         var mouse = Mouse.GetState();
 
         u16 mousePos = (u16) (((mouse.Y / this.Scaling) * this.Width) + (mouse.X / this.Scaling));
-        this._hid.SetMouse(mousePos,
+        this._hid.SetMouse(
+            mousePos,
             mouse.LeftButton   == ButtonState.Pressed,
             mouse.RightButton  == ButtonState.Pressed,
             mouse.MiddleButton == ButtonState.Pressed);
+
+        Keys[] keys = keyboard.GetPressedKeys();
+        foreach (Keys newKey in keys.Except(this._oldKeys ?? []))
+        {
+            this._hid.SetKeyboard((u8) newKey, true);
+        }
+        
+        foreach (Keys oldKey in this._oldKeys?.Except(keys) ?? [])
+        {
+            this._hid.SetKeyboard((u8) oldKey, false);
+        }
+
+        this._oldKeys = keys;
 
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed
             || keyboard.IsKeyDown(Keys.Escape)

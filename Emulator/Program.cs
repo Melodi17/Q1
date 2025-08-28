@@ -74,7 +74,7 @@ public class Program
             {
                 display.OutputTexture = tex;
                 Console.WriteLine("Display surface initialized.");
-            }, () => display.Clock(), () => false);
+            }, () => display.Clock(), () => cpu.AbortRequested);
         game.Run();
         
         Console.WriteLine("Display surface closed. Waiting for CPU thread to finish...");

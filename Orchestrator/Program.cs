@@ -9,7 +9,12 @@ class Program
 {
     static void Main(string[] args)
     {
-        Parser.Default.ParseArguments<Options>(args).WithParsed(Main);
+        Parser p = new(with =>
+        {
+            with.CaseInsensitiveEnumValues = true;
+        });
+        
+        p.ParseArguments<Options>(args).WithParsed(Main);
     }
     
     private static void Main(Options options)

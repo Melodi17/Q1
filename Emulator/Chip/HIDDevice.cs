@@ -1,5 +1,7 @@
 namespace Q1.Emulator.Chip;
 
+using System;
+
 public class HIDDevice : RamDevice
 {
     public HIDDevice(u16 start) : base(start, HIDDevice.CalculateSize()) { }
@@ -24,7 +26,7 @@ public class HIDDevice : RamDevice
         int bit = scanCode & 7;    // keyCode % 8
 
         ushort addr = (ushort) (4 + index);
-        u8 value = this.Read(addr);
+        u8 value = this.Read((u16) (this.AddressableStart + addr));
 
         if (pressed)
             value |= (u8) (1 << bit);
@@ -32,5 +34,16 @@ public class HIDDevice : RamDevice
             value &= (u8) ~(1 << bit);
 
         this.Write((u16) (this.AddressableStart + addr), value);
+    }
+    
+    public bool GetKeyboard(int scanCode)
+    {
+        int index = scanCode >> 3;
+        int bit   = scanCode & 7;
+
+        ushort addr = (ushort) (4 + index);
+        byte value  = this.Read((u16) (this.AddressableStart + addr));
+
+        return (value & (1 << bit)) != 0;
     }
 }
