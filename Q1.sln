@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orchestrator", "Orchestrato
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegionVisualiser", "RegionVisualiser\RegionVisualiser.csproj", "{43523E07-07BD-456A-BD53-C1515ED8148E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compiler.Testing", "Compiler.Testing\Compiler.Testing.csproj", "{2BE81C5F-2117-412D-9FAF-8AA31C2E7000}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{43523E07-07BD-456A-BD53-C1515ED8148E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43523E07-07BD-456A-BD53-C1515ED8148E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43523E07-07BD-456A-BD53-C1515ED8148E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BE81C5F-2117-412D-9FAF-8AA31C2E7000}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BE81C5F-2117-412D-9FAF-8AA31C2E7000}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BE81C5F-2117-412D-9FAF-8AA31C2E7000}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BE81C5F-2117-412D-9FAF-8AA31C2E7000}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

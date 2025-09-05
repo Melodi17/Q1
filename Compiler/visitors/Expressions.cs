@@ -10,7 +10,7 @@ public partial class CCompilerVisitor
 
         return expressionString;
     }
-    
+
     public override string VisitCallExpression(CGrammarParser.CallExpressionContext context)
     {
         string functionName = context.ID().GetText();
@@ -25,15 +25,20 @@ public partial class CCompilerVisitor
         {
             CGrammarParser.ExpressionContext argument = argumentsReversed[i];
             string result = this.VisitExpression(argument);
+            
+            int indexReverse = argumentsReversed.Length - i - 1;
 
-            this.Instruction($"push {result}", $"arg {overload.ParameterTypes[i]} {overload.ParameterNames[i]}");
+            this.Instruction(
+                $"push {result}", $"arg {overload.ParameterTypes[indexReverse]} {overload.ParameterNames[indexReverse]}");
         }
 
-        this.Instruction($"call {function.GetBranchName(overload)}", function.GetBranchFriendlyName(overload));
+        this.Instruction(
+            $"call {function.GetBranchName(overload)}", function.GetBranchFriendlyName(overload));
 
         return "V0";
     }
-    public override string VisitParenthesizedExpression(CGrammarParser.ParenthesizedExpressionContext context)
+    public override string VisitParenthesizedExpression(
+        CGrammarParser.ParenthesizedExpressionContext context)
     {
         return this.VisitExpression(context.expression());
     }
@@ -44,7 +49,8 @@ public partial class CCompilerVisitor
 
         return $"[${reference.Address:X4}]";
     }
-    public override string VisitAssignmentExpression(CGrammarParser.AssignmentExpressionContext context)
+    public override string VisitAssignmentExpression(
+        CGrammarParser.AssignmentExpressionContext context)
     {
         Target target = this.VisitTarget(context.target());
         string value = this.VisitExpression(context.expression());
@@ -78,13 +84,15 @@ public partial class CCompilerVisitor
 
         return "V0";
     }
-    public override string VisitAddressOfExpression(CGrammarParser.AddressOfExpressionContext context)
+    public override string VisitAddressOfExpression(
+        CGrammarParser.AddressOfExpressionContext context)
     {
         Target target = this.VisitTarget(context.target());
 
         return target.Address;
     }
-    public override string VisitDereferenceExpression(CGrammarParser.DereferenceExpressionContext context)
+    public override string VisitDereferenceExpression(
+        CGrammarParser.DereferenceExpressionContext context)
     {
         string value = this.VisitExpression(context.expression());
 
@@ -97,16 +105,16 @@ public partial class CCompilerVisitor
         Target obj = this.VisitTarget(context.obj);
         if (obj.Type is not CTypePtr ptr)
             throw new CompilerException("Indexer target was not a pointer!");
-        
+
         this.Instruction($"push {obj.Value}", "store index obj");
 
         string indexer = this.VisitExpression(context.indexer);
 
-        this.Instruction($"mov {indexer}, V1",      "store indexer");
-        this.Instruction($"pop V0",                 "restore index obj");
+        this.Instruction($"mov {indexer}, V1", "store indexer");
+        this.Instruction($"pop V0", "restore index obj");
         this.Instruction($"mul V1, {ptr.Sub.Size}", $"multiply indexer by {ptr.Sub.Size}");
-        this.Instruction($"add AX, V0",             "add indexer and index obj");
-        this.Instruction($"mov AX, V0",             "move to general purpose register");
+        this.Instruction($"add AX, V0", "add indexer and index obj");
+        this.Instruction($"mov AX, V0", "move to general purpose register");
         return "[V0]";
     }
 
@@ -115,19 +123,31 @@ public partial class CCompilerVisitor
         CType type = this.VisitCType(context.type());
         int? arrPtr = null;
 
-        if (context._params.Count == 0)
+        int length = context.INT() != null
+            ? int.Parse(context.INT().GetText())
+            : context._params.Count;
+
+        if (length == 0)
             throw new CompilerException("Cannot create empty array");
-        
+
         foreach (CGrammarParser.ExpressionContext? param in context._params)
         {
             int itemPtr = Alloc(type.Size);
-            
+
             if (arrPtr == null)
                 arrPtr = itemPtr;
 
             string value = this.VisitExpression(param);
             this.DynamicMove(type, value, $"[${itemPtr:X4}]");
         }
+
+        int remainingSize = (length - context._params.Count) * type.Size;
+        if (remainingSize < 0)
+            throw new CompilerException("Array length larger than specified length");
+        int blockPtr = Alloc(remainingSize);
+        
+        if (arrPtr == null)
+            arrPtr = blockPtr;
 
         return $"${arrPtr:X4}";
     }

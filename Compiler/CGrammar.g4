@@ -55,7 +55,7 @@ declaration
 expression
     : '(' expression ')' #parenthesizedExpression
 //    | left=expression ',' right=expression #commaExpression
-    | 'new' type '[' INT? ']' '{' ( params+=expression (',' params+=expression )* )? '}' #arrayExpression
+    | 'new' type '[' INT? ']' ('{' ( params+=expression (',' params+=expression )* )? '}')? #arrayExpression
     | constant #constantExpression
     | target '=' expression #assignmentExpression
     | '*' expression #dereferenceExpression

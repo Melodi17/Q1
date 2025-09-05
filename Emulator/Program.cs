@@ -64,6 +64,7 @@ public class Program
                 cpu.Clock();
             }
             Console.WriteLine($"Exit code: 0x{cpu.V[0]:X4}");
+            MemoryDump(memory, Q1Layout.FreeMemoryStart, (u16) (Q1Layout.Memory.start + Q1Layout.Memory.size - 1));
         });
         t.IsBackground = true;
         t.Start();
@@ -79,5 +80,19 @@ public class Program
         
         Console.WriteLine("Display surface closed. Waiting for CPU thread to finish...");
         t.Join();
+    }
+    
+    private static void MemoryDump(RamDevice memory, u16 start, u16 end)
+    {
+        for (u16 addr = start; addr <= end; addr += 16)
+        {
+            Console.Write($"0x{addr:X4}: ");
+            for (u16 offset = 0; offset < 16; offset++)
+            {
+                if (addr + offset > end) break;
+                Console.Write($"{memory.Read((u16) (addr + offset)):X2} ");
+            }
+            Console.WriteLine();
+        }
     }
 }

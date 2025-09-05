@@ -125,14 +125,14 @@ public partial class Q1Cpu
     private void Instruction_SHL(u8 m1, u8 m2)
     {
         u16 v1 = this.Address(m1).read();
-        u16 v2 = this.Address(m1).read();
+        u16 v2 = this.Address(m2).read();
         u16 shifted = (u16) (v1 << v2);
         this.DX = shifted;
     }
     private void Instruction_SHR(u8 m1, u8 m2)
     {
         u16 v1 = this.Address(m1).read();
-        u16 v2 = this.Address(m1).read();
+        u16 v2 = this.Address(m2).read();
         u16 shifted = (u16) (v1 >> v2);
         this.DX = shifted;
     }

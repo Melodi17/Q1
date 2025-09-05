@@ -5,7 +5,7 @@ public partial class CCompilerVisitor
     private List<(CGrammarParser.FunctionDefinitionContext context,
         FunctionReference function, FunctionOverload overload,
         List<string> paramNames, List<CType> paramTypes)> _functionBodies = new();
-    
+
     private VariableReference FindVariable(string varName)
     {
         foreach (Dictionary<string, VariableReference> variables in this._variableStack)
@@ -42,7 +42,7 @@ public partial class CCompilerVisitor
 
         throw new CompilerException($"Function '{name}' has not been defined or prototyped.");
     }
-    
+
     public override string? VisitFunctionPrototype(CGrammarParser.FunctionPrototypeContext context)
     {
         string functionName = context.name.Text;
@@ -52,13 +52,15 @@ public partial class CCompilerVisitor
         List<string> parameterNames = context._params.Select(x => x.Text).ToList();
 
         FunctionReference function = this.CreateOrGetFunctionReference(functionName, type);
-        FunctionOverload overload = function.CreateOverloadWithoutBody(parameterNames, parameterTypes);
+        FunctionOverload overload =
+            function.CreateOverloadWithoutBody(parameterNames, parameterTypes);
 
         function.Overloads.Add(overload);
 
         return null;
     }
-    public override string? VisitFunctionDefinition(CGrammarParser.FunctionDefinitionContext context)
+    public override string? VisitFunctionDefinition(
+        CGrammarParser.FunctionDefinitionContext context)
     {
         string functionName = context.name.Text;
         CType type = this.VisitCType(context.rtype);
@@ -73,7 +75,12 @@ public partial class CCompilerVisitor
 
         return null;
     }
-    private void VisitFunctionBody(CGrammarParser.FunctionDefinitionContext context, FunctionReference function, FunctionOverload overload, List<string> paramNames, List<CType> paramTypes)
+    private void VisitFunctionBody(
+        CGrammarParser.FunctionDefinitionContext context,
+        FunctionReference function,
+        FunctionOverload overload,
+        List<string> paramNames,
+        List<CType> paramTypes)
     {
         this.Branch(function.GetBranchName(overload), function.GetBranchFriendlyName(overload));
 
@@ -96,9 +103,11 @@ public partial class CCompilerVisitor
 
         this.Instruction("mov 0, V0", "fallback return 0");
         this.Instruction("ret");
+
         this.Blank();
     }
-    public override string? VisitVariableDeclaration(CGrammarParser.VariableDeclarationContext context)
+    public override string? VisitVariableDeclaration(
+        CGrammarParser.VariableDeclarationContext context)
     {
         CType type = this.VisitCType(context.type());
         int addr = this.Alloc(CType.Int.Size);

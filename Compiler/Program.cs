@@ -27,17 +27,7 @@ public class Program
         try
         {
             ICharStream inputStream = new PreprocessingCharStream(options.InputFile);
-            CGrammarLexer lexer = new(inputStream);
-            lexer.RemoveErrorListeners();
-
-            ITokenStream tokenStream = new BufferedTokenStream(lexer);
-            CGrammarParser parser = new(tokenStream);
-            parser.RemoveErrorListeners();
-
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            Encoding encoding = Encoding.GetEncoding(437);
-            CCompilerVisitor compiler = new(options.CommentCompilationMode, encoding);
-            IEnumerable<string> result = compiler.Compile(parser.program());
+            IEnumerable<string> result = Program.Compile(options, inputStream);
 
             File.WriteAllLines(options.OutputFile, result);
             if (options.Verbose)
@@ -57,5 +47,27 @@ public class Program
             Console.ResetColor();
             Environment.Exit(1);
         }
+    }
+    public static IEnumerable<string> Compile(CompilerOptions options, ICharStream inputStream)
+    {
+        CGrammarLexer lexer = new(inputStream);
+        lexer.RemoveErrorListeners();
+
+        ITokenStream tokenStream = new BufferedTokenStream(lexer);
+        CGrammarParser parser = new(tokenStream);
+        parser.RemoveErrorListeners();
+
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        Encoding encoding = Encoding.GetEncoding(437);
+        CCompilerVisitor compiler = new(options.CommentCompilationMode, encoding);
+        IEnumerable<string> result = compiler.Compile(parser.program());
+        
+        return result;
+    }
+    
+    public static string Optimize(IEnumerable<string> instructions)
+    {
+        Optimizer optimizer = new(instructions.ToList());
+        return optimizer.Optimize();
     }
 }
