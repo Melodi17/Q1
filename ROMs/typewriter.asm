@@ -272,7 +272,7 @@ _then_15:
     mov 8, V0                 ; store ternary success result
 _end_16:
     mov V0, [$7237]           ; int pix = V0
-    push [$7237]              ; arg int x
+    push [$7237]              ; arg int c
     push [$7227]              ; left operand
     mov [$722F], V1           ; right operand
     pop V0                    ; get left operand back
@@ -282,7 +282,7 @@ _end_16:
     mov [$7233], V1           ; right operand
     pop V0                    ; get left operand back
     add V0, V1                ; compute addition
-    push AX                   ; arg int c
+    push AX                   ; arg int x
     call _screen_setPixel_int_x__int_y__int_c; int screen_setPixel(int x, int y, int c)
     push [$7233]              ; i++
     inc [$7233]
@@ -321,8 +321,8 @@ _body_17:
     add AX, V0                ; add indexer and index obj
     mov AX, V0                ; move to general purpose register
     mov [V0], [$7245]         ; int ch = [V0]
-    push [$7241]              ; arg int ch
-    push [$723F]              ; arg int x
+    push [$7241]              ; arg int color
+    push [$723F]              ; arg int y
     push [$723D]              ; left operand
     push [$7243]              ; left operand
     mov 8, V1                 ; right operand
@@ -331,8 +331,8 @@ _body_17:
     mov AX, V1                ; right operand
     pop V0                    ; get left operand back
     add V0, V1                ; compute addition
-    push AX                   ; arg int y
-    push [$7245]              ; arg int color
+    push AX                   ; arg int x
+    push [$7245]              ; arg int ch
     call _drawChar_int_ch__int_x__int_y__int_color; int drawChar(int ch, int x, int y, int color)
     push [$7243]              ; i++
     inc [$7243]
@@ -435,17 +435,17 @@ _end_27:
     jmp _end_29               ; if succeeds, continue, else jump to end
     mov 0, [$7247]            ; [$7247] = 0
 _end_29:
-    push 1                    ; arg int ch
-    push [$7249]              ; arg int x
-    push [$7247]              ; arg int y
-    push 32                   ; arg int color
+    push 1                    ; arg int color
+    push [$7249]              ; arg int y
+    push [$7247]              ; arg int x
+    push 32                   ; arg int ch
     call _drawChar_int_ch__int_x__int_y__int_color; int drawChar(int ch, int x, int y, int color)
     jmp _body_19              ; continue
 _end_28:
-    push 1                    ; arg int ch
-    push [$7249]              ; arg int x
-    push [$7247]              ; arg int y
-    push [$724B]              ; arg int color
+    push 1                    ; arg int color
+    push [$7249]              ; arg int y
+    push [$7247]              ; arg int x
+    push [$724B]              ; arg int ch
     call _drawChar_int_ch__int_x__int_y__int_color; int drawChar(int ch, int x, int y, int color)
     push [$7247]              ; left operand
     mov 8, V1                 ; right operand
