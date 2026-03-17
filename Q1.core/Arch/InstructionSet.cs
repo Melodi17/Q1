@@ -12,7 +12,7 @@ public static class InstructionSet
 
         #region Control Group
 
-         InstructionSet.Lookup[0x00] = new InstructionGroup
+        InstructionSet.Lookup[0x00] = new InstructionGroup
         {
             Implicit = nop,
             SimpleAddressing = new SimpleInstruction { Name = "JMP", Execute = InstructionSet.Jump },
@@ -48,6 +48,14 @@ public static class InstructionSet
         {
             Implicit = nop,
             SimpleAddressing = new SimpleInstruction { Name = "POP", Execute = InstructionSet.Pop },
+            ExtendedImplicit = nop,
+            ExtendedAddressing = nopExtended
+        };
+        
+        InstructionSet.Lookup[0x05] = new InstructionGroup
+        {
+            Implicit = nop,
+            SimpleAddressing = new SimpleInstruction { Name = "INT", Execute = InstructionSet.Interrupt },
             ExtendedImplicit = nop,
             ExtendedAddressing = nopExtended
         };
@@ -93,7 +101,79 @@ public static class InstructionSet
             Implicit = new ImplicitInstruction { Name = "SHPR(DX)", Execute = InstructionSet.ShiftPlaceRightDx },
             SimpleAddressing = new SimpleInstruction { Name = "SHPR", Execute = InstructionSet.ShiftPlaceRight },
             ExtendedImplicit = nop,
-            ExtendedAddressing = new ExtendedInstruction { Name = "SHL", Execute = InstructionSet.ShiftRight }
+            ExtendedAddressing = new ExtendedInstruction { Name = "SHR", Execute = InstructionSet.ShiftRight }
+        };
+
+        #endregion
+
+        #region Logic Group
+
+        InstructionSet.Lookup[0x20] = new InstructionGroup
+        {
+            Implicit = new ImplicitInstruction { Name = "NOT(LX)", Execute = InstructionSet.NotLx },
+            SimpleAddressing = new SimpleInstruction { Name = "NOT", Execute = InstructionSet.Not },
+            ExtendedImplicit = nop,
+            ExtendedAddressing = new ExtendedInstruction { Name = "CMP", Execute = InstructionSet.Compare }
+        };
+        
+        InstructionSet.Lookup[0x21] = new InstructionGroup
+        {
+            Implicit = nop,
+            SimpleAddressing = nopSimple,
+            ExtendedImplicit = nop,
+            ExtendedAddressing = new ExtendedInstruction { Name = "LT", Execute = InstructionSet.LessThan }
+        };
+        
+        InstructionSet.Lookup[0x22] = new InstructionGroup
+        {
+            Implicit = nop,
+            SimpleAddressing = nopSimple,
+            ExtendedImplicit = nop,
+            ExtendedAddressing = new ExtendedInstruction { Name = "GT", Execute = InstructionSet.GreaterThan }
+        };
+
+        #endregion
+        
+        #region Arithmatic Group
+
+        InstructionSet.Lookup[0x30] = new InstructionGroup
+        {
+            Implicit = new ImplicitInstruction { Name = "INC(AX)", Execute = InstructionSet.IncrementAx },
+            SimpleAddressing = new SimpleInstruction { Name = "INC", Execute = InstructionSet.Increment },
+            ExtendedImplicit = nop,
+            ExtendedAddressing = new ExtendedInstruction { Name = "ADD", Execute = InstructionSet.Add }
+        };
+        
+        InstructionSet.Lookup[0x31] = new InstructionGroup
+        {
+            Implicit = new ImplicitInstruction { Name = "DEC(AX)", Execute = InstructionSet.DecrementAx },
+            SimpleAddressing = new SimpleInstruction { Name = "DEC", Execute = InstructionSet.Decrement },
+            ExtendedImplicit = nop,
+            ExtendedAddressing = new ExtendedInstruction { Name = "SUB", Execute = InstructionSet.Subtract }
+        };
+        
+        InstructionSet.Lookup[0x32] = new InstructionGroup
+        {
+            Implicit = nop,
+            SimpleAddressing = nopSimple,
+            ExtendedImplicit = nop,
+            ExtendedAddressing = new ExtendedInstruction { Name = "DIV", Execute = InstructionSet.Divide }
+        };
+        
+        InstructionSet.Lookup[0x33] = new InstructionGroup
+        {
+            Implicit = nop,
+            SimpleAddressing = nopSimple,
+            ExtendedImplicit = nop,
+            ExtendedAddressing = new ExtendedInstruction { Name = "MUL", Execute = InstructionSet.Multiply }
+        };
+        
+        InstructionSet.Lookup[0x34] = new InstructionGroup
+        {
+            Implicit = nop,
+            SimpleAddressing = nopSimple,
+            ExtendedImplicit = nop,
+            ExtendedAddressing = new ExtendedInstruction { Name = "DIV", Execute = InstructionSet.Modulo }
         };
 
         #endregion
@@ -113,6 +193,13 @@ public static class InstructionSet
     private static void Suspend(Chip chip, bool word)
     {
         throw new NotImplementedException("SUS instruction is not implemented yet.");
+    }
+    
+    private static void Interrupt(Chip chip, u8 m1, bool word)
+    {
+        u16 interruptNumber = chip.Load(m1, word);
+        
+        chip.Interrupt(interruptNumber);
     }
     
     private static void Move(Chip chip, u8 m1, u8 m2, bool word)
@@ -267,14 +354,115 @@ public static class InstructionSet
     #endregion
     
     #region Logic Instructions
-
     
+    private static void Not(Chip chip, u8 m1, bool word)
+    {
+        u16 value = chip.Load(m1, word);
+        chip.Lx = value == 0 ? (u16)1 : (u16)0;
+    }
+    
+    private static void NotLx(Chip chip, bool word)
+    {
+        chip.Lx = chip.Lx == 0 ? (u16)1 : (u16)0;
+    }
+    
+    private static void Compare(Chip chip, u8 m1, u8 m2, bool word)
+    {
+        u16 value1 = chip.Load(m1, word);
+        u16 value2 = chip.Load(m2, word);
+        chip.Lx = value1 == value2 ? (u16)1 : (u16)0;
+    }
+    
+    private static void LessThan(Chip chip, u8 m1, u8 m2, bool word)
+    {
+        u16 value1 = chip.Load(m1, word);
+        u16 value2 = chip.Load(m2, word);
+        chip.Lx = value1 < value2 ? (u16)1 : (u16)0;
+    }
+    
+    private static void GreaterThan(Chip chip, u8 m1, u8 m2, bool word)
+    {
+        u16 value1 = chip.Load(m1, word);
+        u16 value2 = chip.Load(m2, word);
+        chip.Lx = value1 > value2 ? (u16)1 : (u16)0;
+    }
 
     #endregion
     
     #region Arithmetic Instructions
 
+    private static void Increment(Chip chip, u8 m1, bool word)
+    {
+        u16 value = chip.Load(m1, word);
+        value++;
+        chip.Store(m1, value, word);
+    }
     
+    private static void IncrementAx(Chip chip, bool word)
+    {
+        chip.Ax++;
+    }
+    
+    private static void Decrement(Chip chip, u8 m1, bool word)
+    {
+        u16 value = chip.Load(m1, word);
+        value--;
+        chip.Store(m1, value, word);
+    }
+    
+    private static void DecrementAx(Chip chip, bool word)
+    {
+        chip.Ax--;
+    }
+    
+    private static void Add(Chip chip, u8 m1, u8 m2, bool word)
+    {
+        u16 value1 = chip.Load(m1, word);
+        u16 value2 = chip.Load(m2, word);
+        u16 result = (u16)(value1 + value2);
+
+        chip.Ax = result;
+    }
+    
+    private static void Subtract(Chip chip, u8 m1, u8 m2, bool word)
+    {
+        u16 value1 = chip.Load(m1, word);
+        u16 value2 = chip.Load(m2, word);
+        u16 result = (u16)(value1 - value2);
+
+        chip.Ax = result;
+    }
+    
+    private static void Multiply(Chip chip, u8 m1, u8 m2, bool word)
+    {
+        u16 value1 = chip.Load(m1, word);
+        u16 value2 = chip.Load(m2, word);
+        u16 result = (u16)(value1 * value2);
+
+        chip.Ax = result;
+    }
+    
+    private static void Divide(Chip chip, u8 m1, u8 m2, bool word)
+    {
+        u16 value1 = chip.Load(m1, word);
+        u16 value2 = chip.Load(m2, word);
+        if (value2 == 0)
+            throw new DivideByZeroException("Attempted to divide by zero.");
+
+        u16 result = (u16)(value1 / value2);
+        chip.Ax = result;
+    }
+    
+    private static void Modulo(Chip chip, u8 m1, u8 m2, bool word)
+    {
+        u16 value1 = chip.Load(m1, word);
+        u16 value2 = chip.Load(m2, word);
+        if (value2 == 0)
+            throw new DivideByZeroException("Attempted to modulo by zero.");
+
+        u16 result = (u16)(value1 % value2);
+        chip.Ax = result;
+    }
 
     #endregion
 }

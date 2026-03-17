@@ -140,4 +140,13 @@ public class Chip
         
         else throw new InvalidOperationException($"Invalid register index: {index}");
     }
+    public void Interrupt(u16 code)
+    {
+        if (code >= ChipLayout.IVT_COUNT)
+            throw new InvalidOperationException($"Invalid interrupt code: {code}");
+        
+        this.Push(this.Pc);
+        u16 interruptVectorAddress = (u16) (ChipLayout.IVT_START + code * 2);
+        this.Pc = this.Bus.ReadWord(interruptVectorAddress);
+    }
 }

@@ -14,7 +14,7 @@ public class InstructionsTests
             .Where(x => x != default)
             .ToArray();
         
-        Assert.That(populatedSets, Has.Length.EqualTo(18), 
-            "Expected 8 instruction groups to be defined");
+        Assert.That(populatedSets, Has.Length.EqualTo(19), 
+            "Expected 19 instruction groups to be defined");
     }
 }
