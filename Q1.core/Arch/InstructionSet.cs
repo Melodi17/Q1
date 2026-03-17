@@ -186,6 +186,83 @@ public static class InstructionSet
     {
         chip.Dx = (u16)~chip.Dx;
     }
+    
+    private static void And(Chip chip, u8 m1, u8 m2, bool word)
+    {
+        u16 value1 = chip.Load(m1, word);
+        u16 value2 = chip.Load(m2, word);
+        u16 result = (u16)(value1 & value2);
+
+        chip.Dx = result;
+    }
+    
+    private static void Or(Chip chip, u8 m1, u8 m2, bool word)
+    {
+        u16 value1 = chip.Load(m1, word);
+        u16 value2 = chip.Load(m2, word);
+        u16 result = (u16)(value1 | value2);
+
+        chip.Dx = result;
+    }
+    
+    private static void Xor(Chip chip, u8 m1, u8 m2, bool word)
+    {
+        u16 value1 = chip.Load(m1, word);
+        u16 value2 = chip.Load(m2, word);
+        u16 result = (u16)(value1 ^ value2);
+
+        chip.Dx = result;
+    }
+
+    private static void ShiftLeft(Chip chip, u8 m1, u8 m2, bool word)
+    {
+        u16 value = chip.Load(m1, word);
+        u16 shiftAmount = (u16) (chip.Load(m2, word) & 0xF); // Limit shift to 0-15
+        u16 result = (u16) (value << shiftAmount);
+
+        chip.Dx = result;
+    }
+    
+    private static void ShiftRight(Chip chip, u8 m1, u8 m2, bool word)
+    {
+        u16 value = chip.Load(m1, word);
+        u16 shiftAmount = (u16) (chip.Load(m2, word) & 0xF); // Limit shift to 0-15
+        u16 result = (u16) (value >> shiftAmount);
+
+        chip.Dx = result;
+    }
+    
+    private static void ShiftPlaceLeft(Chip chip, u8 m1, bool word)
+    {
+        u16 value = chip.Load(m1, word);
+        u16 result = (u16) ((value << 1) | (value >> 15)); // Rotate left
+
+        chip.Dx = result;
+    }
+    
+    private static void ShiftPlaceRight(Chip chip, u8 m1, bool word)
+    {
+        u16 value = chip.Load(m1, word);
+        u16 result = (u16) ((value >> 1) | (value << 15)); // Rotate right
+
+        chip.Dx = result;
+    }
+    
+    private static void ShiftPlaceLeftDx(Chip chip, bool word)
+    {
+        u16 value = chip.Dx;
+        u16 result = (u16) ((value << 1) | (value >> 15)); // Rotate left
+
+        chip.Dx = result;
+    }
+    
+    private static void ShiftPlaceRightDx(Chip chip, bool word)
+    {
+        u16 value = chip.Dx;
+        u16 result = (u16) ((value >> 1) | (value << 15)); // Rotate right
+
+        chip.Dx = result;
+    }
 
     #endregion
     
