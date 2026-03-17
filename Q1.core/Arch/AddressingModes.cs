@@ -1,5 +1,7 @@
 namespace Q1.core.Arch;
 
+using Components;
+
 public static class AddressingModes
 {
     public static AddressingMode[] Lookup = new AddressingMode[8];

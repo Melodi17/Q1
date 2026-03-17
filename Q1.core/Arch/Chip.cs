@@ -1,5 +1,7 @@
 ﻿namespace Q1.core.Arch;
 
+using Components;
+
 // Big endian
 public class Chip
 {
