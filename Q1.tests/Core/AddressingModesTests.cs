@@ -2,6 +2,7 @@ namespace Q1.tests.Core;
 
 using core;
 using core.Arch;
+using core.Arch.Lookups;
 
 [TestFixture]
 public class AddressingModesTests
@@ -16,5 +17,8 @@ public class AddressingModesTests
         
         Assert.That(populatedModes, Has.Length.EqualTo(8), 
             "Expected 8 addressing modes to be defined");
+        
+        Assert.That(AddressingModes.Lookup.Length, Is.EqualTo(8),
+            "Expected addressing mode lookup to have 8 entries");
     }
 }

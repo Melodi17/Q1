@@ -1,6 +1,8 @@
 ﻿namespace Q1.core.Arch;
 
 using Components;
+using Constants;
+using Lookups;
 
 // Big endian
 public class Chip
@@ -10,10 +12,15 @@ public class Chip
     public u16 Ax, Dx, Lx;
     
     private u16[] _registers;
+    
+    public Chip()
+    {
+        this.Reset();
+    }
 
     public void Reset()
     {
-        this._registers = new u16[64];
+        this._registers = new u16[ChipRegisters.GENERIC_REGISTER_COUNT];
         this.Pc = ChipLayout.PROGRAM_START;
         this.Sp = ChipLayout.STACK_START;
     }
@@ -23,23 +30,25 @@ public class Chip
         this.Bus.Clock();
         
         this.Fetch(out u8 opcode, out u8 m1, out u8 m2, out bool word);
+        
+        var instruction = InstructionSet.Lookup[opcode];
 
         switch (m1, m2)
         {
             case (0x00, 0x00):
-                InstructionSet.Lookup[opcode].Implicit.Execute(this, word);
+                instruction.Implicit.Execute(this, word);
                 break;
             
             case (_, 0x00):
-                InstructionSet.Lookup[opcode].SimpleAddressing.Execute(this, m1, word);
+                instruction.SimpleAddressing.Execute(this, m1, word);
                 break;
             
             case (0x00, 0x01):
-                InstructionSet.Lookup[opcode].ExtendedImplicit.Execute(this, word);
+                instruction.ExtendedImplicit.Execute(this, word);
                 break;
             
             case (_, _):
-                InstructionSet.Lookup[opcode].ExtendedAddressing.Execute(this, m1, m2, word);
+                instruction.ExtendedAddressing.Execute(this, m1, m2, word);
                 break;
         }
     }
@@ -49,12 +58,8 @@ public class Chip
     { 
         u16 instruction = this.Bus.ReadWord(this.Pc);
         this.Pc += 2;
-
-        opcode = (u8) ((instruction >> 8) & 0xFE); // 128 opcodes
-        word = ((instruction >> 8) & 0x1) != 0; // flag for word mode
         
-        m1 = (u8) ((instruction >> 4) & 0x0F); // 16 modes
-        m2 = (u8) (instruction        & 0x0F); // 16 modes
+        InstructionEncoding.Decode(instruction, out opcode, out m1, out m2, out word);
     }
 
     public void SkipInstruction()
@@ -105,43 +110,44 @@ public class Chip
     
     public u16 GetRegister(u8 index)
     {
-        if (index < 64) return this._registers[index];
+        if (index < ChipRegisters.GENERIC_REGISTER_COUNT) return this._registers[index];
         
-        if (index == 0x40) return this.Ax;
-        if (index == 0x41) return (u16) (this.Ax >> 8); // High byte of Ax
-        if (index == 0x42) return (u16) (this.Ax & 0xFF); // Low byte of Ax
+        if (index == ChipRegisters.AX) return this.Ax;
+        if (index == ChipRegisters.AH) return (u16) (this.Ax >> 8);   // High byte of Ax
+        if (index == ChipRegisters.AL) return (u16) (this.Ax & 0xFF); // Low byte of Ax
         
-        if (index == 0x44) return this.Dx;
-        if (index == 0x45) return (u16) (this.Dx >> 8); // High byte of Dx
-        if (index == 0x46) return (u16) (this.Dx & 0xFF); // Low byte of Dx
+        if (index == ChipRegisters.DX) return this.Dx;
+        if (index == ChipRegisters.DH) return (u16) (this.Dx >> 8); // High byte of Dx
+        if (index == ChipRegisters.DL) return (u16) (this.Dx & 0xFF); // Low byte of Dx
         
-        if (index == 0x48) return this.Lx;
+        if (index == ChipRegisters.LX) return this.Lx;
         
-        if (index == 0x4C) return this.Pc;
-        if (index == 0x4D) return this.Sp;
+        if (index == ChipRegisters.PC) return this.Pc;
+        if (index == ChipRegisters.SP) return this.Sp;
         
         throw new InvalidOperationException($"Invalid register index: {index}");
     }
     
     public void SetRegister(u8 index, u16 value)
     {
-        if (index < 64) this._registers[index] = value;
+        if (index < ChipRegisters.GENERIC_REGISTER_COUNT) this._registers[index] = value;
         
-        else if (index == 0x40) this.Ax = value;
-        else if (index == 0x41) this.Ax = (u16)((this.Ax & 0x00FF) | ((value & 0xFF) << 8)); // Set high byte of Ax
-        else if (index == 0x42) this.Ax = (u16)((this.Ax & 0xFF00) | (value & 0xFF)); // Set low byte of Ax
+        else if (index == ChipRegisters.AX) this.Ax = value;
+        else if (index == ChipRegisters.AH) this.Ax = (u16)((this.Ax & 0x00FF) | ((value & 0xFF) << 8)); // Set high byte of Ax
+        else if (index == ChipRegisters.AL) this.Ax = (u16)((this.Ax & 0xFF00) | (value & 0xFF));        // Set low byte of Ax
         
-        else if (index == 0x44) this.Dx = value;
-        else if (index == 0x45) this.Dx = (u16)((this.Dx & 0x00FF) | ((value & 0xFF) << 8)); // Set high byte of Dx
-        else if (index == 0x46) this.Dx = (u16)((this.Dx & 0xFF00) | (value & 0xFF)); // Set low byte of Dx
+        else if (index == ChipRegisters.DX) this.Dx = value;
+        else if (index == ChipRegisters.DH) this.Dx = (u16)((this.Dx & 0x00FF) | ((value & 0xFF) << 8)); // Set high byte of Dx
+        else if (index == ChipRegisters.DL) this.Dx = (u16)((this.Dx & 0xFF00) | (value & 0xFF));        // Set low byte of Dx
         
-        else if (index == 0x48) this.Lx = value;
+        else if (index == ChipRegisters.LX) this.Lx = value;
         
-        else if (index == 0x4C) this.Pc = value;
-        else if (index == 0x4D) this.Sp = value;
+        else if (index == ChipRegisters.PC) this.Pc = value;
+        else if (index == ChipRegisters.SP) this.Sp = value;
         
         else throw new InvalidOperationException($"Invalid register index: {index}");
     }
+    
     public void Interrupt(u16 code)
     {
         if (code >= ChipLayout.IVT_COUNT)
@@ -150,5 +156,14 @@ public class Chip
         this.Push(this.Pc);
         u16 interruptVectorAddress = (u16) (ChipLayout.IVT_START + code * 2);
         this.Pc = this.Bus.ReadWord(interruptVectorAddress);
+    }
+    
+    public void RegisterInterruptHandler(u16 code, u16 handlerAddress)
+    {
+        if (code >= ChipLayout.IVT_COUNT)
+            throw new InvalidOperationException($"Invalid interrupt code: {code}");
+        
+        u16 interruptVectorAddress = (u16) (ChipLayout.IVT_START + code * 2);
+        this.Bus.WriteWord(interruptVectorAddress, handlerAddress);
     }
 }

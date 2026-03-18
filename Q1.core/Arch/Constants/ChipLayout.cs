@@ -1,4 +1,4 @@
-namespace Q1.core.Arch;
+namespace Q1.core.Arch.Constants;
 
 public static class ChipLayout
 {

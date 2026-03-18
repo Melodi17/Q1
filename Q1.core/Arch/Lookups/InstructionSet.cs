@@ -1,8 +1,24 @@
-namespace Q1.core.Arch;
+namespace Q1.core.Arch.Lookups;
 
 public static class InstructionSet
 {
     public static readonly InstructionGroup[] Lookup = new InstructionGroup[128];
+    
+    public static u8 GetOpcode(string instructionName)
+    {
+        for (u8 opcode = 0; opcode < InstructionSet.Lookup.Length; opcode++)
+        {
+            var group = InstructionSet.Lookup[opcode];
+            if (group.Implicit.Name == instructionName ||
+                group.SimpleAddressing.Name == instructionName ||
+                group.ExtendedImplicit.Name == instructionName ||
+                group.ExtendedAddressing.Name == instructionName)
+            {
+                return opcode;
+            }
+        }
+        throw new ArgumentException($"Instruction '{instructionName}' not found in the instruction set.");
+    }
     
     static InstructionSet()
     {
@@ -173,85 +189,85 @@ public static class InstructionSet
             Implicit = nop,
             SimpleAddressing = nopSimple,
             ExtendedImplicit = nop,
-            ExtendedAddressing = new ExtendedInstruction { Name = "DIV", Execute = InstructionSet.Modulo }
+            ExtendedAddressing = new ExtendedInstruction { Name = "MOD", Execute = InstructionSet.Modulo }
         };
 
         #endregion
     }
 
-    private static void Nop(Chip chip, bool word) { /* No operation */ }
-    private static void Nop(Chip chip, u8 m1, bool word) { /* No operation */ }
-    private static void Nop(Chip chip, u8 m1, u8 m2, bool word) { /* No operation */ }
+    public static void Nop(Chip chip, bool word) { /* No operation */ }
+    public static void Nop(Chip chip, u8 m1, bool word) { /* No operation */ }
+    public static void Nop(Chip chip, u8 m1, u8 m2, bool word) { /* No operation */ }
 
     #region Control Instructions
 
-    private static void Halt(Chip chip, bool word)
+    public static void Halt(Chip chip, bool word)
     {
-        throw new NotImplementedException("HALT instruction is not implemented yet.");
+        throw new HaltException();
     }
 
-    private static void Suspend(Chip chip, bool word)
+    public static void Suspend(Chip chip, bool word)
     {
         throw new NotImplementedException("SUS instruction is not implemented yet.");
     }
     
-    private static void Interrupt(Chip chip, u8 m1, bool word)
+    public static void Interrupt(Chip chip, u8 m1, bool word)
     {
         u16 interruptNumber = chip.Load(m1, word);
         
         chip.Interrupt(interruptNumber);
     }
     
-    private static void Move(Chip chip, u8 m1, u8 m2, bool word)
+    public static void Move(Chip chip, u8 m1, u8 m2, bool word)
     {
         u16 value = chip.Load(m1, word);
         chip.Store(m2, value, word);
     }
     
-    private static void Jump(Chip chip, u8 m1, bool word)
+    public static void Jump(Chip chip, u8 m1, bool word)
     {
         u16 address = chip.Load(m1, word);
         chip.Pc = address;
     }
 
-    private static void Call(Chip chip, u8 m1, bool word)
+    public static void Call(Chip chip, u8 m1, bool word)
     {
         u16 targetAddress = chip.Load(m1, word);
         chip.Push(chip.Pc);
         chip.Pc = targetAddress;
     }
     
-    private static void Return(Chip chip, bool word)
+    public static void Return(Chip chip, bool word)
     {
         u16 returnAddress = chip.Pop();
         chip.Pc = returnAddress;
     }
     
-    private static void BranchIfZero(Chip chip, u8 m1, bool word)
+    public static void BranchIfZero(Chip chip, u8 m1, bool word)
     {
         u16 value = chip.Load(m1, word);
         if (value == 0)
             chip.SkipInstruction();
     }
     
-    private static void BranchIfZeroLx(Chip chip, bool word)
+    public static void BranchIfZeroLx(Chip chip, bool word)
     {
         if (chip.Lx == 0)
             chip.SkipInstruction();
     }
 
-    private static void Branch(Chip chip, bool word)
+    public static void Branch(Chip chip, bool word)
     {
         chip.SkipInstruction();
     }
     
-    private static void Push(Chip chip, u8 m1, bool word)
+    public static void Push(Chip chip, u8 m1, bool word)
     {
         u16 value = chip.Load(m1, word);
         chip.Push(value);
     }
     
-    private static void Pop(Chip chip, u8 m1, bool word)
+    public static void Pop(Chip chip, u8 m1, bool word)
     {
         u16 value = chip.Pop();
         chip.Store(m1, value, word);
@@ -261,7 +277,7 @@ public static class InstructionSet
 
     #region Data Instructions
     
-    private static void Inverse(Chip chip, u8 m1, bool word)
+    public static void Inverse(Chip chip, u8 m1, bool word)
     {
         u16 value = chip.Load(m1, word);
         value = (u16)~value;
@@ -269,12 +285,12 @@ public static class InstructionSet
         chip.Dx = value;
     }
     
-    private static void InverseDx(Chip chip, bool word)
+    public static void InverseDx(Chip chip, bool word)
     {
         chip.Dx = (u16)~chip.Dx;
     }
     
-    private static void And(Chip chip, u8 m1, u8 m2, bool word)
+    public static void And(Chip chip, u8 m1, u8 m2, bool word)
     {
         u16 value1 = chip.Load(m1, word);
         u16 value2 = chip.Load(m2, word);
@@ -283,7 +299,7 @@ public static class InstructionSet
         chip.Dx = result;
     }
     
-    private static void Or(Chip chip, u8 m1, u8 m2, bool word)
+    public static void Or(Chip chip, u8 m1, u8 m2, bool word)
     {
         u16 value1 = chip.Load(m1, word);
         u16 value2 = chip.Load(m2, word);
@@ -292,7 +308,7 @@ public static class InstructionSet
         chip.Dx = result;
     }
     
-    private static void Xor(Chip chip, u8 m1, u8 m2, bool word)
+    public static void Xor(Chip chip, u8 m1, u8 m2, bool word)
     {
         u16 value1 = chip.Load(m1, word);
         u16 value2 = chip.Load(m2, word);
@@ -301,7 +317,7 @@ public static class InstructionSet
         chip.Dx = result;
     }
 
-    private static void ShiftLeft(Chip chip, u8 m1, u8 m2, bool word)
+    public static void ShiftLeft(Chip chip, u8 m1, u8 m2, bool word)
     {
         u16 value = chip.Load(m1, word);
         u16 shiftAmount = (u16) (chip.Load(m2, word) & 0xF); // Limit shift to 0-15
@@ -310,7 +326,7 @@ public static class InstructionSet
         chip.Dx = result;
     }
     
-    private static void ShiftRight(Chip chip, u8 m1, u8 m2, bool word)
+    public static void ShiftRight(Chip chip, u8 m1, u8 m2, bool word)
     {
         u16 value = chip.Load(m1, word);
         u16 shiftAmount = (u16) (chip.Load(m2, word) & 0xF); // Limit shift to 0-15
@@ -319,7 +335,7 @@ public static class InstructionSet
         chip.Dx = result;
     }
     
-    private static void ShiftPlaceLeft(Chip chip, u8 m1, bool word)
+    public static void ShiftPlaceLeft(Chip chip, u8 m1, bool word)
     {
         u16 value = chip.Load(m1, word);
         u16 result = (u16) ((value << 1) | (value >> 15)); // Rotate left
@@ -327,7 +343,7 @@ public static class InstructionSet
         chip.Dx = result;
     }
     
-    private static void ShiftPlaceRight(Chip chip, u8 m1, bool word)
+    public static void ShiftPlaceRight(Chip chip, u8 m1, bool word)
     {
         u16 value = chip.Load(m1, word);
         u16 result = (u16) ((value >> 1) | (value << 15)); // Rotate right
@@ -335,7 +351,7 @@ public static class InstructionSet
         chip.Dx = result;
     }
     
-    private static void ShiftPlaceLeftDx(Chip chip, bool word)
+    public static void ShiftPlaceLeftDx(Chip chip, bool word)
     {
         u16 value = chip.Dx;
         u16 result = (u16) ((value << 1) | (value >> 15)); // Rotate left
@@ -343,7 +359,7 @@ public static class InstructionSet
         chip.Dx = result;
     }
     
-    private static void ShiftPlaceRightDx(Chip chip, bool word)
+    public static void ShiftPlaceRightDx(Chip chip, bool word)
     {
         u16 value = chip.Dx;
         u16 result = (u16) ((value >> 1) | (value << 15)); // Rotate right
@@ -355,32 +371,32 @@ public static class InstructionSet
     
     #region Logic Instructions
     
-    private static void Not(Chip chip, u8 m1, bool word)
+    public static void Not(Chip chip, u8 m1, bool word)
     {
         u16 value = chip.Load(m1, word);
         chip.Lx = value == 0 ? (u16)1 : (u16)0;
     }
     
-    private static void NotLx(Chip chip, bool word)
+    public static void NotLx(Chip chip, bool word)
     {
         chip.Lx = chip.Lx == 0 ? (u16)1 : (u16)0;
     }
     
-    private static void Compare(Chip chip, u8 m1, u8 m2, bool word)
+    public static void Compare(Chip chip, u8 m1, u8 m2, bool word)
     {
         u16 value1 = chip.Load(m1, word);
         u16 value2 = chip.Load(m2, word);
         chip.Lx = value1 == value2 ? (u16)1 : (u16)0;
     }
     
-    private static void LessThan(Chip chip, u8 m1, u8 m2, bool word)
+    public static void LessThan(Chip chip, u8 m1, u8 m2, bool word)
     {
         u16 value1 = chip.Load(m1, word);
         u16 value2 = chip.Load(m2, word);
         chip.Lx = value1 < value2 ? (u16)1 : (u16)0;
     }
     
-    private static void GreaterThan(Chip chip, u8 m1, u8 m2, bool word)
+    public static void GreaterThan(Chip chip, u8 m1, u8 m2, bool word)
     {
         u16 value1 = chip.Load(m1, word);
         u16 value2 = chip.Load(m2, word);
@@ -391,31 +407,31 @@ public static class InstructionSet
     
     #region Arithmetic Instructions
 
-    private static void Increment(Chip chip, u8 m1, bool word)
+    public static void Increment(Chip chip, u8 m1, bool word)
     {
         u16 value = chip.Load(m1, word);
         value++;
         chip.Store(m1, value, word);
     }
     
-    private static void IncrementAx(Chip chip, bool word)
+    public static void IncrementAx(Chip chip, bool word)
     {
         chip.Ax++;
     }
     
-    private static void Decrement(Chip chip, u8 m1, bool word)
+    public static void Decrement(Chip chip, u8 m1, bool word)
     {
         u16 value = chip.Load(m1, word);
         value--;
         chip.Store(m1, value, word);
     }
     
-    private static void DecrementAx(Chip chip, bool word)
+    public static void DecrementAx(Chip chip, bool word)
     {
         chip.Ax--;
     }
     
-    private static void Add(Chip chip, u8 m1, u8 m2, bool word)
+    public static void Add(Chip chip, u8 m1, u8 m2, bool word)
     {
         u16 value1 = chip.Load(m1, word);
         u16 value2 = chip.Load(m2, word);
@@ -424,7 +440,7 @@ public static class InstructionSet
         chip.Ax = result;
     }
     
-    private static void Subtract(Chip chip, u8 m1, u8 m2, bool word)
+    public static void Subtract(Chip chip, u8 m1, u8 m2, bool word)
     {
         u16 value1 = chip.Load(m1, word);
         u16 value2 = chip.Load(m2, word);
@@ -433,7 +449,7 @@ public static class InstructionSet
         chip.Ax = result;
     }
     
-    private static void Multiply(Chip chip, u8 m1, u8 m2, bool word)
+    public static void Multiply(Chip chip, u8 m1, u8 m2, bool word)
     {
         u16 value1 = chip.Load(m1, word);
         u16 value2 = chip.Load(m2, word);
@@ -442,7 +458,7 @@ public static class InstructionSet
         chip.Ax = result;
     }
     
-    private static void Divide(Chip chip, u8 m1, u8 m2, bool word)
+    public static void Divide(Chip chip, u8 m1, u8 m2, bool word)
     {
         u16 value1 = chip.Load(m1, word);
         u16 value2 = chip.Load(m2, word);
@@ -453,7 +469,7 @@ public static class InstructionSet
         chip.Ax = result;
     }
     
-    private static void Modulo(Chip chip, u8 m1, u8 m2, bool word)
+    public static void Modulo(Chip chip, u8 m1, u8 m2, bool word)
     {
         u16 value1 = chip.Load(m1, word);
         u16 value2 = chip.Load(m2, word);
