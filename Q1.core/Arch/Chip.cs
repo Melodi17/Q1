@@ -53,7 +53,7 @@ public class Chip
         }
     }
     
-    /// [opcode: 7 bits] [word: 1 bits] [m1: 4 bits] [m2: 4 bits]
+    /// [word: 1 bits] [opcode: 7 bits] [m1: 4 bits] [m2: 4 bits]
     public void Fetch(out u8 opcode, out u8 m1, out u8 m2, out bool word)
     { 
         u16 instruction = this.Bus.ReadWord(this.Pc);
