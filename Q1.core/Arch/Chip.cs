@@ -7,7 +7,7 @@ using Lookups;
 // Big endian
 public class Chip
 {
-    public IAddressable Bus;
+    public Bus Bus;
     public u16 Pc, Sp;
     public u16 Ax, Dx, Lx;
     

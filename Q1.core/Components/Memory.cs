@@ -1,6 +1,6 @@
 namespace Q1.core.Components;
 
-public class Memory : IAddressable
+public class Memory : IBusDevice
 {
     private readonly u8[] _memory;
     
@@ -17,5 +17,5 @@ public class Memory : IAddressable
     
     public u8 Read(u16 address) => this._memory[address];
     public void Write(u16 address, u8 value) => this._memory[address] = value;
-    public void Clock() { /* No timing behavior for simple memory */ }
+    public void Clock(Bus bus) { /* No timing behavior for simple memory */ }
 }

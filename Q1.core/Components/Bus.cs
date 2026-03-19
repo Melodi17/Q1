@@ -5,7 +5,7 @@ using Q1.core.Arch;
 public class Bus : IAddressable
 {
     private Chip? _chip;
-    private readonly List<IAddressable> _devices;
+    private readonly List<IBusDevice> _devices;
 
     public u16 AddressableStart { get; }
     public u16 AddressableEnd { get; }
@@ -34,7 +34,7 @@ public class Bus : IAddressable
         chip.Bus = this;
     }
 
-    public void MountDevice(IAddressable device)
+    public void MountDevice(IBusDevice device)
     {
         if (device.AddressableStart >= device.AddressableEnd)
             throw new ArgumentException("Addressable range is invalid.", nameof(device));
@@ -45,14 +45,14 @@ public class Bus : IAddressable
 
         if (index > 0)
         {
-            IAddressable prev = this._devices[index - 1];
+            IBusDevice prev = this._devices[index - 1];
             if (device.AddressableStart < prev.AddressableEnd)
                 throw new InvalidOperationException("Address range overlaps with previous device.");
         }
 
         if (index < this._devices.Count)
         {
-            IAddressable next = this._devices[index];
+            IBusDevice next = this._devices[index];
             if (device.AddressableEnd > next.AddressableStart)
                 throw new InvalidOperationException("Address range overlaps with next device.");
         }
@@ -60,9 +60,9 @@ public class Bus : IAddressable
         this._devices.Insert(index, device);
     }
 
-    private IAddressable? GetDevice(u16 address)
+    private IBusDevice? GetDevice(u16 address)
     {
-        foreach (IAddressable device in this._devices)
+        foreach (IBusDevice device in this._devices)
         {
             if (address < device.AddressableStart)
                 break;
@@ -76,7 +76,7 @@ public class Bus : IAddressable
 
     public u8 Read(u16 address)
     {
-        IAddressable? device = this.GetDevice(address);
+        IBusDevice? device = this.GetDevice(address);
         if (device == null)
             return 0;
 
@@ -85,7 +85,7 @@ public class Bus : IAddressable
 
     public void Write(u16 address, u8 value)
     {
-        IAddressable? device = this.GetDevice(address);
+        IBusDevice? device = this.GetDevice(address);
         if (device == null)
             return;
 
@@ -94,7 +94,7 @@ public class Bus : IAddressable
 
     public void Clock()
     {
-        foreach (IAddressable addressable in this._devices)
-            addressable.Clock();
+        foreach (IBusDevice addressable in this._devices)
+            addressable.Clock(this);
     }
 }

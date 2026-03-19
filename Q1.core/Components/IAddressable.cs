@@ -4,10 +4,14 @@ public interface IAddressable
 {
     public u8 Read(u16 address);
     public void Write(u16 address, u8 value);
-    public void Clock();
+}
 
+public interface IBusDevice : IAddressable
+{
     public u16 AddressableStart { get; }
     public u16 AddressableEnd { get; }
+    
+    public void Clock(Bus bus);
 }
 
 public static class AddressableExtensions
