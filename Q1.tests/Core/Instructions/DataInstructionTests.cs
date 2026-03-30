@@ -1,6 +1,7 @@
 namespace Q1.tests.Core.Instructions;
 
 using core.Arch;
+using core.Arch.Constants;
 using core.Arch.Lookups;
 using core.Components;
 
@@ -161,6 +162,163 @@ public class DataInstructionTests : InstructionTestBase
         u16 expected = (u16) (value16_1 ^ value16_2);
         Assert.That(chip.Dx, Is.EqualTo(expected));
     }
+
+    [Test]
+    public void ShiftLeftInPlaceDxInstruction_ShouldCorrectlyShiftBits()
+    {
+        // Arrange
+        u16 value16 = 0b1010101010101010;
+
+        var chip = this.CreateChip();
+        chip.Dx = value16;
+
+        var instruction = InstructionEncoding
+            .Encode(
+                InstructionSet.GetOpcode("SHPL(DX)"),
+                0,
+                0,
+                true);
+        chip.Bus.WriteWord(chip.Pc, instruction);
+
+        // Act
+        chip.Clock();
+
+        // Assert
+        u16 expected = (u16) ((value16 << 1) | (value16 >> 15));
+        Assert.That(chip.Dx, Is.EqualTo(expected));
+    }
     
+    [Test]
+    public void ShiftLeftInPlaceInstruction_ShouldCorrectlyShiftBits()
+    {
+        // Arrange
+        u16 value16 = 0b1010101010101010;
+
+        var chip = this.CreateChip();
+
+        var instruction = InstructionEncoding
+            .Encode(
+                InstructionSet.GetOpcode("SHPL"),
+                AddressingModes.GetAddressingMode("Immediate"),
+                0,
+                true);
+
+        chip.Bus.WriteWord(chip.Pc, instruction);
+        chip.Bus.WriteWord((u16) (chip.Pc + 2), value16);
+
+        // Act
+        chip.Clock();
+
+        // Assert
+        u16 expected = (u16) ((value16 << 1) | (value16 >> 15));
+        Assert.That(chip.Dx, Is.EqualTo(expected));
+    }
     
+    [Test]
+    public void ShiftLeftInstruction_ShouldCorrectlyShiftBits()
+    {
+        // Arrange
+        u16 value16 = 0b1010101010101010;
+        u16 shiftAmount = 3;
+
+        var chip = this.CreateChip();
+
+        var instruction = InstructionEncoding
+            .Encode(
+                InstructionSet.GetOpcode("SHL"),
+                AddressingModes.GetAddressingMode("Immediate"),
+                AddressingModes.GetAddressingMode("Immediate"),
+                true);
+
+        chip.Bus.WriteWord(chip.Pc, instruction);
+        chip.Bus.WriteWord((u16) (chip.Pc + 2), value16);
+        chip.Bus.WriteWord((u16) (chip.Pc + 4), shiftAmount);
+
+        // Act
+        chip.Clock();
+
+        // Assert
+        u16 expected = (u16) (value16 << shiftAmount);
+        Assert.That(chip.Dx, Is.EqualTo(expected));
+    }
+    
+    [Test]
+    public void ShiftRightInPlaceDxInstruction_ShouldCorrectlyShiftBits()
+    {
+        // Arrange
+        u16 value16 = 0b1010101010101010;
+
+        var chip = this.CreateChip();
+        chip.Dx = value16;
+
+        var instruction = InstructionEncoding
+            .Encode(
+                InstructionSet.GetOpcode("SHPR(DX)"),
+                0,
+                0,
+                true);
+
+        chip.Bus.WriteWord(chip.Pc, instruction);
+
+        // Act
+        chip.Clock();
+
+        // Assert
+        u16 expected = (u16) (value16 >> 1);
+        Assert.That(chip.Dx, Is.EqualTo(expected));
+    }
+    
+    [Test]
+    public void ShiftRightInPlaceInstruction_ShouldCorrectlyShiftBits()
+    {
+        // Arrange
+        u16 value16 = 0b1010101010101010;
+
+        var chip = this.CreateChip();
+
+        var instruction = InstructionEncoding
+            .Encode(
+                InstructionSet.GetOpcode("SHPL"),
+                AddressingModes.GetAddressingMode("Immediate"),
+                0,
+                true);
+
+        chip.Bus.WriteWord(chip.Pc, instruction);
+        chip.Bus.WriteWord((u16) (chip.Pc + 2), value16);
+
+        // Act
+        chip.Clock();
+
+        // Assert
+        u16 expected = (u16) ((value16 >> 1) | (value16 << 15));
+        Assert.That(chip.Dx, Is.EqualTo(expected));
+    }
+    
+    [Test]
+    public void ShiftRightInstruction_ShouldCorrectlyShiftBits()
+    {
+        // Arrange
+        u16 value16 = 0b1010101010101010;
+        u16 shiftAmount = 3;
+
+        var chip = this.CreateChip();
+
+        var instruction = InstructionEncoding
+            .Encode(
+                InstructionSet.GetOpcode("SHR"),
+                AddressingModes.GetAddressingMode("Immediate"),
+                AddressingModes.GetAddressingMode("Immediate"),
+                true);
+
+        chip.Bus.WriteWord(chip.Pc, instruction);
+        chip.Bus.WriteWord((u16) (chip.Pc + 2), value16);
+        chip.Bus.WriteWord((u16) (chip.Pc + 4), shiftAmount);
+
+        // Act
+        chip.Clock();
+
+        // Assert
+        u16 expected = (u16) (value16 >> shiftAmount);
+        Assert.That(chip.Dx, Is.EqualTo(expected));
+    }
 }
