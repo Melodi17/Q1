@@ -20,6 +20,31 @@ public static class InstructionSet
         throw new ArgumentException($"Instruction '{instructionName}' not found in the instruction set.");
     }
     
+    public static u8 GetOpcodeWithIndex(string instructionName, out u8 index)
+    {
+        for (u8 opcode = 0; opcode < InstructionSet.Lookup.Length; opcode++)
+        {
+            var group = InstructionSet.Lookup[opcode];
+            if (group.Implicit.Name           == instructionName ||
+                group.SimpleAddressing.Name   == instructionName ||
+                group.ExtendedImplicit.Name   == instructionName ||
+                group.ExtendedAddressing.Name == instructionName)
+            {
+                if (group.Implicit.Name == instructionName)
+                    index = 0;
+                else if (group.SimpleAddressing.Name == instructionName)
+                    index = 1;
+                else if (group.ExtendedImplicit.Name == instructionName)
+                    index = 2;
+                else
+                    index = 3;
+                
+                return opcode;
+            }
+        }
+        throw new ArgumentException($"Instruction '{instructionName}' not found in the instruction set.");
+    }
+    
     static InstructionSet()
     {
         var nop = new ImplicitInstruction { Name = "NOP", Execute = InstructionSet.Nop };
